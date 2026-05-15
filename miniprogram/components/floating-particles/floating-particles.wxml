@@ -1,0 +1,7 @@
+<view class="particle-container">
+  <text
+    wx:for="{{particles}}" wx:key="id"
+    class="particle {{item.isHeart ? 'particle-heart' : 'particle-sparkle'}}"
+    style="{{item.style}}"
+  >{{item.isHeart ? '💕' : ''}}</text>
+</view>

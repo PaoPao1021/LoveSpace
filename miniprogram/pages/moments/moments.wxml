@@ -1,0 +1,46 @@
+<bg-layer />
+<floating-particles count="6" type="mix" />
+<view class="page">
+  <!-- 随机回忆入口 -->
+  <view class="random-btn" bindtap="onRandom">
+    <text class="random-icon">🎲</text>
+    <text class="random-text">随机回忆</text>
+  </view>
+
+  <!-- 时间轴列表 -->
+  <view class="timeline" wx:if="{{list.length > 0}}">
+    <view class="timeline-item" wx:for="{{list}}" wx:key="_id" bindtap="goEdit" data-id="{{item._id}}">
+      <view class="timeline-dot"></view>
+      <view class="timeline-card">
+        <text class="timeline-title" wx:if="{{item.title}}">{{item.title}}</text>
+        <text class="timeline-content">{{item.content}}</text>
+        <!-- 图片 -->
+        <view class="timeline-images" wx:if="{{item.images.length > 0}}">
+          <image wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="aspectFill" class="timeline-img" />
+        </view>
+        <!-- 标签 -->
+        <view class="timeline-tags" wx:if="{{item.tags.length > 0}}">
+          <text class="timeline-tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">#{{tag}}</text>
+        </view>
+        <text class="timeline-time">{{item.timeStr}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{list.length === 0 && loaded}}">
+    <text class="empty-emoji">📝</text>
+    <text class="empty-text">还没有记录</text>
+    <text class="empty-sub">记录你们的每一个小瞬间~</text>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore}}" bindtap="loadMore">
+    <text>加载更多</text>
+  </view>
+
+  <!-- FAB -->
+  <view class="fab" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

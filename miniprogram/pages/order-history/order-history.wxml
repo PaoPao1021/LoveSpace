@@ -1,0 +1,28 @@
+<bg-layer />
+<view class="page">
+  <view class="order-list" wx:if="{{list.length > 0}}">
+    <view class="order-card" wx:for="{{list}}" wx:key="_id">
+      <view class="order-header">
+        <text class="order-status">已下单</text>
+        <text class="order-time">{{item.timeText}}</text>
+      </view>
+      <view class="order-items">
+        <view class="order-item" wx:for="{{item.items}}" wx:for-item="dish" wx:key="dishId">
+          <text class="item-name">{{dish.name}}</text>
+          <text class="item-spec" wx:if="{{dish.specText}}">（{{dish.specText}}）</text>
+          <text class="item-qty">x{{dish.quantity}}</text>
+        </view>
+      </view>
+      <view class="order-footer">
+        <text class="order-count">共{{item.itemCount}}件</text>
+        <text class="order-total">¥{{item.totalPrice}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{list.length === 0 && loaded}}">
+    <text class="empty-emoji">📋</text>
+    <text class="empty-text">还没有订单</text>
+    <text class="empty-sub">去点餐页面下单吧~</text>
+  </view>
+</view>

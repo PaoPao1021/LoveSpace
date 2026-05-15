@@ -1,0 +1,38 @@
+<bg-layer />
+<view class="page">
+  <view class="form">
+    <input class="title-input" placeholder="标题（可选）" value="{{form.title}}" bindinput="onInput" data-field="title" />
+
+    <textarea class="content-input" placeholder="记录这一刻..." value="{{form.content}}" bindinput="onInput" data-field="content" auto-height maxlength="1000" />
+
+    <!-- 已选图片 -->
+    <view class="image-list" wx:if="{{form.images.length > 0}}">
+      <view class="image-item" wx:for="{{form.images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" class="preview-img" />
+        <view class="remove-img" bindtap="onRemoveImg" data-index="{{index}}">×</view>
+      </view>
+    </view>
+
+    <!-- 添加图片 -->
+    <view class="add-image" bindtap="onChooseImage" wx:if="{{form.images.length < 9}}">
+      <text class="add-icon">+</text>
+      <text class="add-text">添加图片</text>
+    </view>
+
+    <!-- 标签 -->
+    <view class="tag-section">
+      <text class="section-label">标签</text>
+      <view class="tag-list">
+        <view class="tag-item {{form.tags.includes(item) ? 'active' : ''}}" wx:for="{{presetTags}}" wx:key="*this" bindtap="onToggleTag" data-tag="{{item}}">
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="bottom-bar">
+    <button class="btn-save" bindtap="onSave">保存</button>
+    <button class="btn-delete" wx:if="{{id}}" bindtap="onDelete">删除</button>
+  </view>
+</view>

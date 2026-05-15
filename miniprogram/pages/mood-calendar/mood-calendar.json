@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "心情日历",
+  "usingComponents": {
+    "bg-layer": "/components/bg-layer/bg-layer"
+  }
+}

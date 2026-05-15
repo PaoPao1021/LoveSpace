@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "设置",
+  "usingComponents": {
+    "van-popup": "@vant/weapp/popup/index",
+    "bg-layer": "/components/bg-layer/bg-layer"
+  }
+}

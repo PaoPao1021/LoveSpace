@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "纪念日详情",
+  "usingComponents": {
+    "bg-layer": "/components/bg-layer/bg-layer"
+  }
+}

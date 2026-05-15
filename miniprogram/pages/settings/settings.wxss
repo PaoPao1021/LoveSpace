@@ -1,0 +1,234 @@
+/* ===== 毛玻璃卡片 ===== */
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  border-radius: 28rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(172, 136, 180, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+}
+
+.card-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+  letter-spacing: 1rpx;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.setting-item:last-child { border-bottom: none; }
+
+.setting-label {
+  font-size: 28rpx;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.setting-value {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.setting-right {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.setting-arrow {
+  color: var(--color-text-light);
+  font-size: 24rpx;
+}
+
+.bg-preview {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  border: 2rpx solid rgba(0, 0, 0, 0.06);
+}
+
+.bg-thumb {
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== 危险区域 ===== */
+.danger-zone {
+  margin-top: 48rpx;
+  text-align: center;
+}
+
+.btn-danger {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--color-danger);
+  border: 2rpx solid rgba(248, 113, 113, 0.3);
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  width: 60%;
+  font-weight: 500;
+}
+.btn-danger::after { border: none; }
+
+/* ===== 背景设置弹窗 ===== */
+.bg-panel {
+  padding: 16rpx 0;
+}
+
+.panel-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 12rpx;
+  letter-spacing: 2rpx;
+}
+
+.panel-desc {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+/* 背景预览 */
+.bg-preview-large {
+  width: 100%;
+  height: 300rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+  margin-bottom: 28rpx;
+  position: relative;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+}
+
+.bg-preview-img {
+  width: 100%;
+  height: 100%;
+}
+
+.bg-preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #FDF2F4, #F8F0F4, #F0ECF8);
+}
+
+/* 操作按钮 */
+.bg-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.bg-actions .btn-primary,
+.bg-actions .btn-outline {
+  flex: 1;
+}
+
+/* 透明度滑块 */
+.opacity-section {
+  margin-bottom: 32rpx;
+}
+
+.opacity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.opacity-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.opacity-value {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.opacity-tips {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.tip-text {
+  font-size: 22rpx;
+  color: var(--color-text-light);
+}
+
+/* 预设透明度 */
+.preset-section {
+  margin-top: 16rpx;
+}
+
+.preset-label {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 16rpx;
+}
+
+.preset-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.preset-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1rpx solid rgba(255, 255, 255, 0.6);
+  border-radius: 20rpx;
+  transition: all 0.2s;
+}
+
+.preset-item:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.preset-val {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.preset-name {
+  display: block;
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+  margin-top: 4rpx;
+}

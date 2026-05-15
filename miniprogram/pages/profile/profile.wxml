@@ -1,0 +1,100 @@
+<bg-layer />
+<floating-particles count="5" type="sparkle" />
+<view class="page">
+  <!-- 加载中 -->
+  <view class="loading-block" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <!-- 用户信息 · 贴纸头部 -->
+    <view class="profile-header breath-card">
+      <view class="tape-piece"></view>
+      <view class="cuddle-avatars">
+        <view class="avatar-edit-wrap" bindtap="onTapAvatar">
+          <image class="avatar my-avatar" src="{{myAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+          <view class="avatar-edit-badge">
+            <text class="avatar-edit-icon">📷</text>
+          </view>
+        </view>
+        <view class="hero-heart-wrap heartbeat">
+          <text class="hero-heart">💕</text>
+        </view>
+        <image class="avatar partner-avatar" src="{{partnerAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+      </view>
+      <view class="name-row">
+        <text class="profile-name my-name" bindtap="onTapNickname">{{myName}}</text>
+        <text class="name-edit-hint" bindtap="onTapNickname">✏️</text>
+        <text class="name-separator"> & </text>
+        <text class="profile-name">{{partnerName}}</text>
+      </view>
+      <text class="profile-days">在一起 {{daysTogether}} 天</text>
+    </view>
+
+    <!-- 功能入口 -->
+    <view class="menu-group">
+      <view class="menu-item" bindtap="goPage" data-url="/pages/anniversary/anniversary">
+        <text class="menu-icon">📅</text>
+        <text class="menu-label">纪念日</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/mood/mood">
+        <text class="menu-icon">😊</text>
+        <text class="menu-label">心情打卡</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/points/points">
+        <text class="menu-icon">⭐</text>
+        <text class="menu-label">爱心积分</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/menu/menu">
+        <text class="menu-icon">🍜</text>
+        <text class="menu-label">今天吃什么</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/tasks/tasks">
+        <text class="menu-icon">✅</text>
+        <text class="menu-label">情侣任务</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/wishes/wishes">
+        <text class="menu-icon">🌟</text>
+        <text class="menu-label">愿望清单</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/capsule/capsule">
+        <text class="menu-icon">💌</text>
+        <text class="menu-label">时光胶囊</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/thanks/thanks">
+        <text class="menu-icon">🙏</text>
+        <text class="menu-label">感谢墙</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goPage" data-url="/pages/timeline/timeline">
+        <text class="menu-icon">📖</text>
+        <text class="menu-label">回忆时间轴</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="menu-group">
+      <view class="menu-item" bindtap="goPage" data-url="/pages/settings/settings">
+        <text class="menu-icon">⚙️</text>
+        <text class="menu-label">设置</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 昵称编辑弹窗 -->
+  <van-popup show="{{showEditNickname}}" round position="bottom" custom-style="padding: 32rpx;" bind:close="onCloseEditNickname">
+    <view class="edit-popup">
+      <text class="popup-title">修改昵称</text>
+      <input class="form-input" value="{{editNickname}}" bindinput="onNicknameInput" placeholder="输入新昵称" maxlength="20" />
+      <button class="btn-save" bindtap="onSaveNickname">保存</button>
+    </view>
+  </van-popup>
+</view>

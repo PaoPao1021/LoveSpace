@@ -1,0 +1,132 @@
+<bg-layer />
+<floating-particles count="5" type="sparkle" />
+<view class="page">
+  <!-- 积分卡片 -->
+  <view class="score-card">
+    <view class="score-card-inner">
+      <view class="score-header">
+        <text class="score-title">{{level.icon}} {{level.name}}</text>
+      </view>
+      <view class="score-row">
+        <view class="score-item">
+          <text class="score-num">{{myScore}}</text>
+          <text class="score-label">我的积分</text>
+        </view>
+        <view class="score-vs"><text class="vs-icon">💕</text></view>
+        <view class="score-item">
+          <text class="score-num">{{partnerScore}}</text>
+          <text class="score-label">TA的积分</text>
+        </view>
+      </view>
+      <view class="progress-section" wx:if="{{nextLevel}}">
+        <text class="progress-text">距离「{{nextLevel.name}}」还需 {{nextLevel.remaining}} 积分</text>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速加分 -->
+  <view class="card">
+    <view class="card-row">
+      <text class="card-title">给TA加分</text>
+      <text class="card-action" bindtap="onCustomPoints">+ 自定义</text>
+    </view>
+    <view class="reason-grid">
+      <view class="reason-item" wx:for="{{reasons}}" wx:key="label" bindtap="onGivePoints" data-reason="{{item}}">
+        <text class="reason-icon">{{item.icon}}</text>
+        <text class="reason-label">{{item.label}}</text>
+        <text class="reason-points">+{{item.points}}</text>
+      </view>
+      <view class="reason-item custom" wx:for="{{customReasons}}" wx:key="label"
+            bindtap="onGivePoints" data-reason="{{item}}"
+            bindlongpress="onEditCustomReason" data-index="{{index}}">
+        <text class="reason-icon">{{item.icon}}</text>
+        <text class="reason-label">{{item.label}}</text>
+        <text class="reason-points">{{item.points > 0 ? '+' : ''}}{{item.points}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 积分兑换 -->
+  <view class="card">
+    <view class="card-row">
+      <text class="card-title">积分兑换</text>
+      <text class="card-action" bindtap="onCustomExchange">+ 自定义</text>
+    </view>
+    <view class="exchange-grid">
+      <view class="exchange-item" wx:for="{{exchanges}}" wx:key="name" bindtap="onExchange" data-item="{{item}}">
+        <text class="exchange-icon">{{item.icon}}</text>
+        <text class="exchange-name">{{item.name}}</text>
+        <text class="exchange-cost">{{item.cost}}分</text>
+      </view>
+      <view class="exchange-item custom" wx:for="{{cloudExchanges}}" wx:key="_id"
+            bindtap="onExchange" data-item="{{item}}"
+            bindlongpress="onDeleteCustomExchange" data-item="{{item}}">
+        <text class="exchange-icon">{{item.icon || '🎁'}}</text>
+        <text class="exchange-name">{{item.name}}</text>
+        <text class="exchange-cost">{{item.cost}}分</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 兑换记录 -->
+  <view class="card" wx:if="{{exchangeHistory.length > 0}}">
+    <view class="card-row" bindtap="onToggleHistory">
+      <text class="card-title">兑换记录</text>
+      <text class="card-arrow">{{showHistory ? '收起' : '查看'}} ›</text>
+    </view>
+    <view class="history-list" wx:if="{{showHistory}}">
+      <view class="history-item" wx:for="{{exchangeHistory}}" wx:key="_id">
+        <text class="history-icon">🎁</text>
+        <view class="history-info">
+          <text class="history-name">{{item.itemName}}</text>
+          <text class="history-time">{{item.timeStr}}</text>
+        </view>
+        <text class="history-cost">-{{item.cost}}分</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 积分记录入口 -->
+  <view class="card card-link" bindtap="goRecords">
+    <text class="card-title">积分明细</text>
+    <text class="card-arrow">›</text>
+  </view>
+
+  <!-- 自定义弹窗 -->
+  <van-popup show="{{showCustom}}" round position="bottom" custom-style="max-height: 65vh;" bind:close="onCloseCustom">
+    <view class="custom-popup">
+      <text class="popup-title">{{customMode === 'reason' ? '自定义积分项目' : '自定义兑换项目'}}</text>
+
+      <view class="form-group">
+        <text class="form-label">名称</text>
+        <input class="form-input" placeholder="{{customMode === 'reason' ? '如：主动道歉' : '如：一次旅行'}}"
+               value="{{customForm.label}}" bindinput="onCustomInput" data-field="label" />
+      </view>
+
+      <view class="form-group" wx:if="{{customMode === 'reason'}}">
+        <text class="form-label">积分数（正数加分，负数减分）</text>
+        <input class="form-input" type="number" value="{{customForm.points}}" bindinput="onCustomPointsChange" />
+      </view>
+
+      <view class="form-group" wx:if="{{customMode === 'exchange'}}">
+        <text class="form-label">所需积分</text>
+        <input class="form-input" type="number" value="{{customForm.cost}}" bindinput="onCustomCostChange" />
+      </view>
+
+      <view class="popup-actions">
+        <button class="btn-outline" bindtap="onCloseCustom">取消</button>
+        <button class="btn-primary" bindtap="{{customMode === 'reason' ? 'onSaveCustomReason' : 'onSaveCustomExchange'}}">保存</button>
+      </view>
+
+      <view class="popup-divider"></view>
+
+      <view class="quick-action" wx:if="{{customMode === 'reason'}}">
+        <text class="quick-desc">不保存，直接执行：</text>
+        <button class="btn-primary btn-sm" bindtap="onAddPoints">立即执行</button>
+      </view>
+    </view>
+  </van-popup>
+</view>

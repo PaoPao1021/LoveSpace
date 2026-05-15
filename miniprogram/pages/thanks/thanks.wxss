@@ -1,0 +1,29 @@
+/* 感谢墙 */
+.page { min-height: 100vh; padding: 24rpx 28rpx 140rpx; background: var(--color-bg); }
+
+.thanks-header { text-align: center; padding: 32rpx 0; }
+.thanks-emoji { display: block; font-size: 48rpx; }
+.thanks-title { display: block; font-size: 32rpx; font-weight: 700; margin-top: 8rpx; letter-spacing: 1rpx; }
+.thanks-desc { display: block; font-size: 24rpx; color: var(--color-text-light); margin-top: 4rpx; }
+
+.card {
+  background: #FFFFFF; border-radius: var(--radius-card);
+  padding: 24rpx 28rpx; margin-bottom: 14rpx;
+  box-shadow: var(--shadow-card);
+}
+.thanks-content { display: block; font-size: 28rpx; line-height: 1.7; }
+.thanks-time { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 8rpx; }
+
+.empty { text-align: center; padding: 140rpx 0; color: var(--color-text-light); }
+
+.fab {
+  position: fixed; right: 40rpx;
+  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  width: 96rpx; height: 96rpx; border-radius: 50%;
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10rpx 28rpx rgba(200,160,160,0.22);
+  z-index: 20;
+}
+.fab:active { transform: scale(0.88); }
+.fab-icon { font-size: 40rpx; color: #FFFFFF; font-weight: 300; }

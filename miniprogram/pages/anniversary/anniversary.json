@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "纪念日",
+  "usingComponents": {
+    "bg-layer": "/components/bg-layer/bg-layer",
+    "van-popup": "@vant/weapp/popup/index"
+  }
+}

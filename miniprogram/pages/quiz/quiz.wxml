@@ -1,0 +1,22 @@
+<bg-layer />
+<view class="page">
+  <view class="quiz-header">
+    <text class="quiz-emoji">💕</text>
+    <text class="quiz-title">默契测试</text>
+    <text class="quiz-desc">看看你们有多了解对方</text>
+  </view>
+  <view class="quiz-list" wx:if="{{list.length > 0}}">
+    <view class="quiz-item" wx:for="{{list}}" wx:key="_id">
+      <text class="quiz-question">{{item.question}}</text>
+      <view class="quiz-answers" wx:if="{{item.user1Answer}}">
+        <text class="answer-item">你的答案: {{item.user1Answer}}</text>
+        <text class="answer-item">TA的答案: {{item.user2Answer || '未答'}}</text>
+        <text class="match-result" wx:if="{{item.isMatched}}">✅ 默契！</text>
+      </view>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{list.length === 0 && loaded}}">
+    <text class="empty-emoji">🤔</text>
+    <text class="empty-text">还没有问答</text>
+  </view>
+</view>

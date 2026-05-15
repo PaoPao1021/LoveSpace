@@ -1,0 +1,53 @@
+<bg-layer />
+<view class="page">
+  <!-- 今日心情 -->
+  <view class="today-card">
+    <view class="today-card-inner">
+    <text class="today-title">今天的心情是...</text>
+    <view class="mood-grid">
+      <view class="mood-item {{selectedMood === item.type ? 'active' : ''}}" wx:for="{{moodTypes}}" wx:key="type" bindtap="onSelectMood" data-type="{{item.type}}">
+        <text class="mood-emoji">{{item.emoji}}</text>
+        <text class="mood-label">{{item.label}}</text>
+      </view>
+    </view>
+    </view>
+  </view>
+
+  <!-- 心情日记 -->
+  <view class="card" wx:if="{{selectedMood}}">
+    <text class="card-title">想说点什么吗？</text>
+    <textarea class="diary-input" placeholder="今天发生了什么..." value="{{content}}" bindinput="onContentInput" auto-height maxlength="500" />
+
+    <view class="visibility-row">
+      <text class="vis-label">可见范围</text>
+      <view class="vis-options">
+        <view class="vis-option {{visibility === 'both' ? 'active' : ''}}" bindtap="onVisibility" data-v="both">
+          <text>双方可见</text>
+        </view>
+        <view class="vis-option {{visibility === 'self' ? 'active' : ''}}" bindtap="onVisibility" data-v="self">
+          <text>仅自己</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn-save" bindtap="onSave">打卡</button>
+  </view>
+
+  <!-- 对方今日心情 -->
+  <view class="card partner-card" wx:if="{{partnerMood}}">
+    <text class="card-title">TA今天的心情</text>
+    <view class="partner-mood">
+      <text class="partner-emoji">{{partnerMood.emoji}}</text>
+      <text class="partner-label">{{partnerMood.label}}</text>
+      <text class="partner-content" wx:if="{{partnerMood.content}}">{{partnerMood.content}}</text>
+    </view>
+  </view>
+
+  <!-- 心情日历入口 -->
+  <view class="card" bindtap="goCalendar">
+    <view class="card-row">
+      <text class="card-title">心情日历</text>
+      <text class="card-arrow">›</text>
+    </view>
+  </view>
+</view>

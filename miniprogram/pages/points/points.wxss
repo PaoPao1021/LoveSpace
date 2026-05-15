@@ -1,0 +1,137 @@
+/* 恋爱能量系统 · 奶油 + 呼吸感 */
+.page { min-height: 100vh; padding: 24rpx 28rpx 140rpx; background: var(--color-bg); }
+
+/* 积分卡片 — 呼吸渐变 */
+.score-card {
+  border-radius: var(--radius-widget);
+  padding: 5rpx;
+  margin-bottom: 28rpx;
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4, #D4C5B0);
+  background-size: 300% 300%;
+  animation: energyShift 7s ease infinite;
+  box-shadow: var(--shadow-float);
+}
+@keyframes energyShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.score-card-inner {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: calc(var(--radius-widget) - 5rpx);
+  padding: 36rpx 32rpx;
+  text-align: center;
+}
+.score-header { margin-bottom: 24rpx; }
+.score-title {
+  font-size: 30rpx; font-weight: 700;
+  color: var(--color-text); letter-spacing: 2rpx;
+}
+.score-row { display: flex; align-items: center; justify-content: space-around; }
+.score-item { text-align: center; }
+.score-num {
+  display: block; font-size: 64rpx; font-weight: 800;
+  background: linear-gradient(135deg, #D4B8B8, #E8D0D0);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+.score-label { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 8rpx; }
+.vs-icon { font-size: 32rpx; }
+
+.progress-section { margin-top: 28rpx; }
+.progress-text { display: block; font-size: 22rpx; color: var(--color-text-light); margin-bottom: 12rpx; }
+.progress-bar { height: 10rpx; background: #F5F0EB; border-radius: var(--radius-pill); overflow: hidden; }
+.progress-fill {
+  height: 100%; border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, #E8D0D0, #F2D4D4);
+  transition: width 0.6s ease-out;
+}
+
+/* 卡片 */
+.card {
+  background: #FFFFFF;
+  border-radius: var(--radius-widget);
+  padding: 28rpx 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow-card);
+}
+.card-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
+.card-title { font-size: 28rpx; font-weight: 700; color: var(--color-text); }
+.card-action {
+  font-size: 22rpx; color: var(--color-text-light);
+  padding: 4rpx 18rpx; border-radius: var(--radius-pill);
+  font-weight: 500;
+}
+.card-arrow { color: var(--color-text-light); font-size: 26rpx; }
+
+/* 积分项目网格 — 强制4列 */
+.reason-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14rpx; }
+.reason-item {
+  text-align: center;
+  padding: 22rpx 4rpx;
+  background: #F7F2ED;
+  border-radius: var(--radius-card);
+  transition: transform 0.2s;
+}
+.reason-item:active { transform: scale(0.95); background: #F0E8DE; }
+.reason-item.custom {
+  background: #F8F5F0;
+  border: 2rpx dashed rgba(200,180,160,0.3);
+}
+.reason-icon { display: block; font-size: 38rpx; margin-bottom: 6rpx; }
+.reason-label { display: block; font-size: 22rpx; color: var(--color-text-secondary); font-weight: 500; }
+.reason-points { display: block; font-size: 22rpx; color: #B89A9A; margin-top: 4rpx; font-weight: 600; }
+
+/* 兑换网格 — 强制4列 */
+.exchange-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14rpx; }
+.exchange-item {
+  text-align: center;
+  padding: 22rpx 4rpx;
+  background: #F7F2ED;
+  border-radius: var(--radius-card);
+  transition: transform 0.2s;
+}
+.exchange-item:active { transform: scale(0.95); background: #F0E8DE; }
+.exchange-item.custom {
+  background: #F8F5F0;
+  border: 2rpx dashed rgba(200,180,160,0.3);
+}
+.exchange-icon { display: block; font-size: 38rpx; margin-bottom: 6rpx; }
+.exchange-name { display: block; font-size: 22rpx; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 4rpx; }
+.exchange-cost {
+  display: inline-block; font-size: 20rpx; color: #B89A9A; font-weight: 600;
+  padding: 2rpx 14rpx; background: #F8EDED; border-radius: var(--radius-pill);
+}
+
+/* 兑换记录 */
+.history-list { display: flex; flex-direction: column; gap: 10rpx; }
+.history-item {
+  display: flex; align-items: center; gap: 14rpx;
+  padding: 18rpx 20rpx;
+  background: #F7F2ED; border-radius: var(--radius-card);
+}
+.history-icon { font-size: 28rpx; }
+.history-info { flex: 1; }
+.history-name { display: block; font-size: 26rpx; color: var(--color-text); }
+.history-time { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 2rpx; }
+.history-cost { font-size: 26rpx; color: #B89A9A; font-weight: 600; }
+
+.card-link { display: flex; justify-content: space-between; align-items: center; }
+.card-link .card-title { margin-bottom: 0; }
+
+/* 弹窗 */
+.custom-popup { padding: 16rpx 32rpx 40rpx; }
+.popup-title { display: block; font-size: 34rpx; font-weight: 700; text-align: center; margin-bottom: 28rpx; letter-spacing: 1rpx; }
+.form-group { margin-bottom: 24rpx; }
+.form-label { display: block; font-size: 24rpx; color: var(--color-text-secondary); margin-bottom: 12rpx; font-weight: 500; }
+.form-input { width: 100%; height: 88rpx; background: #F7F5F2; border-radius: var(--radius-card); padding: 0 24rpx; font-size: 28rpx; box-sizing: border-box; }
+.popup-actions { display: flex; gap: 20rpx; margin-top: 28rpx; }
+.btn-outline, .btn-primary { flex: 1; height: 80rpx; border-radius: var(--radius-pill); border: none; font-size: 28rpx; display: flex; align-items: center; justify-content: center; }
+.btn-outline { background: #F7F2ED; color: var(--color-text-secondary); }
+.btn-primary { background: linear-gradient(135deg, #E8D0D0, #F2D4D4); color: #FFF; }
+.btn-sm { font-size: 24rpx; padding: 12rpx 28rpx; }
+.popup-divider { height: 1rpx; background: #F0EDEA; margin: 24rpx 0; }
+.quick-action { display: flex; align-items: center; justify-content: space-between; }
+.quick-desc { font-size: 24rpx; color: var(--color-text-light); }

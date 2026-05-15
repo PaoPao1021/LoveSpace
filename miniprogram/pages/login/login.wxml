@@ -1,0 +1,92 @@
+<bg-layer />
+<view class="login-page">
+  <!-- 背景装饰 -->
+  <view class="bg-decor">
+    <view class="heart heart-1">💕</view>
+    <view class="heart heart-2">💗</view>
+    <view class="heart heart-3">✨</view>
+  </view>
+
+  <!-- Logo区域 -->
+  <view class="logo-area">
+    <view class="logo">🏠</view>
+    <text class="app-name">LoveSpace</text>
+    <text class="app-desc">属于你们两个人的小世界</text>
+  </view>
+
+  <!-- 用户信息 -->
+  <view class="card user-card" wx:if="{{!isLoggedIn}}">
+    <text class="card-title">先告诉我你是谁~</text>
+    <view class="avatar-picker" bindtap="onChooseAvatar">
+      <image class="picker-avatar" src="{{avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
+      <text class="picker-hint">点击选择头像</text>
+    </view>
+    <view class="input-group">
+      <text class="input-label">你的昵称</text>
+      <input class="input-field" placeholder="TA怎么叫你？" value="{{nickName}}" bindinput="onNickNameInput" />
+    </view>
+    <button class="btn-primary" bindtap="onGetUserInfo">开始使用</button>
+  </view>
+
+  <!-- 已登录，选择创建或加入 -->
+  <view class="card action-card" wx:if="{{isLoggedIn && !coupleId}}">
+    <text class="card-title">你们还没有绑定哦</text>
+    <text class="card-subtitle">选择一种方式开始你们的故事</text>
+
+    <view class="action-buttons">
+      <view class="action-btn" bindtap="onCreate">
+        <view class="action-icon">💌</view>
+        <text class="action-label">我来创建</text>
+        <text class="action-desc">生成邀请码给TA</text>
+      </view>
+      <view class="action-btn" bindtap="onJoin">
+        <view class="action-icon">🔗</view>
+        <text class="action-label">我要加入</text>
+        <text class="action-desc">输入TA的邀请码</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 创建流程 -->
+  <view class="card create-card" wx:if="{{step === 'create'}}">
+    <text class="card-title">创建你们的空间</text>
+
+    <view class="input-group">
+      <text class="input-label">在一起的日期</text>
+      <picker mode="date" value="{{startDate}}" bindchange="onDateChange">
+        <view class="input-field picker-field">
+          <text>{{startDate || '选择日期'}}</text>
+          <text class="picker-arrow">▾</text>
+        </view>
+      </picker>
+    </view>
+
+    <button class="btn-primary" bindtap="onCreateCouple">生成邀请码</button>
+  </view>
+
+  <!-- 邀请码展示 -->
+  <view class="card invite-card" wx:if="{{step === 'invite'}}">
+    <text class="card-title">你的邀请码</text>
+    <text class="card-subtitle">把这串码发给TA，等TA来加入~</text>
+    <view class="invite-code">
+      <text class="code-text">{{inviteCode}}</text>
+    </view>
+    <view class="code-actions">
+      <button class="btn-outline" bindtap="onCopyCode">复制邀请码</button>
+    </view>
+    <text class="invite-tip">正在等待对方加入...</text>
+  </view>
+
+  <!-- 加入流程 -->
+  <view class="card join-card" wx:if="{{step === 'join'}}">
+    <text class="card-title">输入邀请码</text>
+    <text class="card-subtitle">把TA给你的邀请码填进来</text>
+
+    <view class="input-group">
+      <input class="input-field code-input" placeholder="输入6位邀请码" value="{{inputCode}}" bindinput="onCodeInput" maxlength="6" />
+    </view>
+
+    <button class="btn-primary" bindtap="onJoinCouple">加入</button>
+    <view class="link-text" bindtap="onBack">返回</view>
+  </view>
+</view>

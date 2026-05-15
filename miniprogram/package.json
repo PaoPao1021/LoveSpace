@@ -1,0 +1,9 @@
+{
+  "name": "lovespace",
+  "version": "1.0.0",
+  "dependencies": {
+    "@vant/weapp": "^1.11.0",
+    "leancloud-storage": "^4.15.2",
+    "miniprogram-compat": "^0.1.0"
+  }
+}

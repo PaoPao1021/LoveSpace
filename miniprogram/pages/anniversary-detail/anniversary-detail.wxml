@@ -1,0 +1,34 @@
+<bg-layer />
+<view class="page" wx:if="{{data}}">
+  <!-- 头部 -->
+  <view class="detail-header">
+    <text class="detail-emoji">{{emoji}}</text>
+    <text class="detail-name">{{data.name}}</text>
+    <text class="detail-date-text">{{data.date}}</text>
+  </view>
+
+  <!-- 倒计时卡片 -->
+  <view class="countdown-card">
+    <view class="countdown-item">
+      <text class="countdown-num">{{daysLeft}}</text>
+      <text class="countdown-label">天后到来</text>
+    </view>
+    <view class="countdown-divider"></view>
+    <view class="countdown-item">
+      <text class="countdown-num">{{daysPast}}</text>
+      <text class="countdown-label">天已过去</text>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card" wx:if="{{data.note}}">
+    <text class="card-title">备注</text>
+    <text class="note-text">{{data.note}}</text>
+  </view>
+
+  <!-- 操作 -->
+  <view class="actions">
+    <button class="btn-action" bindtap="onEdit">编辑</button>
+    <button class="btn-action danger" bindtap="onDelete">删除</button>
+  </view>
+</view>

@@ -1,0 +1,60 @@
+/* 相册 · 日杂拼贴 */
+.page { min-height: 100vh; padding: 24rpx 28rpx 160rpx; background: var(--color-bg); }
+
+.album-grid { display: flex; flex-wrap: wrap; gap: 20rpx; }
+
+.album-item { width: calc(50% - 10rpx); }
+
+.album-cover {
+  width: 100%; height: 300rpx;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: #F7F2ED;
+  box-shadow: var(--shadow-card);
+}
+
+.cover-img { width: 100%; height: 100%; }
+
+.cover-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #F7F2ED, #F0E8DE);
+}
+.cover-emoji { font-size: 80rpx; }
+
+.album-name { display: block; font-size: 28rpx; font-weight: 600; color: var(--color-text); margin-top: 12rpx; }
+.album-count { display: block; font-size: 22rpx; color: var(--color-text-light); }
+
+.empty { text-align: center; padding: 140rpx 0; }
+.empty-emoji { display: block; font-size: 80rpx; margin-bottom: 20rpx; opacity: 0.6; }
+.empty-text { display: block; font-size: 30rpx; font-weight: 600; color: var(--color-text); margin-bottom: 10rpx; }
+.empty-sub { font-size: 24rpx; color: var(--color-text-light); }
+
+.bottom-bar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  display: flex; gap: 20rpx;
+  padding: 24rpx 28rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 -2rpx 20rpx rgba(180,160,150,0.06);
+}
+
+.btn-upload {
+  flex: 1;
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  color: #FFF; border: none; border-radius: var(--radius-pill);
+  font-size: 28rpx; height: 80rpx; display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-button);
+}
+.btn-upload::after { border: none; }
+
+.btn-add-album {
+  flex: 1;
+  background: #FFFFFF;
+  color: #B89A9A; border: 1rpx solid #F0EDEA;
+  border-radius: var(--radius-pill);
+  font-size: 28rpx; height: 80rpx; display: flex; align-items: center; justify-content: center;
+}
+.btn-add-album::after { border: none; }

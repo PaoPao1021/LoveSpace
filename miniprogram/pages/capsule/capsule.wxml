@@ -1,0 +1,60 @@
+<bg-layer />
+<view class="page">
+  <!-- 未解锁 -->
+  <view class="section" wx:if="{{locked.length > 0}}">
+    <text class="section-title">🔒 等待开启</text>
+    <view class="capsule-list">
+      <view class="capsule-item locked" wx:for="{{locked}}" wx:key="_id">
+        <text class="capsule-icon">💌</text>
+        <view class="capsule-info">
+          <text class="capsule-title">{{item.title}}</text>
+          <text class="capsule-date">{{item.unlockDate}} 开启</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已解锁 -->
+  <view class="section" wx:if="{{unlocked.length > 0}}">
+    <text class="section-title">📬 已开启</text>
+    <view class="capsule-list">
+      <view class="capsule-item" wx:for="{{unlocked}}" wx:key="_id" bindtap="onOpen" data-id="{{item._id}}">
+        <text class="capsule-icon">💌</text>
+        <view class="capsule-info">
+          <text class="capsule-title">{{item.title}}</text>
+          <text class="capsule-date">{{item.unlockDate}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{locked.length === 0 && unlocked.length === 0 && loaded}}">
+    <text class="empty-emoji">💌</text>
+    <text class="empty-text">还没有时光胶囊</text>
+    <text class="empty-sub">给未来的彼此写一封信吧~</text>
+  </view>
+
+  <view class="add-entry" bindtap="onAdd">
+    <text class="add-entry-icon">➕</text>
+    <text class="add-entry-text">写一封时光胶囊</text>
+  </view>
+
+  <van-popup show="{{showAdd}}" position="bottom" round bind:close="onCloseAdd">
+    <view class="add-popup">
+      <text class="popup-title">写给未来的我们</text>
+      <view class="form-item">
+        <input class="form-input" placeholder="标题" value="{{form.title}}" bindinput="onInput" data-field="title" />
+      </view>
+      <view class="form-item">
+        <textarea class="form-textarea" placeholder="写下你想说的话..." value="{{form.content}}" bindinput="onInput" data-field="content" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">开启日期</text>
+        <picker mode="date" value="{{form.unlockDate}}" start="{{today}}" bindchange="onDateChange">
+          <view class="form-input picker"><text>{{form.unlockDate || '选择日期'}}</text></view>
+        </picker>
+      </view>
+      <button class="btn-save" bindtap="onSave">封存胶囊</button>
+    </view>
+  </van-popup>
+</view>

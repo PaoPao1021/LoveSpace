@@ -1,0 +1,189 @@
+/* ═══════════════════════════════════════
+   首页 · 会呼吸的恋爱桌面
+   气质：贴纸手账 + iOS小组件 + 动态恋爱空间
+   ═══════════════════════════════════════ */
+
+/* ===== 欢迎 ===== */
+.welcome-prompt { padding: 160rpx 0; }
+.welcome-emoji { display: block; font-size: 88rpx; margin-bottom: 24rpx; }
+.welcome-title { display: block; font-size: 34rpx; font-weight: 700; color: var(--color-text); margin-bottom: 10rpx; letter-spacing: 2rpx; }
+.welcome-desc { display: block; font-size: 26rpx; color: var(--color-text-light); margin-bottom: 36rpx; }
+
+/* ===== Hero · 贴纸卡片 ===== */
+.hero-card {
+  background: #FFFFFF;
+  border-radius: 32rpx 28rpx 36rpx 24rpx;
+  padding: 44rpx 28rpx 32rpx;
+  margin-bottom: 20rpx;
+  text-align: center;
+  box-shadow:
+    0 6rpx 24rpx rgba(180,160,150,0.08),
+    0 2rpx 8rpx rgba(180,160,150,0.03);
+  position: relative;
+  overflow: visible;
+}
+
+.hero-greeting {
+  display: block;
+  font-size: 24rpx; color: var(--color-text-light);
+  margin-bottom: 24rpx; letter-spacing: 2rpx;
+}
+
+/* 头像贴贴 */
+.hero-avatar-wrap { animation: softPulse 4s ease-in-out infinite; }
+.hero-avatar-wrap:last-child { animation-delay: 0.6s; }
+.hero-avatar {
+  width: 108rpx; height: 108rpx; border-radius: 50%;
+  border: 4rpx solid #FFFFFF;
+  box-shadow: 0 4rpx 18rpx rgba(180,160,150,0.10);
+}
+.hero-avatar-partner {
+  box-shadow: 0 4rpx 18rpx rgba(200,170,180,0.12);
+}
+.hero-heart-wrap {
+  display: flex; align-items: center; padding-bottom: 20rpx;
+}
+.hero-heart { font-size: 42rpx; }
+
+/* 天数 */
+.hero-days-label { display: block; font-size: 24rpx; color: var(--color-text-light); margin-bottom: 4rpx; }
+.hero-days-row { display: flex; align-items: baseline; justify-content: center; gap: 6rpx; }
+.hero-days-num {
+  font-size: 84rpx; font-weight: 800;
+  background: linear-gradient(135deg, #D4B8B8, #E8D0D0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+.hero-days-unit { font-size: 28rpx; color: var(--color-text-secondary); font-weight: 500; }
+.hero-days-date { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 6rpx; }
+
+/* ===== 通知便签 ===== */
+.notif-dot {
+  display: inline-block; width: 8rpx; height: 8rpx;
+  border-radius: 50%; background: #E8D0D0;
+  margin-right: 8rpx; flex-shrink: 0;
+}
+.notif-text {
+  font-size: 24rpx; color: var(--color-text-secondary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ===== 恋爱电量 ===== */
+.energy-card {
+  background: #FFFFFF;
+  border-radius: 28rpx 32rpx 24rpx 30rpx;
+  padding: 24rpx 28rpx 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow-card);
+}
+.energy-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14rpx; }
+.energy-title { font-size: 28rpx; font-weight: 700; color: var(--color-text); }
+.energy-tip { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 10rpx; }
+
+/* ===== 纪念日 · 拍立得贴纸 ===== */
+.countdown-card {
+  display: flex; align-items: center; gap: 20rpx;
+  background: #FFFFFF;
+  padding: 24rpx 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow-polaroid);
+  position: relative; overflow: visible;
+}
+.countdown-polaroid { flex-shrink: 0; }
+.polaroid-inner {
+  width: 80rpx; height: 88rpx;
+  background: linear-gradient(135deg, #F7F2ED, #F0E8DE);
+  border-radius: var(--radius-photo);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-polaroid);
+}
+.polaroid-emoji { font-size: 36rpx; }
+
+.countdown-body { flex: 1; }
+.countdown-label { margin-bottom: 6rpx; }
+.countdown-name { display: block; font-size: 28rpx; font-weight: 700; color: var(--color-text); letter-spacing: 1rpx; }
+.countdown-date { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 4rpx; }
+
+.countdown-badge {
+  text-align: center; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.countdown-num { font-size: 34rpx; font-weight: 800; color: #FFF; line-height: 1; }
+.countdown-now { font-size: 24rpx; font-weight: 800; color: #FFF; }
+.countdown-unit { font-size: 18rpx; color: rgba(255,255,255,0.8); }
+
+/* ===== 心情 ===== */
+.mood-card {
+  background: #FFFFFF;
+  border-radius: 28rpx 24rpx 32rpx 20rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow-card);
+}
+.mood-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
+.mood-title { font-size: 28rpx; font-weight: 700; color: var(--color-text); }
+
+.mood-pair { display: flex; align-items: center; }
+.mood-slot { flex: 1; text-align: center; padding: 8rpx 0; }
+.mood-emoji { display: block; font-size: 48rpx; margin-bottom: 4rpx; }
+.mood-owner { display: block; font-size: 22rpx; color: var(--color-text-light); margin-bottom: 2rpx; }
+.mood-status { display: block; font-size: 24rpx; color: var(--color-text-secondary); font-weight: 500; }
+.mood-divider {
+  width: 2rpx; height: 64rpx;
+  background: linear-gradient(180deg, transparent, #E8E2DC, transparent);
+}
+
+/* ===== 照片回忆 ===== */
+.photo-card {
+  background: #FFFFFF;
+  border-radius: 24rpx 30rpx 20rpx 28rpx;
+  padding: 24rpx 28rpx 18rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow-card);
+}
+.photo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14rpx; }
+.photo-title { font-size: 28rpx; font-weight: 700; color: var(--color-text); }
+
+.photo-list { display: flex; gap: 14rpx; overflow-x: auto; padding-bottom: 6rpx; }
+.photo-item { flex-shrink: 0; width: 190rpx; }
+.photo-thumb {
+  width: 190rpx; height: 150rpx; border-radius: var(--radius-photo);
+  object-fit: cover;
+}
+.photo-placeholder {
+  background: #F7F2ED; display: flex; align-items: center; justify-content: center;
+  font-size: 48rpx;
+}
+.photo-text {
+  display: block; font-size: 24rpx; color: var(--color-text);
+  margin-top: 8rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ===== 今日一句 ===== */
+.quote-card {
+  background: linear-gradient(135deg, #FCFAF7, #F7F2ED);
+  border-radius: 28rpx 24rpx 32rpx 20rpx;
+  padding: 32rpx 36rpx;
+  margin-bottom: 20rpx;
+  text-align: center;
+  box-shadow: var(--shadow-glow);
+  transform: rotate(-0.2deg);
+}
+.quote-mark {
+  display: block; font-size: 56rpx; color: #E8D0D0;
+  line-height: 1; margin-bottom: 6rpx;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.quote-text {
+  display: block; font-size: 28rpx; color: var(--color-text-secondary);
+  line-height: 1.8; letter-spacing: 2rpx; font-style: italic;
+}
+
+/* ===== 加载 ===== */
+.loading-page {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 100vh; gap: 24rpx;
+}
+.loading-emoji { font-size: 56rpx; }
+.loading-text { font-size: 26rpx; color: var(--color-text-secondary); }

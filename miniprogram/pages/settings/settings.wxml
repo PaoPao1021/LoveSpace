@@ -1,0 +1,125 @@
+<bg-layer />
+<view class="page">
+  <!-- 个人信息 -->
+  <view class="glass-card">
+    <text class="card-title">个人信息</text>
+    <view class="setting-item" bindtap="onEditNick">
+      <text class="setting-label">我的昵称</text>
+      <text class="setting-value">{{nickName}}</text>
+    </view>
+  </view>
+
+  <!-- 关系 -->
+  <view class="glass-card">
+    <text class="card-title">关系</text>
+    <view class="setting-item">
+      <text class="setting-label">在一起日期</text>
+      <text class="setting-value">{{startDate}}</text>
+    </view>
+    <view class="setting-item">
+      <text class="setting-label">邀请码</text>
+      <text class="setting-value">{{inviteCode}}</text>
+    </view>
+  </view>
+
+  <!-- 自定义背景 -->
+  <view class="glass-card">
+    <text class="card-title">个性化</text>
+    <view class="setting-item" bindtap="onOpenBgPanel">
+      <text class="setting-label">自定义背景</text>
+      <view class="setting-right">
+        <view class="bg-preview" wx:if="{{bgImage}}">
+          <image class="bg-thumb" src="{{bgImage}}" mode="aspectFill" />
+        </view>
+        <text class="setting-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据 -->
+  <view class="glass-card">
+    <text class="card-title">数据</text>
+    <view class="setting-item" bindtap="onExport">
+      <text class="setting-label">导出数据</text>
+      <text class="setting-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 关于 -->
+  <view class="glass-card">
+    <text class="card-title">关于</text>
+    <view class="setting-item">
+      <text class="setting-label">版本</text>
+      <text class="setting-value">1.0.0</text>
+    </view>
+  </view>
+
+  <!-- 解除绑定 -->
+  <view class="danger-zone">
+    <button class="btn-danger" bindtap="onDissolve">解除绑定</button>
+  </view>
+
+  <!-- 背景设置弹窗 -->
+  <van-popup show="{{showBgPanel}}" round position="bottom" custom-style="height: 65vh; padding: 32rpx;" bind:close="onCloseBgPanel">
+    <view class="bg-panel">
+      <text class="panel-title">自定义背景</text>
+      <text class="panel-desc">选择一张图片作为全屏背景，设置透明度营造沉浸感</text>
+
+      <!-- 当前背景预览 -->
+      <view class="bg-preview-large" wx:if="{{bgImage}}">
+        <image class="bg-preview-img" src="{{bgImage}}" mode="aspectFill" />
+        <view class="bg-preview-overlay" style="opacity: {{(100 - bgOpacity) / 100}}"></view>
+      </view>
+
+      <!-- 选择图片 -->
+      <view class="bg-actions">
+        <button class="btn-primary" bindtap="onChooseBg">{{bgImage ? '更换背景' : '选择图片'}}</button>
+        <button class="btn-outline" bindtap="onResetBg" wx:if="{{bgImage}}">恢复默认</button>
+      </view>
+
+      <!-- 透明度滑块 -->
+      <view class="opacity-section" wx:if="{{bgImage}}">
+        <view class="opacity-header">
+          <text class="opacity-label">背景透明度</text>
+          <text class="opacity-value">{{bgOpacity}}%</text>
+        </view>
+        <slider
+          min="10"
+          max="100"
+          value="{{bgOpacity}}"
+          active-color="#FF6B81"
+          background-color="#F0E8E8"
+          block-size="24"
+          bindchange="onOpacityChange"
+        />
+        <view class="opacity-tips">
+          <text class="tip-text">数值越小背景越透明</text>
+          <text class="tip-text">100% = 完全显示</text>
+        </view>
+      </view>
+
+      <!-- 预设透明度 -->
+      <view class="preset-section" wx:if="{{bgImage}}">
+        <text class="preset-label">快速设置</text>
+        <view class="preset-row">
+          <view class="preset-item" bindtap="onPresetOpacity" data-val="30">
+            <text class="preset-val">30%</text>
+            <text class="preset-name">朦胧</text>
+          </view>
+          <view class="preset-item" bindtap="onPresetOpacity" data-val="50">
+            <text class="preset-val">50%</text>
+            <text class="preset-name">柔和</text>
+          </view>
+          <view class="preset-item" bindtap="onPresetOpacity" data-val="70">
+            <text class="preset-val">70%</text>
+            <text class="preset-name">清晰</text>
+          </view>
+          <view class="preset-item" bindtap="onPresetOpacity" data-val="90">
+            <text class="preset-val">90%</text>
+            <text class="preset-name">明亮</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </van-popup>
+</view>

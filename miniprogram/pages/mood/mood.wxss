@@ -1,0 +1,89 @@
+/* 心情打卡 · 情绪宇宙 */
+.page { min-height: 100vh; padding: 24rpx 28rpx 140rpx; background: var(--color-bg); }
+
+/* 今日心情卡片 */
+.today-card {
+  border-radius: var(--radius-widget);
+  padding: 5rpx;
+  margin-bottom: 28rpx;
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4, #D4C5B0);
+  background-size: 300% 300%;
+  animation: gradientShift 8s ease infinite;
+  overflow: hidden;
+  box-shadow: var(--shadow-float);
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.today-card-inner {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: calc(var(--radius-widget) - 5rpx);
+  padding: 40rpx 32rpx;
+  text-align: center;
+}
+.today-title { display: block; font-size: 34rpx; font-weight: 700; color: var(--color-text); margin-bottom: 28rpx; letter-spacing: 2rpx; }
+
+.mood-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16rpx; }
+.mood-item {
+  width: 116rpx; text-align: center; padding: 16rpx 0;
+  border-radius: var(--radius-card);
+  transition: all 0.25s;
+  background: rgba(255,255,255,0.5);
+}
+.mood-item.active {
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 6rpx 20rpx rgba(200,160,160,0.15);
+  transform: scale(1.08);
+}
+.mood-emoji { display: block; font-size: 46rpx; margin-bottom: 6rpx; }
+.mood-label { font-size: 22rpx; color: var(--color-text-secondary); font-weight: 500; }
+
+/* 卡片 */
+.card {
+  background: #FFFFFF;
+  border-radius: var(--radius-widget);
+  padding: 28rpx 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow-card);
+}
+.card-title { display: block; font-size: 28rpx; font-weight: 700; margin-bottom: 16rpx; }
+.card-row { display: flex; justify-content: space-between; align-items: center; }
+.card-arrow { color: var(--color-text-light); font-size: 24rpx; }
+
+.diary-input {
+  width: 100%; min-height: 180rpx;
+  background: #F7F5F2; border-radius: var(--radius-card);
+  padding: 24rpx; font-size: 28rpx; box-sizing: border-box; line-height: 1.7;
+}
+
+.visibility-row { display: flex; align-items: center; justify-content: space-between; margin: 24rpx 0; }
+.vis-label { font-size: 26rpx; color: var(--color-text-secondary); font-weight: 500; }
+.vis-options { display: flex; gap: 14rpx; }
+.vis-option {
+  padding: 8rpx 24rpx; border-radius: var(--radius-pill);
+  font-size: 24rpx; background: #F7F5F2; color: var(--color-text-secondary);
+  transition: all 0.2s;
+}
+.vis-option.active {
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4); color: #FFF;
+}
+
+.btn-save {
+  width: 100%; height: 88rpx;
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  color: #FFF; border: none; border-radius: var(--radius-pill);
+  font-size: 30rpx; font-weight: 600; letter-spacing: 2rpx;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-button);
+}
+.btn-save::after { border: none; }
+
+/* 对方心情 */
+.partner-mood { text-align: center; padding: 24rpx 0; }
+.partner-emoji { display: block; font-size: 64rpx; margin-bottom: 12rpx; }
+.partner-label { display: block; font-size: 28rpx; font-weight: 600; color: var(--color-text); margin-bottom: 8rpx; }
+.partner-content { font-size: 26rpx; color: var(--color-text-secondary); line-height: 1.6; }

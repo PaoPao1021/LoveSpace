@@ -1,0 +1,106 @@
+<bg-layer />
+<floating-particles count="6" type="mix" />
+<view class="page">
+  <!-- 时间轴列表 -->
+  <block wx:if="{{list.length > 0}}">
+    <view class="timeline-group" wx:for="{{list}}" wx:key="monthLabel">
+      <view class="month-divider">
+        <text class="month-text">{{item.monthLabel}}</text>
+      </view>
+      <view class="timeline-items">
+        <view class="timeline-item" wx:for="{{item.items}}" wx:key="_id" wx:for-item="event" bindtap="onTapItem" data-item="{{event}}">
+          <view class="timeline-dot"></view>
+          <view class="timeline-card">
+            <view class="timeline-date-row">
+              <text class="timeline-date">{{event.dateStr}}</text>
+              <text class="timeline-author" wx:if="{{event.author}}">
+                {{event.author === openid ? '我' : 'TA'}}
+              </text>
+            </view>
+            <text class="timeline-title" wx:if="{{event.title}}">{{event.title}}</text>
+            <text class="timeline-content">{{event.contentPreview || event.content}}</text>
+            <view class="timeline-images" wx:if="{{event.images && event.images.length > 0}}">
+              <image
+                wx:for="{{event.images}}" wx:for-item="img" wx:for-index="imgIdx" wx:key="*this"
+                src="{{img}}" mode="aspectFill" class="timeline-img"
+                catchtap="onPreviewItemImage" data-images="{{event.images}}" data-index="{{imgIdx}}"
+              />
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{list.length === 0 && loaded}}">
+    <text class="empty-emoji">📖</text>
+    <text class="empty-text">还没有回忆</text>
+    <text class="empty-sub">点击下方按钮，记录你们的故事吧~</text>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore}}" bindtap="loadMore">
+    <text>加载更多</text>
+  </view>
+
+  <!-- 底部留白 -->
+  <view style="height: 140rpx;"></view>
+
+  <!-- 添加按钮 -->
+  <view class="fab" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 添加弹窗 -->
+  <van-popup show="{{showAdd}}" position="bottom" round custom-style="max-height: 85vh;" bind:close="onCloseAdd">
+    <view class="add-popup">
+      <text class="popup-title">记录时刻</text>
+
+      <!-- 日期 -->
+      <view class="form-group">
+        <text class="form-label">发生日期</text>
+        <picker mode="date" value="{{form.eventDate}}" bindchange="onDateChange">
+          <view class="date-picker-btn">
+            <text class="date-picker-icon">📅</text>
+            <text class="date-picker-text">{{form.eventDate || '请选择日期'}}</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 标题 -->
+      <view class="form-group">
+        <text class="form-label">标题（可选）</text>
+        <input class="form-input" placeholder="给这一刻取个名字吧" value="{{form.title}}" bindinput="onInput" data-field="title" maxlength="30" />
+      </view>
+
+      <!-- 内容 -->
+      <view class="form-group">
+        <text class="form-label">发生了什么</text>
+        <textarea class="form-textarea" placeholder="记录你们的故事..." value="{{form.content}}" bindinput="onInput" data-field="content" maxlength="500" auto-height />
+      </view>
+
+      <!-- 图片 -->
+      <view class="form-group">
+        <text class="form-label">照片（可选）</text>
+        <view class="image-grid">
+          <block wx:for="{{form.images}}" wx:key="*this">
+            <view class="image-cell">
+              <image src="{{item}}" mode="aspectFill" class="image-thumb" bindtap="onPreviewImage" data-url="{{item}}" />
+              <view class="image-remove" catchtap="onRemoveImage" data-index="{{index}}">✕</view>
+            </view>
+          </block>
+          <view class="image-cell image-add" wx:if="{{form.images.length < 9}}" bindtap="onChooseImage">
+            <text class="image-add-icon">+</text>
+            <text class="image-add-text">{{form.images.length}}/9</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 提交 -->
+      <button class="btn-save" bindtap="onSave" loading="{{submitting}}" disabled="{{submitting}}">
+        {{submitting ? '保存中...' : '保存回忆'}}
+      </button>
+    </view>
+  </van-popup>
+</view>

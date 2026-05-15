@@ -1,0 +1,205 @@
+/* ═══════════════════════════════════════
+   登录页 · 奶油玻璃 + 贴纸邀请码
+   设计：遵循 frontend-design 大胆美学方向
+   ═══════════════════════════════════════ */
+
+.login-page {
+  min-height: 100vh;
+  padding: 60rpx 32rpx;
+  background: linear-gradient(175deg, #FCFAF7 0%, #F7F2ED 50%, #F0ECF8 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景光晕 — 极其克制 */
+.login-page::before {
+  content: '';
+  position: absolute;
+  top: -180rpx; right: -150rpx;
+  width: 460rpx; height: 460rpx;
+  background: radial-gradient(circle, rgba(232,208,208,0.18) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.login-page::after {
+  content: '';
+  position: absolute;
+  bottom: -120rpx; left: -100rpx;
+  width: 380rpx; height: 380rpx;
+  background: radial-gradient(circle, rgba(212,197,176,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* 浮动装饰 */
+.bg-decor { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; }
+.heart { position: absolute; font-size: 36rpx; opacity: 0.14; animation: floatAround 9s ease-in-out infinite; }
+.heart-1 { top: 6%; left: 10%; animation-delay: 0s; }
+.heart-2 { top: 22%; right: 8%; animation-delay: 3s; }
+.heart-3 { top: 50%; left: 14%; animation-delay: 5.5s; }
+
+@keyframes floatAround {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.12; }
+  50%      { transform: translateY(-36rpx) rotate(18deg); opacity: 0.22; }
+}
+
+/* Logo */
+.logo-area { text-align: center; margin-bottom: 52rpx; position: relative; z-index: 1; }
+.logo { font-size: 96rpx; margin-bottom: 14rpx; }
+.app-name {
+  display: block;
+  font-size: 52rpx; font-weight: 800;
+  background: linear-gradient(135deg, #B89A9A, #D4C5B0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 8rpx;
+}
+.app-desc {
+  display: block;
+  font-size: 26rpx; color: #A09890;
+  margin-top: 10rpx; letter-spacing: 3rpx;
+}
+
+/* ═══ 玻璃卡片 ═══ */
+.card {
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1rpx solid rgba(255,255,255,0.55);
+  border-radius: 32rpx;
+  padding: 44rpx 36rpx;
+  margin-bottom: 28rpx;
+  position: relative;
+  z-index: 1;
+  box-shadow:
+    0 8rpx 32rpx rgba(180,160,150,0.08),
+    0 2rpx 8rpx rgba(180,160,150,0.03);
+}
+
+.card-title {
+  display: block;
+  font-size: 34rpx; font-weight: 700;
+  color: #3C3C3C;
+  text-align: center; margin-bottom: 10rpx;
+  letter-spacing: 2rpx;
+}
+.card-subtitle {
+  display: block;
+  font-size: 26rpx; color: #8A8580;
+  text-align: center; margin-bottom: 36rpx;
+}
+
+/* ═══ 头像选择 ═══ */
+.avatar-picker { text-align: center; margin-bottom: 28rpx; }
+.avatar-picker:active { opacity: 0.8; }
+.picker-avatar {
+  width: 160rpx; height: 160rpx; border-radius: 50%;
+  border: 5rpx solid #FFFFFF;
+  box-shadow: 0 6rpx 24rpx rgba(180,160,150,0.14);
+}
+.picker-hint {
+  display: block; font-size: 24rpx; color: #A09890;
+  margin-top: 12rpx;
+}
+
+/* ═══ 输入框 ═══ */
+.input-group { margin-bottom: 28rpx; }
+.input-label {
+  display: block; font-size: 24rpx; color: #8A8580;
+  margin-bottom: 12rpx; font-weight: 500;
+}
+.input-field {
+  width: 100%; height: 92rpx;
+  background: #F7F5F2;
+  border: 2rpx solid transparent;
+  border-radius: 20rpx;
+  padding: 0 28rpx;
+  font-size: 30rpx; color: #3C3C3C;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+.input-field:focus {
+  border-color: rgba(200,170,160,0.35);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 6rpx rgba(210,190,180,0.06);
+}
+.picker-field {
+  display: flex; align-items: center; justify-content: space-between;
+  line-height: 92rpx;
+}
+.picker-arrow { color: #A09890; font-size: 24rpx; }
+
+/* 邀请码输入 — 大字强调 */
+.code-input {
+  text-align: center;
+  font-size: 48rpx; letter-spacing: 18rpx;
+  font-weight: 700; color: #3C3C3C;
+}
+
+/* ═══ 按钮 — 高对比度 ═══ */
+.btn-primary {
+  width: 100%; height: 92rpx;
+  background: linear-gradient(135deg, #C8B0A8, #D4B8B0);
+  color: #FFFFFF;
+  border: none; border-radius: 999rpx;
+  font-size: 30rpx; font-weight: 700;
+  letter-spacing: 3rpx;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6rpx 20rpx rgba(180,150,140,0.2);
+}
+.btn-primary::after { border: none; }
+.btn-primary:active { opacity: 0.82; transform: scale(0.98); }
+
+.btn-outline {
+  width: 100%; height: 84rpx;
+  background: rgba(255,255,255,0.7);
+  color: #8A7A6A;
+  border: 2rpx solid rgba(180,160,140,0.25);
+  border-radius: 999rpx;
+  font-size: 28rpx; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-outline::after { border: none; }
+.btn-outline:active { background: #F7F2ED; }
+
+/* ═══ 操作卡片 ═══ */
+.action-buttons { display: flex; gap: 20rpx; margin-top: 36rpx; }
+.action-btn {
+  flex: 1;
+  background: rgba(255,255,255,0.6);
+  border: 2rpx solid rgba(255,255,255,0.5);
+  border-radius: 28rpx;
+  padding: 36rpx 16rpx;
+  text-align: center;
+  transition: all 0.25s;
+}
+.action-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.85); }
+.action-icon { font-size: 60rpx; margin-bottom: 12rpx; }
+.action-label { display: block; font-size: 30rpx; font-weight: 700; color: #3C3C3C; }
+.action-desc { display: block; font-size: 22rpx; color: #8A8580; margin-top: 6rpx; }
+
+/* ═══ 邀请码展示 ═══ */
+.invite-code {
+  background: #F7F2ED;
+  border-radius: 24rpx;
+  padding: 44rpx;
+  text-align: center;
+  margin: 36rpx 0;
+  border: 2rpx dashed rgba(180,160,140,0.35);
+}
+.code-text {
+  font-size: 68rpx; font-weight: 800;
+  background: linear-gradient(135deg, #B89A9A, #D4C5B0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 16rpx;
+}
+.code-actions { margin-bottom: 20rpx; }
+.invite-tip { display: block; text-align: center; font-size: 24rpx; color: #A09890; }
+
+/* 返回链接 */
+.link-text {
+  text-align: center; color: #B89A9A;
+  font-size: 28rpx; margin-top: 24rpx; font-weight: 600;
+  letter-spacing: 1rpx;
+}

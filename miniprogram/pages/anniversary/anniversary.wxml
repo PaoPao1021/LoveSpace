@@ -1,0 +1,79 @@
+<bg-layer />
+<view class="page">
+  <!-- 纪念日列表 -->
+  <view class="ann-list" wx:if="{{list.length > 0}}">
+    <view class="ann-card {{item.isTop ? 'is-top' : ''}}" wx:for="{{list}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+      <view class="ann-cover">
+        <text>{{item.emoji || '📅'}}</text>
+      </view>
+      <view class="ann-body">
+        <text class="ann-name">{{item.name}}</text>
+        <text class="ann-date">{{item.date}}</text>
+        <text class="ann-note" wx:if="{{item.note}}">{{item.note}}</text>
+      </view>
+      <view class="ann-badge">
+        <text class="ann-countdown" wx:if="{{item.daysLeft >= 0}}">{{item.daysLeft}}</text>
+        <text class="ann-countdown" wx:else>{{item.daysPast}}</text>
+        <text class="ann-countdown-label">{{item.daysLeft >= 0 ? '天后' : '天前'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{list.length === 0 && loaded}}">
+    <text class="empty-emoji">📅</text>
+    <text class="empty-text">还没有纪念日哦</text>
+    <text class="empty-sub">添加你们的第一个纪念日吧~</text>
+  </view>
+
+  <!-- 底部留白 -->
+  <view style="height: 140rpx;"></view>
+
+  <!-- FAB -->
+  <view class="fab" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 添加弹窗 -->
+  <van-popup show="{{showAdd}}" position="bottom" round custom-style="max-height: 85vh;" bind:close="onCloseAdd">
+    <view class="add-popup">
+      <text class="popup-title">添加纪念日</text>
+
+      <view class="form-group">
+        <text class="form-label">名称</text>
+        <input class="form-input" placeholder="比如：在一起纪念日" value="{{form.name}}" bindinput="onInput" data-field="name" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">日期</text>
+        <picker mode="date" value="{{form.date}}" bindchange="onDateChange">
+          <view class="date-picker">
+            <text class="date-picker-icon">📅</text>
+            <text class="date-picker-text">{{form.date || '选择日期'}}</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">类型</text>
+        <view class="type-row">
+          <view class="type-option {{form.type === item.value ? 'active' : ''}}" wx:for="{{types}}" wx:key="value" bindtap="onTypeSelect" data-value="{{item.value}}">
+            <text>{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">备注</text>
+        <textarea class="form-textarea" placeholder="记录一些细节~" value="{{form.note}}" bindinput="onInput" data-field="note" />
+      </view>
+
+      <view class="form-group flex-between">
+        <text class="form-label">每年提醒</text>
+        <switch checked="{{form.isRepeat}}" bindchange="onRepeatChange" color="#E8D0D0" />
+      </view>
+
+      <button class="btn-save" bindtap="onSave">保存</button>
+    </view>
+  </van-popup>
+</view>

@@ -1,0 +1,124 @@
+<bg-layer />
+<view class="page">
+  <!-- 点餐入口 -->
+  <view class="order-banner" bindtap="goOrderMode">
+    <view class="order-banner-left">
+      <view class="order-banner-icon">👨‍🍳</view>
+      <view class="order-banner-info">
+        <text class="order-banner-title">想吃什么？点TA做</text>
+        <text class="order-banner-desc">选好发给TA，让TA给你做~</text>
+      </view>
+    </view>
+    <text class="order-banner-arrow">›</text>
+  </view>
+
+  <!-- 推荐 & 添加 -->
+  <view class="menu-actions">
+    <view class="menu-action-btn recommend" bindtap="onRecommend">
+      <text class="menu-action-emoji">🤔</text>
+      <text class="menu-action-text">随机推荐</text>
+    </view>
+    <view class="menu-action-btn add" bindtap="onAdd">
+      <text class="menu-action-emoji">➕</text>
+      <text class="menu-action-text">添加菜品</text>
+    </view>
+  </view>
+
+  <!-- 推荐结果 -->
+  <view class="card" wx:if="{{recommendList.length > 0}}">
+    <text class="card-title">✨ 今日推荐</text>
+    <view class="recommend-list">
+      <view class="recommend-item" wx:for="{{recommendList}}" wx:key="_id">
+        <view class="rec-left">
+          <text class="rec-emoji">🍽️</text>
+          <text class="rec-name">{{item.name}}</text>
+        </view>
+        <text class="rec-rating">{{item.rating}}⭐</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类 -->
+  <scroll-view scroll-x class="category-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="category-tags">
+      <view class="cat-tag {{currentCategory === '' ? 'active' : ''}}" bindtap="onCategory" data-cat="">🍽️ 全部</view>
+      <view class="cat-tag {{currentCategory === item.name ? 'active' : ''}}" wx:for="{{categories}}" wx:key="name" bindtap="onCategory" data-cat="{{item.name}}">
+        {{item.icon}} {{item.name}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 菜品列表 -->
+  <view class="dish-list" wx:if="{{dishList.length > 0}}">
+    <view class="dish-card" wx:for="{{dishList}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+      <image class="dish-img" wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" />
+      <view class="dish-img-placeholder" wx:else>
+        <text>🍽️</text>
+      </view>
+      <view class="dish-body">
+        <text class="dish-name">{{item.name}}</text>
+        <view class="dish-meta">
+          <text class="dish-cat">{{item.category}}</text>
+          <text class="dish-rating">{{item.rating}}⭐</text>
+        </view>
+      </view>
+      <view class="dish-eaten-btn" catchtap="onMarkEaten" data-id="{{item._id}}">
+        <text>吃过</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{dishList.length === 0 && loaded}}">
+    <text class="empty-emoji">🍜</text>
+    <text class="empty-text">还没有菜品</text>
+    <text class="empty-sub">点击上方「添加菜品」开始记录吧~</text>
+  </view>
+
+  <!-- 添加弹窗 -->
+  <van-popup show="{{showAdd}}" position="bottom" round custom-style="max-height: 85vh;" bind:close="onCloseAdd">
+    <view class="add-popup">
+      <text class="popup-title">添加菜品</text>
+
+      <view class="form-group">
+        <text class="form-label">菜品图片</text>
+        <view class="image-upload" wx:if="{{!form.imageUrl}}" bindtap="onChooseImage">
+          <text class="upload-icon">📷</text>
+          <text class="upload-text">点击上传</text>
+        </view>
+        <view class="image-preview" wx:else>
+          <image class="preview-img" src="{{form.imageUrl}}" mode="aspectFill" />
+          <view class="preview-remove" catchtap="onRemoveImage">✕</view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">菜名</text>
+        <input class="form-input" placeholder="叫什么名字？" value="{{form.name}}" bindinput="onInput" data-field="name" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">分类</text>
+        <view class="cat-options">
+          <view class="cat-option {{form.category === item.name ? 'active' : ''}}" wx:for="{{categories}}" wx:key="name" bindtap="onFormCategory" data-cat="{{item.name}}">
+            <text>{{item.icon}} {{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">评分</text>
+        <view class="rating-row">
+          <text class="star {{form.rating >= item ? 'active' : ''}}" wx:for="{{starValues}}" wx:key="*this" bindtap="onRating" data-rating="{{item}}">⭐</text>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">备注</text>
+        <input class="form-input" placeholder="口味、偏好等" value="{{form.note}}" bindinput="onInput" data-field="note" />
+      </view>
+
+      <button class="btn-save" bindtap="onSave">保存菜品</button>
+    </view>
+  </van-popup>
+</view>

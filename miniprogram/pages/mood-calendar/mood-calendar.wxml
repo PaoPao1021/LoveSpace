@@ -1,0 +1,35 @@
+<bg-layer />
+<view class="page">
+  <!-- 月份切换 -->
+  <view class="month-nav">
+    <view class="nav-btn" bindtap="onPrevMonth">&lt;</view>
+    <text class="month-title">{{year}}年{{month}}月</text>
+    <view class="nav-btn" bindtap="onNextMonth">›</view>
+  </view>
+
+  <!-- 星期标题 -->
+  <view class="week-header">
+    <text class="week-day" wx:for="{{weekDays}}" wx:key="*this">{{item}}</text>
+  </view>
+
+  <!-- 日历网格 -->
+  <view class="calendar-grid">
+    <view class="day-cell {{item.isCurrentMonth ? '' : 'other'}} {{item.isToday ? 'today' : ''}}" wx:for="{{calendarDays}}" wx:key="*this">
+      <text class="day-num">{{item.day}}</text>
+      <text class="day-mood" wx:if="{{item.mood}}">{{item.mood}}</text>
+      <text class="day-mood partner" wx:if="{{item.partnerMood}}">{{item.partnerMood}}</text>
+    </view>
+  </view>
+
+  <!-- 图例 -->
+  <view class="legend">
+    <view class="legend-item">
+      <text class="legend-dot my"></text>
+      <text>我的心情</text>
+    </view>
+    <view class="legend-item">
+      <text class="legend-dot partner"></text>
+      <text>TA的心情</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,150 @@
+<bg-layer />
+<floating-particles count="5" type="sparkle" />
+<view class="page">
+  <!-- 任务列表 -->
+  <view class="section-title" wx:if="{{list.length > 0}}">
+    <text class="section-text">{{list.length}}个任务</text>
+  </view>
+
+  <view class="task-list" wx:if="{{list.length > 0}}">
+    <view
+      class="task-item {{item.isCompleted ? 'done' : ''}}"
+      wx:for="{{list}}" wx:key="_id"
+      bindtap="onTapTask" data-id="{{item._id}}"
+    >
+      <view class="task-status-icon">
+        <text wx:if="{{item.isCompleted}}">✅</text>
+        <text wx:else>⬜</text>
+      </view>
+      <view class="task-info">
+        <view class="task-title-row">
+          <text class="task-title">{{item.title}}</text>
+          <view class="task-assignee">
+            <text class="assignee-tag {{item.assignee === 'me' ? 'tag-me' : item.assignee === 'partner' ? 'tag-ta' : 'tag-both'}}">
+              {{item.assigneeLabel}}
+            </text>
+          </view>
+        </view>
+        <text class="task-desc" wx:if="{{item.description}}">{{item.description}}</text>
+        <view class="task-meta">
+          <text class="task-reward">+{{item.rewardPoints}}积分</text>
+          <text class="task-time">{{item.timeStr}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{list.length === 0 && loaded}}">
+    <text class="empty-emoji">✅</text>
+    <text class="empty-text">还没有任务</text>
+    <text class="empty-sub">给对方指派任务，完成后获得积分~</text>
+  </view>
+
+  <!-- 底部留白 -->
+  <view style="height: 140rpx;"></view>
+
+  <!-- 添加按钮 -->
+  <view class="fab" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- ===== 添加弹窗 ===== -->
+  <van-popup show="{{showAdd}}" position="bottom" round custom-style="max-height: 85vh;" bind:close="onCloseAdd">
+    <view class="add-popup">
+      <text class="popup-title">新建任务</text>
+
+      <view class="form-group">
+        <text class="form-label">任务名称</text>
+        <input class="form-input" placeholder="比如：今天互夸一次" value="{{form.title}}" bindinput="onInput" data-field="title" maxlength="30" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">任务描述</text>
+        <textarea class="form-textarea" placeholder="详细说明（可选）" value="{{form.description}}" bindinput="onInput" data-field="description" maxlength="200" auto-height />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">指派给</text>
+        <view class="assignee-row">
+          <view
+            class="assignee-option {{form.assignee === item.value ? 'active' : ''}}"
+            wx:for="{{assigneeOptions}}" wx:key="value"
+            bindtap="onAssigneeSelect" data-value="{{item.value}}"
+          >
+            <text class="assignee-icon">{{item.icon}}</text>
+            <text class="assignee-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">积分奖励</text>
+        <view class="points-input-row">
+          <input class="form-input form-input-short" type="number" placeholder="5" value="{{form.rewardPoints}}" bindinput="onInput" data-field="rewardPoints" />
+          <text class="points-unit">积分</text>
+        </view>
+      </view>
+
+      <button class="btn-save" bindtap="onSave" loading="{{submitting}}" disabled="{{submitting}}">
+        {{submitting ? '发布中...' : '发布任务'}}
+      </button>
+    </view>
+  </van-popup>
+
+  <!-- ===== 详情弹窗 ===== -->
+  <van-popup show="{{showDetail}}" position="bottom" round custom-style="max-height: 75vh;" bind:close="onCloseDetail">
+    <view class="detail-popup" wx:if="{{detailTask}}">
+      <!-- 状态标识 -->
+      <view class="detail-status {{detailTask.isCompleted ? 'status-done' : 'status-pending'}}">
+        <text class="detail-status-icon">{{detailTask.isCompleted ? '✅' : '⏳'}}</text>
+        <text class="detail-status-text">{{detailTask.isCompleted ? '已完成' : '进行中'}}</text>
+      </view>
+
+      <text class="detail-title">{{detailTask.title}}</text>
+
+      <view class="detail-desc" wx:if="{{detailTask.description}}">
+        <text class="detail-label">任务详情</text>
+        <text class="detail-value">{{detailTask.description}}</text>
+      </view>
+
+      <view class="detail-info-grid">
+        <view class="detail-info-item">
+          <text class="info-label">积分奖励</text>
+          <text class="info-value points">+{{detailTask.rewardPoints}}</text>
+        </view>
+        <view class="detail-info-item">
+          <text class="info-label">指派给</text>
+          <text class="info-value">
+            {{detailTask.assignee === 'me' ? '我' : detailTask.assignee === 'partner' ? 'TA' : '双方'}}
+          </text>
+        </view>
+        <view class="detail-info-item">
+          <text class="info-label">创建者</text>
+          <text class="info-value">{{detailTask.creatorName || '我'}}</text>
+        </view>
+        <view class="detail-info-item">
+          <text class="info-label">创建时间</text>
+          <text class="info-value">{{detailTask.timeStr}}</text>
+        </view>
+        <view class="detail-info-item" wx:if="{{detailTask.isCompleted}}">
+          <text class="info-label">完成者</text>
+          <text class="info-value">{{detailTask.completerName || 'TA'}}</text>
+        </view>
+        <view class="detail-info-item" wx:if="{{detailTask.completedTimeStr}}">
+          <text class="info-label">完成时间</text>
+          <text class="info-value">{{detailTask.completedTimeStr}}</text>
+        </view>
+      </view>
+
+      <view class="detail-actions">
+        <button class="btn-complete" wx:if="{{!detailTask.isCompleted}}" bindtap="onComplete">
+          标记完成 +{{detailTask.rewardPoints}}积分
+        </button>
+        <button class="btn-delete" wx:if="{{detailTask.isCreator}}" bindtap="onDelete">
+          删除任务
+        </button>
+      </view>
+    </view>
+  </van-popup>
+</view>

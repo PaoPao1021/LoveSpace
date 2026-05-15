@@ -1,0 +1,36 @@
+/* 心情日历 */
+.page { min-height: 100vh; padding: 24rpx 28rpx; background: var(--color-bg); }
+
+.month-nav { display: flex; align-items: center; justify-content: space-between; padding: 20rpx 0; }
+.nav-btn {
+  width: 64rpx; height: 64rpx; display: flex; align-items: center; justify-content: center;
+  background: #FFFFFF; border-radius: 50%; font-size: 32rpx; color: #B89A9A;
+  box-shadow: var(--shadow-card);
+}
+.month-title { font-size: 32rpx; font-weight: 700; color: var(--color-text); letter-spacing: 1rpx; }
+
+.week-header { display: flex; padding: 14rpx 0; }
+.week-day { flex: 1; text-align: center; font-size: 24rpx; color: var(--color-text-light); }
+
+.calendar-grid {
+  display: flex; flex-wrap: wrap;
+  background: #FFFFFF; border-radius: var(--radius-widget);
+  padding: 16rpx;
+  box-shadow: var(--shadow-card);
+}
+.day-cell {
+  width: 14.28%; height: 100rpx;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative;
+}
+.day-cell.other { opacity: 0.25; }
+.day-cell.today { background: #F7F2ED; border-radius: var(--radius-card); }
+.day-num { font-size: 26rpx; color: var(--color-text); }
+.day-mood { font-size: 24rpx; margin-top: 2rpx; }
+.day-mood.partner { font-size: 20rpx; opacity: 0.6; }
+
+.legend { display: flex; justify-content: center; gap: 32rpx; margin-top: 32rpx; }
+.legend-item { display: flex; align-items: center; gap: 8rpx; font-size: 24rpx; color: var(--color-text-secondary); }
+.legend-dot { width: 16rpx; height: 16rpx; border-radius: 50%; }
+.legend-dot.my { background: #E8D0D0; }
+.legend-dot.partner { background: #C4B5FD; }

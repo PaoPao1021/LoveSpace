@@ -1,0 +1,95 @@
+/* 个人主页 · 奶油 + 毛玻璃 */
+.page { min-height: 100vh; padding: 0 28rpx 120rpx; background: var(--color-bg); }
+
+.loading-block { display: flex; justify-content: center; padding: 180rpx 0; }
+.loading-spinner {
+  width: 52rpx; height: 52rpx;
+  border: 3rpx solid rgba(210,180,180,0.15);
+  border-top-color: #D4B8B8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 头部 */
+.profile-header {
+  text-align: center;
+  padding: 52rpx 32rpx 40rpx;
+  margin: -24rpx -28rpx 0;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1rpx solid rgba(255,255,255,0.5);
+}
+
+.profile-avatars {
+  display: flex; align-items: center; justify-content: center;
+  gap: 32rpx; margin-bottom: 24rpx;
+}
+.avatar {
+  width: 108rpx; height: 108rpx;
+  border-radius: 50%;
+  border: 4rpx solid #FFFFFF;
+  box-shadow: 0 6rpx 22rpx rgba(180,160,150,0.10);
+}
+.my-avatar { border-color: #E8D0D0; }
+.partner-avatar { border-color: #D4C5B0; }
+
+.heart-icon { font-size: 36rpx; }
+
+.avatar-edit-wrap { position: relative; display: inline-block; }
+.avatar-edit-wrap:active { opacity: 0.8; }
+.avatar-edit-badge {
+  position: absolute; bottom: -2rpx; right: -2rpx;
+  width: 40rpx; height: 40rpx;
+  background: #FFF; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.08);
+}
+.avatar-edit-icon { font-size: 20rpx; }
+
+.name-row { display: flex; align-items: center; justify-content: center; margin-bottom: 10rpx; }
+.profile-name { font-size: 34rpx; font-weight: 700; color: var(--color-text); letter-spacing: 1rpx; }
+.my-name { padding: 4rpx 10rpx; border-radius: 8rpx; }
+.my-name:active { background: rgba(210,180,180,0.1); }
+.name-edit-hint { font-size: 24rpx; margin-left: 2rpx; opacity: 0.4; }
+.name-separator { font-size: 32rpx; color: var(--color-text-light); margin: 0 4rpx; }
+.profile-days { display: block; font-size: 24rpx; color: var(--color-text-light); margin-top: 10rpx; letter-spacing: 1rpx; }
+
+/* 菜单 */
+.menu-group {
+  background: #FFFFFF;
+  border-radius: var(--radius-widget);
+  margin-top: 24rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.menu-item {
+  display: flex; align-items: center;
+  padding: 28rpx 24rpx;
+  min-height: 90rpx;
+  border-bottom: 1rpx solid #F5F2EF;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:active { background: #FBFAF8; }
+.menu-icon { font-size: 32rpx; margin-right: 20rpx; width: 48rpx; text-align: center; }
+.menu-label { flex: 1; font-size: 28rpx; color: var(--color-text); font-weight: 500; }
+.menu-arrow { font-size: 26rpx; color: var(--color-text-light); }
+
+/* 弹窗 */
+.edit-popup { padding: 8rpx 32rpx 40rpx; }
+.popup-title { display: block; font-size: 34rpx; font-weight: 700; text-align: center; margin-bottom: 28rpx; color: var(--color-text); }
+.form-input {
+  width: 100%; height: 88rpx; background: #F7F5F2;
+  border-radius: var(--radius-card);
+  padding: 0 24rpx; font-size: 30rpx; margin-bottom: 28rpx; box-sizing: border-box;
+}
+.btn-save {
+  width: 100%; height: 88rpx;
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  color: #FFF; border: none; border-radius: var(--radius-pill);
+  font-size: 30rpx; font-weight: 600; letter-spacing: 2rpx;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-button);
+}
+.btn-save::after { border: none; }

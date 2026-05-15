@@ -1,0 +1,948 @@
+/* ============================================
+   LoveSpace · 晨光奶油 设计系统
+   气质：像清晨第一缕阳光照在奶油蛋糕上
+   ============================================ */
+
+page {
+  /* ━━━ 主色系 · 奶油蜜桃 ━━━ */
+  --color-cream:        #FAFAF8;   /* 奶油白 — 页面背景 */
+  --color-warm-apricot: #F7F2ED;   /* 米杏色 — 暖色背景层 */
+  --color-milk-coffee:  #F0E8DE;   /* 浅奶咖 — 第二背景 */
+  --color-peach-blush:  #F2D4D4;   /* 蜜桃粉 — 主色调 */
+  --color-dusty-rose:   #E8D0D0;   /* 雾霾粉 — 强调背景 */
+  --color-cherry-soft:  #F5E0E0;   /* 淡樱粉 — hover态 */
+  --color-milk-gray:    #F0EDEA;   /* 牛奶灰 — 分割线 */
+  --color-champagne:    #D4C5B0;   /* 香槟金 — 少量点缀 */
+
+  /* ━━━ 文字色系 ━━━ */
+  --color-text:         #3C3C3C;   /* 主文字 */
+  --color-text-secondary: #8A8580; /* 次文字 */
+  --color-text-light:   #BFBAB5;   /* 辅助文字 */
+  --color-text-faint:   #D9D5D0;   /* 超弱文字 */
+
+  /* ━━━ 功能色 ━━━ */
+  --color-heart:        #D4B8B8;   /* 心动红（低饱和）*/
+  --color-calm:         #C5D5C0;   /* 治愈绿 */
+  --color-gentle:       #C8D2DE;   /* 温柔蓝 */
+  --color-warm:         #EBE0CC;   /* 暖黄 */
+
+  /* ━━━ 兼容别名（旧页面引用）━━━ */
+  --color-primary:      #E8D0D0;
+  --color-primary-light:#F2D4D4;
+  --color-primary-bg:   rgba(232,208,208,0.10);
+  --color-secondary:    #C4B5FD;
+  --color-secondary-light: #DDD6FE;
+  --color-border:       rgba(255,255,255,0.6);
+  --color-divider:      #F0EDEA;
+  --color-danger:       #D4B8B8;
+  --color-warning:      #D4C5B0;
+  --color-success:      #C5D5C0;
+  --color-bg:           #FCFAF7;
+
+  /* ━━━ 圆角体系 ━━━ */
+  --radius-photo:  12rpx;  /* 照片 */
+  --radius-card:   24rpx;  /* 功能卡片 */
+  --radius-widget: 28rpx;  /* 小组件卡片 */
+  --radius-modal:  36rpx;  /* 弹窗顶部 */
+  --radius-pill:   999rpx; /* 胶囊按钮 */
+
+  /* ━━━ 阴影体系（色调阴影，不用黑色）━━━ */
+  --shadow-card:
+    0 4rpx 20rpx rgba(180, 160, 150, 0.08);
+  --shadow-float:
+    0 8rpx 32rpx rgba(180, 160, 150, 0.10);
+  --shadow-glow:
+    0 2rpx 16rpx rgba(200, 180, 170, 0.06);
+  --shadow-button:
+    0 4rpx 12rpx rgba(220, 180, 180, 0.18);
+  --shadow-polaroid:
+    0 6rpx 24rpx rgba(160, 140, 130, 0.10),
+    0 2rpx 6rpx rgba(160, 140, 130, 0.04);
+
+  /* ━━━ 毛玻璃 ━━━ */
+  --glass-bg:      rgba(250, 250, 248, 0.78);
+  --glass-border:  1rpx solid rgba(255, 255, 255, 0.55);
+  --glass-blur:    blur(28px);
+
+  /* ━━━ 间距 ━━━ */
+  --space-page:    28rpx;
+  --space-card-padding: 32rpx;
+  --space-card-gap: 24rpx;
+  --space-element: 16rpx;
+
+  /* ━━━ 全局基础 ━━━ */
+  font-size: 28rpx;
+  color: var(--color-text);
+  background: linear-gradient(175deg, #FCFAF7 0%, #FAFAF8 40%, #F7F3EF 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================
+   页面容器
+   ============================================ */
+.page {
+  min-height: 100vh;
+  padding: var(--space-page);
+  padding-bottom: calc(var(--space-page) + env(safe-area-inset-bottom));
+  position: relative;
+}
+
+/* 背景光晕装饰 — 极其克制 */
+.page::before {
+  content: '';
+  position: fixed;
+  top: -15%;
+  right: -10%;
+  width: 55%;
+  height: 40%;
+  background: radial-gradient(ellipse, rgba(242, 212, 212, 0.10) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page::after {
+  content: '';
+  position: fixed;
+  bottom: -5%;
+  left: -8%;
+  width: 45%;
+  height: 35%;
+  background: radial-gradient(ellipse, rgba(240, 232, 222, 0.10) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page > view { position: relative; z-index: 1; }
+
+/* ============================================
+   毛玻璃卡片 — 小组件质感
+   ============================================ */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--radius-widget);
+  padding: var(--space-card-padding);
+  margin-bottom: var(--space-card-gap);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+}
+
+/* 纯白卡片 — 内容承载 */
+.card {
+  background: #FFFFFF;
+  border-radius: var(--radius-widget);
+  padding: var(--space-card-padding);
+  margin-bottom: var(--space-card-gap);
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+/* ============================================
+   卡片内元素
+   ============================================ */
+.card-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 20rpx;
+  letter-spacing: 1rpx;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.card-action {
+  font-size: 24rpx;
+  color: var(--color-text-light);
+  padding: 6rpx 20rpx;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+/* ============================================
+   按钮系统
+   ============================================ */
+.btn-primary {
+  background: linear-gradient(135deg, #E8D0D0 0%, #F2D4D4 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 22rpx 56rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  box-shadow: var(--shadow-button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-primary::after { border: none; }
+.btn-primary:active { opacity: 0.8; transform: scale(0.98); }
+
+.btn-save {
+  width: 100%;
+  height: 88rpx;
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-button);
+}
+.btn-save::after { border: none; }
+.btn-save:active { opacity: 0.8; }
+.btn-save[disabled] { opacity: 0.45; }
+
+/* ============================================
+   FAB 浮动按钮
+   ============================================ */
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10rpx 28rpx rgba(200, 160, 160, 0.22);
+  z-index: 20;
+  transition: transform 0.2s;
+}
+.fab:active {
+  transform: scale(0.88);
+  box-shadow: 0 6rpx 16rpx rgba(200, 160, 160, 0.16);
+}
+.fab-icon {
+  font-size: 40rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* ============================================
+   头像
+   ============================================ */
+.avatar {
+  width: 88rpx; height: 88rpx;
+  border-radius: 50%;
+  border: 3rpx solid #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(180, 160, 150, 0.10);
+}
+.avatar-sm { width: 60rpx; height: 60rpx; }
+.avatar-lg { width: 120rpx; height: 120rpx; border-width: 5rpx; }
+
+/* ============================================
+   标签
+   ============================================ */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8rpx 22rpx;
+  border-radius: var(--radius-pill);
+  font-size: 22rpx;
+  font-weight: 500;
+}
+.tag-soft { background: var(--color-warm-apricot); color: var(--color-text-secondary); }
+.tag-dusty { background: #F8EDED; color: #B89A9A; }
+
+/* ============================================
+   空状态
+   ============================================ */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+}
+.empty-emoji { font-size: 80rpx; margin-bottom: 24rpx; opacity: 0.7; }
+.empty-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 10rpx;
+}
+.empty-sub {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ============================================
+   输入框
+   ============================================ */
+.form-input {
+  width: 100%; height: 88rpx;
+  background: #F7F5F2;
+  border: 2rpx solid transparent;
+  border-radius: var(--radius-card);
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  color: var(--color-text);
+  box-sizing: border-box;
+}
+.form-input:focus {
+  border-color: rgba(210, 180, 180, 0.3);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 6rpx rgba(220, 200, 200, 0.06);
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 120rpx;
+  background: #F7F5F2;
+  border-radius: var(--radius-card);
+  padding: 20rpx 28rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.form-label {
+  display: block;
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+.form-group { margin-bottom: 24rpx; }
+
+/* ============================================
+   弹窗
+   ============================================ */
+.popup-title {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 28rpx;
+  color: var(--color-text);
+  letter-spacing: 1rpx;
+}
+
+/* ============================================
+   菜单项
+   ============================================ */
+.menu-group {
+  background: #FFFFFF;
+  border-radius: var(--radius-widget);
+  margin-top: var(--space-card-gap);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 24rpx;
+  min-height: 88rpx;
+  border-bottom: 1rpx solid #F5F2EF;
+  transition: background 0.15s;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:active { background: #FBFAF8; }
+.menu-icon { font-size: 32rpx; margin-right: 20rpx; width: 48rpx; text-align: center; }
+.menu-label { flex: 1; font-size: 28rpx; color: var(--color-text); font-weight: 500; }
+.menu-arrow { font-size: 26rpx; color: var(--color-text-light); }
+
+/* ============================================
+   进度条（恋爱能量）
+   ============================================ */
+.energy-bar {
+  height: 10rpx;
+  background: #F5F0EB;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.energy-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, #E8D0D0, #F2D4D4);
+  transition: width 0.6s ease-out;
+  position: relative;
+}
+.energy-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 30rpx; height: 100%;
+  background: rgba(255,255,255,0.5);
+  border-radius: var(--radius-pill);
+  animation: energyGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes energyGlow {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.7; }
+}
+
+/* ============================================
+   拍立得卡片
+   ============================================ */
+.polaroid {
+  background: #FFFFFF;
+  padding: 16rpx 16rpx 28rpx;
+  box-shadow: var(--shadow-polaroid);
+  display: inline-block;
+}
+.polaroid-image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.polaroid-text {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-top: 16rpx;
+  letter-spacing: 1rpx;
+}
+
+/* ============================================
+   工具类
+   ============================================ */
+.mt-sm { margin-top: 12rpx; }
+.mt-md { margin-top: 24rpx; }
+.mt-lg { margin-top: 48rpx; }
+.mb-sm { margin-bottom: 12rpx; }
+.mb-md { margin-bottom: 24rpx; }
+
+.text-muted { color: var(--color-text-secondary); }
+.text-light { color: var(--color-text-light); }
+.text-center { text-align: center; }
+.text-sm { font-size: 24rpx; }
+.text-md { font-size: 28rpx; }
+.text-lg { font-size: 34rpx; }
+.text-bold { font-weight: 700; }
+
+.flex { display: flex; }
+.flex-center { align-items: center; justify-content: center; }
+.flex-between { justify-content: space-between; }
+.flex-1 { flex: 1; }
+.gap-sm { gap: 12rpx; }
+.gap-md { gap: 20rpx; }
+
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+/* ============================================
+   动画
+   ============================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20rpx); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(12rpx) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes softPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+
+@keyframes breatheGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 180, 180, 0.25); }
+  50%      { box-shadow: 0 0 20rpx 4rpx rgba(220, 180, 180, 0.10); }
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-in    { animation: fadeInUp 0.45s ease-out; }
+.animate-float { animation: floatIn 0.4s ease-out; }
+.animate-glow  { animation: breatheGlow 3s ease-in-out infinite; }
+
+/* ============================================
+   骨架屏
+   ============================================ */
+.skeleton {
+  background: linear-gradient(90deg, #F5F2EF 25%, #EDE8E3 50%, #F5F2EF 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+  border-radius: var(--radius-card);
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ============================================
+   🎀 贴纸 UI 系统 · Sticker Design System
+   ============================================ */
+
+/* 贴纸卡片 — 微微倾斜 + 波浪边 */
+.sticker-card {
+  background: #FFFFFF;
+  border-radius: 28rpx 24rpx 32rpx 20rpx;
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow:
+    0 4rpx 16rpx rgba(180,160,150,0.07),
+    0 1rpx 4rpx rgba(180,160,150,0.05);
+  position: relative;
+  transform: rotate(-0.3deg);
+  transition: transform 0.3s ease;
+}
+.sticker-card:nth-child(even) { transform: rotate(0.2deg); border-radius: 24rpx 32rpx 20rpx 28rpx; }
+.sticker-card:nth-child(3n) { transform: rotate(-0.15deg); }
+.sticker-card:active { transform: scale(0.98) rotate(0deg); }
+
+/* 贴纸便签 — 像便利贴 */
+.sticker-note {
+  background: #FFFAF5;
+  border-radius: 8rpx 28rpx 28rpx 28rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 3rpx 12rpx rgba(180,160,140,0.08);
+  position: relative;
+  transform: rotate(0.5deg);
+}
+.sticker-note:nth-child(2n) { transform: rotate(-0.3deg); background: #FFF8FA; border-radius: 28rpx 8rpx 28rpx 28rpx; }
+.sticker-note::after {
+  content: '';
+  position: absolute; top: 8rpx; left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx; height: 8rpx;
+  background: rgba(200,180,160,0.25);
+  border-radius: 4rpx;
+}
+
+/* 透明胶带装饰 */
+.tape-piece {
+  position: absolute;
+  top: -12rpx; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 56rpx; height: 20rpx;
+  background: rgba(255,255,255,0.75);
+  border-radius: 3rpx;
+  box-shadow: 0 1rpx 3rpx rgba(0,0,0,0.04);
+  z-index: 2;
+}
+
+/* 曲别针装饰 */
+.clip-decor {
+  position: absolute;
+  top: -8rpx; right: 24rpx;
+  width: 32rpx; height: 40rpx;
+  border: 3rpx solid #D4C5B0;
+  border-radius: 16rpx 16rpx 8rpx 8rpx;
+  border-top: none;
+  z-index: 2;
+  transform: rotate(8deg);
+}
+
+/* 贴纸按钮 — 不规则圆角 + Q弹 */
+.sticker-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8rpx;
+  padding: 16rpx 36rpx;
+  border-radius: 24rpx 30rpx 20rpx 32rpx;
+  font-size: 26rpx; font-weight: 600;
+  color: #B89A9A;
+  background: linear-gradient(135deg, #FFF8FA, #FFF0F2);
+  border: 2rpx solid rgba(232,208,208,0.4);
+  box-shadow: 0 3rpx 10rpx rgba(200,160,160,0.10);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+.sticker-btn:nth-child(odd) { border-radius: 30rpx 24rpx 32rpx 20rpx; transform: rotate(-0.3deg); }
+.sticker-btn:nth-child(even) { border-radius: 20rpx 32rpx 24rpx 30rpx; transform: rotate(0.2deg); }
+.sticker-btn:active {
+  transform: scale(0.92) rotate(0deg);
+  box-shadow: 0 1rpx 4rpx rgba(200,160,160,0.08);
+  background: linear-gradient(135deg, #FFF0F2, #FFE8EC);
+}
+
+/* 手绘爱心按钮 */
+.heart-sticker {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 72rpx; height: 72rpx;
+  background: radial-gradient(circle at 35% 35%, #F5E0E0, #E8D0D0);
+  border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+  box-shadow: 0 4rpx 14rpx rgba(210,170,170,0.18);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+.heart-sticker::before {
+  content: '';
+  position: absolute; top: 14rpx; left: 10rpx;
+  width: 16rpx; height: 16rpx;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+}
+.heart-sticker:active { transform: scale(0.85); }
+
+/* 云朵按钮 */
+.cloud-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8rpx;
+  padding: 18rpx 40rpx;
+  background: #FFFFFF;
+  border-radius: 60rpx 60rpx 60rpx 20rpx;
+  font-size: 26rpx; font-weight: 600;
+  color: var(--color-text-secondary);
+  box-shadow:
+    0 4rpx 16rpx rgba(180,160,150,0.06),
+    16rpx 8rpx 0 -8rpx #FFF,
+    20rpx 12rpx 0 -8rpx rgba(180,160,150,0.03);
+  transition: all 0.3s ease;
+}
+.cloud-btn:active { transform: translateY(2rpx); }
+
+/* 小熊贴纸标签 */
+.bear-tag {
+  display: inline-flex; align-items: center; gap: 6rpx;
+  padding: 6rpx 18rpx 6rpx 12rpx;
+  background: linear-gradient(135deg, #F7F2ED, #F0E8DE);
+  border-radius: 4rpx 20rpx 20rpx 20rpx;
+  font-size: 22rpx; color: #8A7A6A;
+  border: 1rpx solid rgba(200,180,160,0.25);
+  position: relative;
+}
+.bear-tag::before {
+  content: 'ʕ•ᴥ•ʔ';
+  font-size: 16rpx; margin-right: 4rpx;
+}
+
+/* ============================================
+   ✨ 呼吸动效系统 · Breathing Animations
+   ============================================ */
+
+/* 卡片悬浮呼吸 */
+.breath-card {
+  animation: cardBreath 4s ease-in-out infinite;
+}
+@keyframes cardBreath {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-3rpx) scale(1.006); }
+}
+
+/* 爱心心跳 */
+.heartbeat {
+  animation: heartbeat 1.2s ease-in-out infinite;
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  15%      { transform: scale(1.12); }
+  30%      { transform: scale(1); }
+  45%      { transform: scale(1.08); }
+  60%      { transform: scale(1); }
+}
+
+/* 漂浮上升 */
+.float-up {
+  animation: floatUp 5s ease-in-out infinite;
+}
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8rpx); }
+}
+
+/* 左右轻摇 */
+.gentle-sway {
+  animation: gentleSway 6s ease-in-out infinite;
+}
+@keyframes gentleSway {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(0.8deg); }
+  75%      { transform: rotate(-0.6deg); }
+}
+
+/* 星光闪烁 */
+.twinkle {
+  animation: twinkle 2.5s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50%      { opacity: 1; transform: scale(1.1); }
+}
+
+/* Spring 弹性入场 */
+.spring-in {
+  animation: springIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes springIn {
+  from { opacity: 0; transform: scale(0.8) translateY(16rpx); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* 贴纸揭下效果 */
+.sticker-peel {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sticker-peel:active {
+  transform: scale(0.9) rotate(-3deg);
+  filter: brightness(0.95);
+}
+
+/* ============================================
+   🌸 浮动粒子系统 · Floating Particles
+   ============================================ */
+
+/* 单颗爱心粒子 */
+.floating-heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  font-size: 28rpx;
+  opacity: 0;
+  animation: heartFloat 8s ease-in infinite;
+}
+@keyframes heartFloat {
+  0%   { opacity: 0; transform: translateY(0) translateX(0) rotate(0deg) scale(0.5); }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.3; }
+  100% { opacity: 0; transform: translateY(-600rpx) translateX(60rpx) rotate(25deg) scale(1); }
+}
+
+/* 光点粒子 */
+.floating-sparkle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  width: 6rpx; height: 6rpx;
+  background: #E8D0D0;
+  border-radius: 50%;
+  opacity: 0;
+  animation: sparkleFloat 6s ease-in infinite;
+}
+@keyframes sparkleFloat {
+  0%   { opacity: 0; transform: translateY(0) scale(0); }
+  20%  { opacity: 0.5; transform: scale(1); }
+  80%  { opacity: 0.2; }
+  100% { opacity: 0; transform: translateY(-500rpx) scale(0); }
+}
+
+/* ============================================
+   🕐 情绪氛围系统 · Emotional Atmosphere
+   ============================================ */
+
+/* 白天模式（默认） */
+.atmosphere-day {
+  --atmo-overlay: transparent;
+  --atmo-glow: rgba(250, 240, 230, 0.3);
+}
+
+/* 傍晚模式（17-20点） */
+.atmosphere-dusk {
+  --atmo-overlay: linear-gradient(180deg, rgba(250,220,200,0.15), transparent 60%);
+  --atmo-glow: rgba(240, 200, 160, 0.35);
+}
+
+/* 夜间模式（20-6点） */
+.atmosphere-night {
+  --atmo-overlay: linear-gradient(180deg, rgba(30,20,40,0.08), transparent 70%);
+  --atmo-glow: rgba(180, 160, 200, 0.25);
+}
+
+/* 氛围光晕层 */
+.atmo-layer {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--atmo-overlay);
+  pointer-events: none; z-index: 0;
+  transition: background 1.5s ease;
+}
+
+/* ============================================
+   👩‍❤️‍👨 双人互动 · Couple Interactions
+   ============================================ */
+
+/* 头像贴贴近 */
+.cuddle-avatars {
+  display: flex; align-items: center; justify-content: center; gap: 8rpx;
+  animation: cuddleBreathe 3s ease-in-out infinite;
+}
+@keyframes cuddleBreathe {
+  0%, 100% { gap: 8rpx; }
+  50%      { gap: 0rpx; }
+}
+
+/* 头像间的小爱心 */
+.cuddle-hearts {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24rpx;
+  pointer-events: none;
+  animation: heartPop 1.8s ease-out infinite;
+}
+@keyframes heartPop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  50%  { opacity: 1; transform: translate(-50%, -80%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -120%) scale(0.6); }
+}
+
+/* ============================================
+   🎀 装饰元素 · Decorative Elements
+   ============================================ */
+
+/* 手绘波浪线 */
+.wavy-line {
+  height: 8rpx;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 6rpx,
+    #E8D0D0 6rpx,
+    #E8D0D0 8rpx
+  );
+  border-radius: 4rpx;
+  opacity: 0.5;
+  margin: 16rpx 0;
+}
+
+/* 虚线装饰（模拟缝线） */
+.stitch-line {
+  height: 2rpx;
+  background: repeating-linear-gradient(
+    90deg,
+    #D4C5B0 0,
+    #D4C5B0 12rpx,
+    transparent 12rpx,
+    transparent 20rpx
+  );
+  margin: 20rpx 0;
+}
+
+/* 圆点装饰组 */
+.dot-cluster {
+  display: flex; gap: 8rpx; justify-content: center; padding: 8rpx 0;
+}
+.dot-cluster > view {
+  width: 10rpx; height: 10rpx; border-radius: 50%;
+  background: #E8D0D0;
+}
+.dot-cluster > view:nth-child(2) { width: 7rpx; height: 7rpx; opacity: 0.7; }
+.dot-cluster > view:nth-child(3) { width: 12rpx; height: 12rpx; opacity: 0.5; }
+
+/* 蝴蝶结装饰 */
+.bow-decor {
+  position: relative;
+  width: 40rpx; height: 24rpx;
+  display: inline-block;
+}
+.bow-decor::before, .bow-decor::after {
+  content: '';
+  position: absolute; top: 0;
+  width: 20rpx; height: 20rpx;
+  border-radius: 50%;
+  background: #E8D0D0;
+}
+.bow-decor::before { left: 0; }
+.bow-decor::after { right: 0; }
+
+/* ============================================
+   🎯 贴纸化导航 · Sticker Navigation
+   ============================================ */
+
+/* 贴纸导航网格 */
+.sticker-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+  padding: 16rpx 0;
+}
+.sticker-nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 8rpx;
+  padding: 16rpx 0;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sticker-nav-item:active { transform: scale(0.9) rotate(-2deg); }
+
+.sticker-nav-icon {
+  width: 80rpx; height: 80rpx;
+  border-radius: 22rpx 26rpx 18rpx 24rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34rpx;
+  box-shadow: 0 3rpx 12rpx rgba(180,160,150,0.08);
+  position: relative;
+}
+.sticker-nav-item:nth-child(even) .sticker-nav-icon { border-radius: 26rpx 22rpx 24rpx 18rpx; }
+.sticker-nav-item:nth-child(3n) .sticker-nav-icon { border-radius: 20rpx 28rpx 22rpx 26rpx; }
+
+.sticker-nav-label {
+  font-size: 22rpx; color: var(--color-text-light); font-weight: 500;
+}
+
+/* 贴纸图标底色 */
+.sticker-bg-blush { background: linear-gradient(135deg, #F8EDED, #F5E0E0); }
+.sticker-bg-cream { background: linear-gradient(135deg, #F7F2ED, #F0E8DE); }
+.sticker-bg-lavender { background: linear-gradient(135deg, #F0ECF8, #E8E0F4); }
+.sticker-bg-mint { background: linear-gradient(135deg, #ECF8F2, #E0F4EC); }
+.sticker-bg-sky { background: linear-gradient(135deg, #F0F5FA, #E0EDF8); }
+.sticker-bg-peach { background: linear-gradient(135deg, #FFF5F0, #FFEDE0); }
+
+/* ============================================
+   📝 手账元素 · Journal Elements
+   ============================================ */
+
+/* 手写标签 */
+.journal-label {
+  display: inline-block;
+  font-size: 22rpx; color: #B89A9A;
+  padding: 4rpx 14rpx;
+  border: 1rpx solid rgba(200,180,160,0.3);
+  border-radius: 2rpx 14rpx 14rpx 14rpx;
+  letter-spacing: 2rpx;
+  background: rgba(255,255,255,0.5);
+}
+
+/* 日期印章 */
+.date-stamp {
+  display: inline-flex; align-items: center; gap: 4rpx;
+  font-size: 20rpx; color: #BFB5A5;
+  padding: 4rpx 12rpx;
+  border: 1rpx dashed rgba(200,180,160,0.4);
+  border-radius: 4rpx;
+  letter-spacing: 1rpx;
+  transform: rotate(-0.5deg);
+}
+
+/* 手绘下划线 */
+.hand-underline {
+  position: relative;
+  display: inline-block;
+}
+.hand-underline::after {
+  content: '';
+  position: absolute; bottom: 2rpx; left: 0; right: 0;
+  height: 6rpx;
+  background: rgba(232,208,208,0.35);
+  border-radius: 3rpx;
+}
+
+/* 奶油胶边框 */
+.cream-border {
+  border: 3rpx solid transparent;
+  border-image: linear-gradient(135deg, #F2D4D4, #F0E8DE, #E8D0D0) 1;
+  border-radius: var(--radius-widget);
+}

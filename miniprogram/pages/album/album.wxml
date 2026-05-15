@@ -1,0 +1,29 @@
+<bg-layer />
+<view class="page">
+  <!-- 相册分组 -->
+  <view class="album-grid" wx:if="{{albums.length > 0}}">
+    <view class="album-item" wx:for="{{albums}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}" data-name="{{item.name}}">
+      <view class="album-cover">
+        <image wx:if="{{item.coverUrl}}" src="{{item.coverUrl}}" mode="aspectFill" class="cover-img" />
+        <view wx:else class="cover-placeholder">
+          <text class="cover-emoji">{{item.emoji}}</text>
+        </view>
+      </view>
+      <text class="album-name">{{item.name}}</text>
+      <text class="album-count">{{item.photoCount}}张</text>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{albums.length === 0 && loaded}}">
+    <text class="empty-emoji">📷</text>
+    <text class="empty-text">还没有相册</text>
+    <text class="empty-sub">默认相册会在绑定后自动创建</text>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-bar">
+    <button class="btn-upload" bindtap="onUpload">上传照片</button>
+    <button class="btn-add-album" bindtap="onAddAlbum">新建相册</button>
+  </view>
+</view>

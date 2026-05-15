@@ -1,0 +1,20 @@
+<view class="tab-bar">
+  <view class="tab-bar-inner">
+    <view
+      class="tab-item {{selected === index ? 'active' : ''}}"
+      wx:for="{{list}}"
+      wx:key="pagePath"
+      bindtap="switchTab"
+      data-path="{{item.pagePath}}"
+      data-index="{{index}}"
+    >
+      <!-- 贴纸图标 -->
+      <view class="tab-sticker {{item.bgClass}} {{selected === index ? 'sticker-bounce' : ''}}">
+        <text class="tab-sticker-emoji">{{item.sticker}}</text>
+        <!-- 激活时的小光点 -->
+        <view class="sticker-sparkle" wx:if="{{selected === index}}"></view>
+      </view>
+      <text class="tab-text {{selected === index ? 'active' : ''}}">{{item.text}}</text>
+    </view>
+  </view>
+</view>

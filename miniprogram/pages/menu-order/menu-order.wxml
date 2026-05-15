@@ -1,0 +1,107 @@
+<bg-layer />
+<view class="order-page">
+  <!-- 顶部 -->
+  <view class="order-header">
+    <text class="order-title">想吃什么？</text>
+    <text class="order-history-link" bindtap="goOrderHistory">历史订单</text>
+  </view>
+
+  <view class="order-body">
+    <!-- 左侧分类 -->
+    <scroll-view scroll-y class="category-sidebar">
+      <view class="sidebar-item {{currentCatIndex === index ? 'active' : ''}}"
+            wx:for="{{categories}}" wx:key="name"
+            bindtap="onCategoryTap" data-index="{{index}}">
+        <text class="sidebar-icon">{{item.icon}}</text>
+        <text class="sidebar-name">{{item.name}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- 右侧菜品 -->
+    <scroll-view scroll-y class="dish-panel">
+      <view class="dish-card" wx:for="{{filteredDishes}}" wx:key="_id"
+            bindtap="onDishTap" data-id="{{item._id}}">
+        <image class="dish-img" wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" />
+        <view class="dish-img-placeholder" wx:else>{{item.category === '饮料' ? '🧋' : '🍽️'}}</view>
+        <view class="dish-info">
+          <text class="dish-name">{{item.name}}</text>
+          <text class="dish-desc" wx:if="{{item.description || item.note}}">{{item.description || item.note}}</text>
+          <view class="dish-specs" wx:if="{{item.specs.length > 0}}">
+            <text class="spec-hint">可选规格</text>
+          </view>
+          <view class="dish-bottom">
+            <text class="dish-price" wx:if="{{item.price}}">¥{{item.price}}</text>
+            <text class="dish-price no-price" wx:else>暂无价格</text>
+            <view class="dish-add-btn" catchtap="onQuickAdd" data-id="{{item._id}}">
+              <text>+</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="empty" wx:if="{{filteredDishes.length === 0}}">
+        <text class="empty-text">该分类暂无菜品</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部购物车栏 -->
+  <view class="cart-bar" wx:if="{{cartCount > 0}}">
+    <view class="cart-icon-wrap" bindtap="onCartTap">
+      <text class="cart-icon">🛒</text>
+      <view class="cart-badge">{{cartCount}}</view>
+    </view>
+    <view class="cart-info">
+      <text class="cart-total">¥{{cartTotal}}</text>
+      <text class="cart-hint">{{cartCount}}件商品</text>
+    </view>
+    <button class="cart-submit" bindtap="onPlaceOrder">让TA做</button>
+  </view>
+
+  <!-- 购物车详情弹窗 -->
+  <van-popup show="{{cartVisible}}" position="bottom" round bind:close="onCloseCart">
+    <view class="cart-popup">
+      <view class="cart-popup-header">
+        <text class="popup-title">已选菜品</text>
+        <text class="cart-clear" bindtap="onClearCart">清空</text>
+      </view>
+      <view class="cart-item" wx:for="{{cart}}" wx:key="dishId">
+        <view class="cart-item-info">
+          <text class="cart-item-name">{{item.name}}</text>
+          <text class="cart-item-spec" wx:if="{{item.specText}}">{{item.specText}}</text>
+        </view>
+        <view class="cart-item-right">
+          <text class="cart-item-price">¥{{(item.price + item.specPriceAdd) * item.quantity}}</text>
+          <van-stepper value="{{item.quantity}}" bind:change="onQuantityChange" data-index="{{index}}" min="0" />
+        </view>
+      </view>
+    </view>
+  </van-popup>
+
+  <!-- 规格选择弹窗 -->
+  <van-popup show="{{showSpec}}" position="bottom" round bind:close="onCloseSpec">
+    <view class="spec-popup" wx:if="{{specDish}}">
+      <view class="spec-header">
+        <view class="spec-info">
+          <text class="spec-name">{{specDish.name}}</text>
+          <text class="spec-price" wx:if="{{specDish.price}}">¥{{specDish.price}}</text>
+        </view>
+      </view>
+      <view class="spec-group" wx:for="{{specDish.specs}}" wx:key="name" wx:for-item="group">
+        <text class="spec-group-name">{{group.name}}</text>
+        <view class="spec-options">
+          <view class="spec-option {{selectedSpecs[group.name] === opt.name ? 'active' : ''}}"
+                wx:for="{{group.options}}" wx:key="name" wx:for-item="opt"
+                bindtap="onSpecOptionTap" data-group="{{group.name}}" data-option="{{opt.name}}">
+            <text>{{opt.name}}</text>
+            <text class="spec-add" wx:if="{{opt.priceAdd > 0}}">+¥{{opt.priceAdd}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="spec-quantity">
+        <text>数量</text>
+        <van-stepper value="{{specQuantity}}" bind:change="onSpecQuantityChange" min="1" />
+      </view>
+      <button class="btn-primary" bindtap="onAddToCart">选好了</button>
+    </view>
+  </van-popup>
+</view>

@@ -1,0 +1,89 @@
+<bg-layer />
+<view class="page" wx:if="{{data}}">
+  <view class="card">
+    <text class="dish-name">{{data.name}}</text>
+    <view class="dish-meta">
+      <text class="meta-item">{{data.category}}</text>
+      <text class="meta-item">{{data.rating}}⭐</text>
+      <text class="meta-item" wx:if="{{data.price}}">¥{{data.price}}</text>
+    </view>
+    <text class="dish-desc" wx:if="{{data.description}}">{{data.description}}</text>
+    <text class="dish-note" wx:if="{{data.note}}">{{data.note}}</text>
+    <text class="dish-eaten" wx:if="{{data.lastEatenAt}}">上次吃: {{data.lastEatenAt}}</text>
+    <text class="dish-location" wx:if="{{data.location}}">📍 {{data.location}}</text>
+
+    <!-- 规格展示 -->
+    <view class="specs-show" wx:if="{{data.specs.length > 0}}">
+      <text class="specs-title">可选规格</text>
+      <view class="spec-group-show" wx:for="{{data.specs}}" wx:key="name">
+        <text class="spec-group-name">{{item.name}}：</text>
+        <text class="spec-opts">{{item.options[0].name}}<text wx:for="{{item.options}}" wx:for-item="opt" wx:key="name" wx:for-index="oi" wx:if="{{oi > 0}}"> / {{opt.name}}</text></text>
+      </view>
+    </view>
+  </view>
+  <view class="actions">
+    <button class="btn-action" bindtap="onEdit">编辑</button>
+    <button class="btn-action danger" bindtap="onDelete">删除</button>
+  </view>
+
+  <!-- 编辑弹窗 -->
+  <van-popup show="{{showEdit}}" position="bottom" round bind:close="onCloseEdit">
+    <scroll-view scroll-y style="max-height: 80vh;">
+      <view class="edit-popup">
+        <text class="popup-title">编辑菜品</text>
+        <view class="form-item">
+          <text class="form-label">菜名</text>
+          <input class="form-input" value="{{editForm.name}}" bindinput="onEditInput" data-field="name" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">价格</text>
+          <input class="form-input" type="digit" value="{{editForm.price}}" bindinput="onEditInput" data-field="price" placeholder="0" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">描述</text>
+          <input class="form-input" value="{{editForm.description}}" bindinput="onEditInput" data-field="description" placeholder="菜品描述" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">分类</text>
+          <view class="cat-tags">
+            <view class="cat-tag {{editForm.category === item.name ? 'active' : ''}}" wx:for="{{categories}}" wx:key="name" bindtap="onEditCategory" data-cat="{{item.name}}">
+              {{item.icon}} {{item.name}}
+            </view>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">评分</text>
+          <view class="rating-row">
+            <text class="rating-star {{editForm.rating >= item ? 'active' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:key="*this" bindtap="onEditRating" data-rating="{{item}}">⭐</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">备注</text>
+          <input class="form-input" value="{{editForm.note}}" bindinput="onEditInput" data-field="note" placeholder="口味、偏好等" />
+        </view>
+
+        <!-- 规格编辑器 -->
+        <view class="form-item">
+          <view class="form-label-row">
+            <text class="form-label">规格定制</text>
+            <text class="add-link" bindtap="onAddSpecGroup">+ 添加规格组</text>
+          </view>
+          <view class="spec-group-editor" wx:for="{{editForm.specs}}" wx:key="index">
+            <view class="spec-group-header">
+              <input class="spec-group-input" placeholder="规格组名称（如：甜度）" value="{{item.name}}" bindinput="onSpecGroupNameInput" data-index="{{index}}" />
+              <text class="spec-remove" bindtap="onRemoveSpecGroup" data-index="{{index}}">删除</text>
+            </view>
+            <view class="spec-option-editor" wx:for="{{item.options}}" wx:for-item="opt" wx:key="index" wx:for-index="optIdx">
+              <input class="spec-opt-name" placeholder="选项名" value="{{opt.name}}" bindinput="onSpecOptionNameInput" data-gi="{{index}}" data-oi="{{optIdx}}" />
+              <input class="spec-opt-price" type="number" placeholder="加价" value="{{opt.priceAdd}}" bindinput="onSpecOptionPriceInput" data-gi="{{index}}" data-oi="{{optIdx}}" />
+              <text class="spec-opt-remove" bindtap="onRemoveSpecOption" data-gi="{{index}}" data-oi="{{optIdx}}">×</text>
+            </view>
+            <text class="add-link small" bindtap="onAddSpecOption" data-index="{{index}}">+ 添加选项</text>
+          </view>
+        </view>
+
+        <button class="btn-primary" bindtap="onSaveEdit">保存</button>
+      </view>
+    </scroll-view>
+  </van-popup>
+</view>

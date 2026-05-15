@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/anniversary/anniversary",
+    "pages/anniversary-detail/anniversary-detail",
+    "pages/album/album",
+    "pages/album-detail/album-detail",
+    "pages/moments/moments",
+    "pages/moment-edit/moment-edit",
+    "pages/mood/mood",
+    "pages/mood-calendar/mood-calendar",
+    "pages/points/points",
+    "pages/points-records/points-records",
+    "pages/menu/menu",
+    "pages/dish-detail/dish-detail",
+    "pages/tasks/tasks",
+    "pages/wishes/wishes",
+    "pages/capsule/capsule",
+    "pages/quiz/quiz",
+    "pages/thanks/thanks",
+    "pages/timeline/timeline",
+    "pages/settings/settings",
+    "pages/profile/profile",
+    "pages/menu-order/menu-order",
+    "pages/order-history/order-history"
+  ],
+  "window": {
+    "backgroundColor": "#F8F0F4",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FAFAF8",
+    "navigationBarTitleText": "LoveSpace",
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "default"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#BFBAB5",
+    "selectedColor": "#B89A9A",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/album/album",
+        "text": "相册"
+      },
+      {
+        "pagePath": "pages/moments/moments",
+        "text": "点滴"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

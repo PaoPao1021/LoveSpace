@@ -1,0 +1,29 @@
+<bg-layer />
+<view class="page">
+  <!-- 照片网格 -->
+  <view class="photo-grid" wx:if="{{photos.length > 0}}">
+    <view class="photo-item" wx:for="{{photos}}" wx:key="_id" bindtap="onPreview" data-index="{{index}}">
+      <image src="{{item.fileId}}" mode="aspectFill" class="photo-img" />
+      <view class="photo-fav" wx:if="{{item.isFavorite}}" catchtap="onToggleFav" data-id="{{item._id}}">
+        <text>❤️</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{photos.length === 0 && loaded}}">
+    <text class="empty-emoji">📷</text>
+    <text class="empty-text">还没有照片</text>
+    <text class="empty-sub">点击下方按钮上传第一张照片</text>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore}}" bindtap="loadMore">
+    <text>加载更多</text>
+  </view>
+
+  <!-- 底部 -->
+  <view class="bottom-bar">
+    <button class="btn-upload" bindtap="onUpload">上传照片</button>
+  </view>
+</view>

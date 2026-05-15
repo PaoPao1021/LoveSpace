@@ -1,0 +1,3 @@
+<view class="bg-layer" wx:if="{{bgImage}}" style="opacity: {{bgOpacity / 100}};">
+  <image class="bg-image" src="{{bgImage}}" mode="aspectFill" />
+</view>

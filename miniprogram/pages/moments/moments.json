@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "点点滴滴",
+  "usingComponents": {
+    "bg-layer": "/components/bg-layer/bg-layer",
+    "floating-particles": "/components/floating-particles/floating-particles"
+  }
+}

@@ -1,0 +1,25 @@
+.page {
+  min-height: 100vh;
+  padding: 24rpx 32rpx;
+  background: var(--color-bg);
+}
+
+.record-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.record-reason { display: block; font-size: 28rpx; font-weight: 500; }
+.record-note { display: block; font-size: 24rpx; color: var(--color-text-secondary); margin-top: 4rpx; }
+.record-time { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 4rpx; }
+
+.record-points { font-size: 32rpx; font-weight: 700; }
+.record-points.positive { color: var(--color-primary); }
+.record-points.negative { color: var(--color-text-secondary); }
+
+.empty { text-align: center; padding: 80rpx 0; color: var(--color-text-secondary); }

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "点餐",
+  "usingComponents": {
+    "bg-layer": "/components/bg-layer/bg-layer",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-stepper": "@vant/weapp/stepper/index"
+  }
+}
