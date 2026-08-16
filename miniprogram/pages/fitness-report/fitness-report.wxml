@@ -25,6 +25,7 @@
       <view class="metric-grid">
         <view class="metric-card accent"><text class="metric-value">{{report.workouts}}</text><text class="metric-label">次有效运动</text></view>
         <view class="metric-card"><text class="metric-value">{{report.totalMinutes}}</text><text class="metric-label">分钟运动</text></view>
+        <view class="metric-card"><text class="metric-value small">{{report.totalCaloriesLabel}}</text><text class="metric-label">大卡训练消耗</text></view>
         <view class="metric-card"><text class="metric-value small">{{report.totalStepsLabel}}</text><text class="metric-label">步共同前进</text></view>
         <view class="metric-card"><text class="metric-value">{{report.activeDays}}</text><text class="metric-label">天留下记录</text></view>
       </view>
@@ -43,6 +44,7 @@
         <view class="member-metrics">
           <view><text>{{item.stats.workouts}}</text><text>运动次数</text></view>
           <view><text>{{item.stats.minutes}}</text><text>运动分钟</text></view>
+          <view><text>{{item.caloriesLabel}}</text><text>消耗大卡</text></view>
           <view><text>{{item.stepsLabel}}</text><text>本周步数</text></view>
         </view>
         <view class="weight-trend"><text>趋势</text><text>{{item.weightCopy}}</text></view>

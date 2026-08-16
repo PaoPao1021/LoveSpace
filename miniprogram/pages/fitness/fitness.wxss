@@ -37,12 +37,30 @@
 .partner-status { padding: 9rpx 16rpx; border-radius: 999rpx; color: #9c8f88; background: #eee9e4; font-size: 19rpx; }
 .partner-status.done { color: #557362; background: #e4efe7; }
 .checkin-card { padding: 30rpx; border-radius: 30rpx; background: #fff; box-shadow: 0 10rpx 32rpx rgba(45,70,55,.05); }
+.workout-title-row { display: flex; align-items: center; justify-content: space-between; }
+.add-workout { padding: 11rpx 17rpx; border-radius: 999rpx; color: #fff; background: #557763; font-size: 20rpx; font-weight: 650; }
+.workout-list { display: flex; flex-direction: column; gap: 15rpx; margin-top: 24rpx; }
+.workout-card { padding: 21rpx; border: 1rpx solid #e9ede9; border-radius: 22rpx; background: #f7f9f6; }
+.workout-card-head { display: flex; align-items: center; }
+.workout-order { width: 40rpx; height: 40rpx; display: flex; align-items: center; justify-content: center; margin-right: 12rpx; border-radius: 50%; color: #fff; background: #71907c; font-size: 18rpx; font-weight: 700; }
+.workout-picker { flex: 1; color: #334239; font-size: 23rpx; font-weight: 660; }
+.remove-workout { padding: 8rpx 0 8rpx 18rpx; color: #b08378; font-size: 19rpx; }
+.workout-fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10rpx; margin-top: 18rpx; }
+.workout-field { min-width: 0; padding: 15rpx 13rpx; border-radius: 16rpx; background: #fff; }
+.workout-field > text { display: block; color: #98a29b; font-size: 16rpx; }
+.workout-field > view { min-height: 45rpx; display: flex; align-items: baseline; margin-top: 7rpx; color: #344139; font-size: 23rpx; font-weight: 680; }
+.workout-field input { width: 70rpx; height: 45rpx; color: #344139; font-size: 25rpx; font-weight: 700; }
+.workout-field view text { margin-left: 3rpx; color: #9ba49e; font-size: 14rpx; font-weight: 400; }
+.time-field > view { color: #456250; }
+.rest-day { display: flex; flex-direction: column; align-items: center; padding: 28rpx 18rpx; margin-top: 23rpx; border: 2rpx dashed #d3ddd5; border-radius: 21rpx; color: #738078; background: #fafbf9; font-size: 21rpx; }
+.rest-day text:last-child { margin-top: 7rpx; color: #a2aaa5; font-size: 17rpx; }
 .form-row, .weight-row, .meal-row { display: flex; align-items: center; justify-content: space-between; }
 .form-copy { min-width: 0; }
 .form-label { display: block; color: #354139; font-size: 24rpx; font-weight: 660; }
 .form-note { display: block; margin-top: 6rpx; color: #a2aaa5; font-size: 18rpx; }
 .picker-value { padding: 15rpx 18rpx; border-radius: 18rpx; color: #52705f; background: #edf3ee; font-size: 22rpx; }
 .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16rpx; margin-top: 27rpx; }
+.lifestyle-grid { padding-top: 25rpx; margin-top: 25rpx; border-top: 1rpx solid #eff1ee; }
 .field-card { padding: 21rpx; border-radius: 21rpx; background: #f7f8f5; }
 .field-card.disabled { opacity: .48; }
 .field-label { color: #8f9992; font-size: 19rpx; }
@@ -57,6 +75,32 @@
 .save-checkin, .sheet-submit { height: 92rpx; display: flex; align-items: center; justify-content: center; margin-top: 12rpx; border: 0; border-radius: 24rpx; color: #fff; background: #496d59; font-size: 26rpx; font-weight: 680; line-height: 1; }
 .save-checkin::after, .sheet-submit::after { border: 0; }
 .save-checkin[disabled], .sheet-submit[disabled] { color: rgba(255,255,255,.8); background: #7d9687; }
+.nutrition-head { margin-top: 46rpx; }
+.nutrition-basis { padding: 9rpx 15rpx; border-radius: 999rpx; color: #806c4f; background: #eee5d8; font-size: 18rpx; }
+.nutrition-card { padding: 29rpx; border-radius: 30rpx; background: #fff; box-shadow: 0 10rpx 32rpx rgba(45,70,55,.05); }
+.nutrition-energy { display: flex; align-items: flex-end; justify-content: space-between; gap: 24rpx; padding-bottom: 25rpx; border-bottom: 1rpx solid #edf0ed; }
+.nutrition-energy > view { flex-shrink: 0; }
+.energy-value { color: #314038; font-size: 54rpx; line-height: 1; font-weight: 760; }
+.energy-unit { margin-left: 7rpx; color: #909a94; font-size: 18rpx; }
+.energy-copy { max-width: 310rpx; color: #89958d; font-size: 18rpx; line-height: 1.55; text-align: right; }
+.macro-list { display: flex; flex-direction: column; gap: 18rpx; margin-top: 25rpx; }
+.macro-top { display: flex; justify-content: space-between; color: #506057; font-size: 20rpx; }
+.macro-top text:last-child { color: #7f8b84; font-weight: 650; }
+.macro-track { height: 8rpx; margin-top: 9rpx; border-radius: 999rpx; background: #edf0ed; overflow: hidden; }
+.macro-track view { height: 100%; min-width: 6rpx; border-radius: inherit; }
+.food-title { display: flex; align-items: baseline; justify-content: space-between; margin-top: 31rpx; padding-top: 25rpx; border-top: 1rpx solid #edf0ed; }
+.food-title text:first-child { color: #38473f; font-size: 24rpx; font-weight: 680; }
+.food-title text:last-child { color: #a0a9a3; font-size: 16rpx; }
+.food-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12rpx; margin-top: 17rpx; }
+.food-item { padding: 19rpx; border-radius: 19rpx; background: #f6f8f5; }
+.food-item text { display: block; }
+.food-name { color: #506b5b; font-size: 20rpx; font-weight: 680; }
+.food-list { margin-top: 8rpx; color: #56635c; font-size: 18rpx; line-height: 1.55; }
+.food-note { margin-top: 8rpx; color: #99a29c; font-size: 15rpx; line-height: 1.45; }
+.nutrition-disclaimer { display: block; margin-top: 21rpx; color: #a1aaa4; font-size: 16rpx; line-height: 1.6; }
+.nutrition-empty { display: flex; align-items: center; justify-content: space-between; padding: 27rpx; border: 2rpx dashed #cfd9d2; border-radius: 27rpx; background: rgba(255,255,255,.55); color: #5c7b68; font-size: 20rpx; }
+.nutrition-empty view text { display: block; color: #405047; font-size: 23rpx; font-weight: 660; }
+.nutrition-empty view text:last-child { margin-top: 6rpx; color: #99a39c; font-size: 17rpx; font-weight: 400; }
 .challenge-list { display: flex; flex-direction: column; gap: 16rpx; }
 .challenge-card { padding: 27rpx; border-radius: 27rpx; background: #fff; box-shadow: 0 8rpx 28rpx rgba(45,70,55,.04); }
 .challenge-card.completed { background: #e9f1eb; }

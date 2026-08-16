@@ -27,12 +27,12 @@
       <view class="member-row">
         <view class="member-item">
           <image class="member-avatar" src="{{dashboard.me.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
-          <view class="member-copy"><text>{{dashboard.me.name}}</text><text>{{dashboard.myStats.workouts}} 次运动 · {{dashboard.myStats.progress}}%</text></view>
+          <view class="member-copy"><text>{{dashboard.me.name}}</text><text>{{dashboard.myStats.workouts}} 次 · {{dashboard.myStats.calories}} 大卡 · {{dashboard.myStats.progress}}%</text></view>
         </view>
         <view class="member-divider"></view>
         <view class="member-item" wx:if="{{dashboard.partner}}">
           <image class="member-avatar" src="{{dashboard.partner.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
-          <view class="member-copy"><text>{{dashboard.partner.name}}</text><text>{{dashboard.partnerStats.workouts}} 次运动 · {{dashboard.partnerStats.progress}}%</text></view>
+          <view class="member-copy"><text>{{dashboard.partner.name}}</text><text>{{dashboard.partnerStats.workouts}} 次 · {{dashboard.partnerStats.calories}} 大卡 · {{dashboard.partnerStats.progress}}%</text></view>
         </view>
         <view class="member-item awaiting" wx:else><text>等待 TA 加入</text></view>
       </view>
@@ -56,17 +56,39 @@
       <view class="partner-status {{dashboard.partnerCheckedIn ? 'done' : ''}}">{{dashboard.partnerCheckedIn ? 'TA 已打卡' : '等待 TA'}}</view>
     </view>
     <view class="checkin-card">
-      <view class="form-row">
-        <view class="form-copy"><text class="form-label">今日运动</text><text class="form-note">休息也是计划的一部分</text></view>
-        <picker mode="selector" range="{{workoutLabels}}" value="{{workoutIndex}}" bindchange="onWorkoutChange">
-          <view class="picker-value">{{workoutOptions[workoutIndex].label}}⌄</view>
-        </picker>
+      <view class="workout-title-row">
+        <view><text class="form-label">运动记录</text><text class="form-note">每次训练分别记录，更接近真实消耗</text></view>
+        <view class="add-workout" bindtap="addWorkout">＋ 添加</view>
       </view>
-      <view class="form-grid">
-        <view class="field-card {{checkinForm.workoutType === 'rest' ? 'disabled' : ''}}">
-          <text class="field-label">运动时长</text>
-          <view class="field-input"><input type="number" value="{{checkinForm.minutes}}" disabled="{{checkinForm.workoutType === 'rest'}}" data-field="minutes" bindinput="onCheckinInput" placeholder="0" /><text>分钟</text></view>
+
+      <view class="workout-list" wx:if="{{workoutDrafts.length}}">
+        <view class="workout-card" wx:for="{{workoutDrafts}}" wx:key="id">
+          <view class="workout-card-head">
+            <view class="workout-order">{{index + 1}}</view>
+            <picker class="workout-picker" mode="selector" range="{{workoutLabels}}" value="{{item.workoutIndex}}" data-index="{{index}}" bindchange="onWorkoutTypeChange">
+              <view>{{workoutOptions[item.workoutIndex].label}}⌄</view>
+            </picker>
+            <text class="remove-workout" data-index="{{index}}" bindtap="removeWorkout">删除</text>
+          </view>
+          <view class="workout-fields">
+            <view class="workout-field time-field">
+              <text>开始时间</text>
+              <picker mode="time" value="{{item.startTime}}" data-index="{{index}}" bindchange="onWorkoutTimeChange"><view>{{item.startTime || '选择'}}</view></picker>
+            </view>
+            <view class="workout-field">
+              <text>运动时长</text>
+              <view><input type="number" value="{{item.minutes}}" data-index="{{index}}" data-field="minutes" bindinput="onWorkoutInput" placeholder="0" /><text>分钟</text></view>
+            </view>
+            <view class="workout-field">
+              <text>消耗热量</text>
+              <view><input type="number" value="{{item.calories}}" data-index="{{index}}" data-field="calories" bindinput="onWorkoutInput" placeholder="0" /><text>大卡</text></view>
+            </view>
+          </view>
         </view>
+      </view>
+      <view class="rest-day" wx:else bindtap="addWorkout"><text>今天暂未添加运动</text><text>休息也是计划的一部分，也可以点这里添加记录</text></view>
+
+      <view class="form-grid lifestyle-grid">
         <view class="field-card">
           <text class="field-label">今日步数</text>
           <view class="field-input"><input type="number" value="{{checkinForm.steps}}" data-field="steps" bindinput="onCheckinInput" placeholder="0" /><text>步</text></view>
@@ -89,6 +111,33 @@
         <switch checked="{{checkinForm.healthyMeal}}" color="#5f8f76" bindchange="onHealthyMealChange" />
       </view>
       <button class="save-checkin" loading="{{saving}}" disabled="{{saving}}" bindtap="saveCheckin">{{dashboard.todayCheckin ? '更新今日记录' : '完成今日打卡'}}</button>
+    </view>
+
+    <view class="section-head nutrition-head">
+      <view><text class="section-kicker">TODAY'S FUEL</text><text class="section-title">今日饮食参考</text></view>
+      <text class="nutrition-basis" wx:if="{{dashboard.nutritionPlan.ready}}">{{dashboard.nutritionPlan.intensity}}</text>
+    </view>
+    <view class="nutrition-card" wx:if="{{dashboard.nutritionPlan.ready}}">
+      <view class="nutrition-energy">
+        <view><text class="energy-value">{{dashboard.nutritionPlan.calories}}</text><text class="energy-unit">大卡 / 日</text></view>
+        <text class="energy-copy">{{dashboard.nutritionPlan.summary}}</text>
+      </view>
+      <view class="macro-list">
+        <view class="macro-item" wx:for="{{dashboard.nutritionPlan.macros}}" wx:key="key">
+          <view class="macro-top"><text>{{item.name}}</text><text>{{item.grams}}g · {{item.ratio}}%</text></view>
+          <view class="macro-track"><view style="width: {{item.ratio}}%; background: {{item.color}};"></view></view>
+        </view>
+      </view>
+      <view class="food-title"><text>怎么吃更容易做到</text><text>按食材替换，不必照搬菜单</text></view>
+      <view class="food-grid">
+        <view class="food-item" wx:for="{{dashboard.nutritionPlan.foodGroups}}" wx:key="key">
+          <text class="food-name">{{item.name}}</text><text class="food-list">{{item.foods}}</text><text class="food-note">{{item.note}}</text>
+        </view>
+      </view>
+      <text class="nutrition-disclaimer">{{dashboard.nutritionPlan.disclaimer}}</text>
+    </view>
+    <view class="nutrition-empty" wx:else bindtap="openGoalEditor">
+      <view><text>先补充当前体重</text><text>{{dashboard.nutritionPlan.message}}</text></view><text>去设置 →</text>
     </view>
 
     <view class="section-head">

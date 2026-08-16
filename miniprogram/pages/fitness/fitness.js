@@ -7,7 +7,6 @@ const GOAL_LABELS = {
 }
 
 const WORKOUT_OPTIONS = [
-  { value: 'rest', label: '休息日', icon: '○' },
   { value: 'strength', label: '力量训练', icon: '◆' },
   { value: 'run', label: '跑步', icon: '↗' },
   { value: 'walk', label: '快走', icon: '→' },
@@ -16,6 +15,8 @@ const WORKOUT_OPTIONS = [
   { value: 'yoga', label: '瑜伽', icon: '◇' },
   { value: 'other', label: '其他运动', icon: '＋' }
 ]
+
+const MAX_DAILY_WORKOUTS = 12
 
 function shortDate(value) {
   const parts = String(value || '').split('-')
@@ -29,6 +30,50 @@ function progressCopy(value) {
   return '从一次打卡和一次约好的运动开始'
 }
 
+function currentTime() {
+  const date = new Date()
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+}
+
+function createWorkout() {
+  return {
+    id: `w_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    type: 'strength',
+    workoutIndex: 0,
+    startTime: currentTime(),
+    minutes: '',
+    calories: ''
+  }
+}
+
+function workoutDrafts(checkin) {
+  if (Array.isArray(checkin.workouts)) {
+    return checkin.workouts.map((item, index) => {
+      const workoutIndex = Math.max(0, WORKOUT_OPTIONS.findIndex(option => option.value === item.type))
+      return {
+        id: item.id || `saved_${index}`,
+        type: WORKOUT_OPTIONS[workoutIndex].value,
+        workoutIndex,
+        startTime: item.startTime || currentTime(),
+        minutes: item.minutes ? String(item.minutes) : '',
+        calories: item.calories ? String(item.calories) : ''
+      }
+    })
+  }
+  if (checkin.workoutType && checkin.workoutType !== 'rest' && Number(checkin.minutes) > 0) {
+    const workoutIndex = Math.max(0, WORKOUT_OPTIONS.findIndex(option => option.value === checkin.workoutType))
+    return [{
+      id: 'legacy',
+      type: WORKOUT_OPTIONS[workoutIndex].value,
+      workoutIndex,
+      startTime: currentTime(),
+      minutes: String(checkin.minutes),
+      calories: checkin.calories ? String(checkin.calories) : ''
+    }]
+  }
+  return []
+}
+
 Page({
   data: {
     loading: true,
@@ -39,10 +84,8 @@ Page({
     goalTypeLabel: '减脂',
     workoutOptions: WORKOUT_OPTIONS,
     workoutLabels: WORKOUT_OPTIONS.map(item => item.label),
-    workoutIndex: 0,
+    workoutDrafts: [],
     checkinForm: {
-      workoutType: 'rest',
-      minutes: '',
       steps: '',
       water: '',
       sleep: '',
@@ -70,17 +113,14 @@ Page({
     try {
       const dashboard = await callFunction('fitness', { action: 'dashboard' })
       const checkin = dashboard.todayCheckin || {}
-      const workoutIndex = Math.max(0, WORKOUT_OPTIONS.findIndex(item => item.value === (checkin.workoutType || 'rest')))
       const goal = dashboard.myGoal || {}
       this.setData({
         dashboard,
         weekLabel: `${shortDate(dashboard.week.start)} — ${shortDate(dashboard.week.end)}`,
         teamCopy: progressCopy(dashboard.teamProgress),
         goalTypeLabel: GOAL_LABELS[goal.goalType] || '减脂',
-        workoutIndex,
+        workoutDrafts: workoutDrafts(checkin),
         checkinForm: {
-          workoutType: checkin.workoutType || 'rest',
-          minutes: checkin.minutes ? String(checkin.minutes) : '',
           steps: checkin.steps ? String(checkin.steps) : '',
           water: checkin.water ? String(checkin.water) : '',
           sleep: checkin.sleep ? String(checkin.sleep) : '',
@@ -149,14 +189,37 @@ Page({
     }
   },
 
-  onWorkoutChange(event) {
+  addWorkout() {
+    if (this.data.workoutDrafts.length >= MAX_DAILY_WORKOUTS) {
+      wx.showToast({ title: `每天最多添加 ${MAX_DAILY_WORKOUTS} 条`, icon: 'none' })
+      return
+    }
+    this.setData({ workoutDrafts: [...this.data.workoutDrafts, createWorkout()] })
+  },
+
+  removeWorkout(event) {
+    const index = Number(event.currentTarget.dataset.index)
+    this.setData({ workoutDrafts: this.data.workoutDrafts.filter((item, itemIndex) => itemIndex !== index) })
+  },
+
+  onWorkoutTypeChange(event) {
+    const index = Number(event.currentTarget.dataset.index)
     const workoutIndex = Number(event.detail.value)
-    const option = WORKOUT_OPTIONS[workoutIndex]
     this.setData({
-      workoutIndex,
-      'checkinForm.workoutType': option.value,
-      ...(option.value === 'rest' ? { 'checkinForm.minutes': '' } : {})
+      [`workoutDrafts[${index}].workoutIndex`]: workoutIndex,
+      [`workoutDrafts[${index}].type`]: WORKOUT_OPTIONS[workoutIndex].value
     })
+  },
+
+  onWorkoutTimeChange(event) {
+    const index = Number(event.currentTarget.dataset.index)
+    this.setData({ [`workoutDrafts[${index}].startTime`]: event.detail.value })
+  },
+
+  onWorkoutInput(event) {
+    const index = Number(event.currentTarget.dataset.index)
+    const field = event.currentTarget.dataset.field
+    this.setData({ [`workoutDrafts[${index}].${field}`]: event.detail.value })
   },
 
   onCheckinInput(event) {
@@ -168,16 +231,33 @@ Page({
     this.setData({ 'checkinForm.healthyMeal': event.detail.value })
   },
 
+  validateWorkouts() {
+    for (let index = 0; index < this.data.workoutDrafts.length; index += 1) {
+      const item = this.data.workoutDrafts[index]
+      if (!item.startTime) return `请选择第 ${index + 1} 条运动时间`
+      if (!Number(item.minutes)) return `请填写第 ${index + 1} 条运动时长`
+      if (!Number(item.calories)) return `请填写第 ${index + 1} 条消耗大卡`
+    }
+    return ''
+  },
+
   async saveCheckin() {
     if (this.data.saving) return
-    const form = this.data.checkinForm
-    if (form.workoutType !== 'rest' && !Number(form.minutes)) {
-      wx.showToast({ title: '请填写运动时长', icon: 'none' })
+    const errorMessage = this.validateWorkouts()
+    if (errorMessage) {
+      wx.showToast({ title: errorMessage, icon: 'none' })
       return
     }
+    const workouts = this.data.workoutDrafts.map(item => ({
+      id: item.id,
+      type: item.type,
+      startTime: item.startTime,
+      minutes: item.minutes,
+      calories: item.calories
+    }))
     this.setData({ saving: true })
     try {
-      const result = await callFunction('fitness', { action: 'checkIn', data: form })
+      const result = await callFunction('fitness', { action: 'checkIn', data: { ...this.data.checkinForm, workouts } })
       if (result.completed && result.completed.length) {
         const challenge = result.completed[0]
         wx.showModal({

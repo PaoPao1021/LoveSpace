@@ -32,10 +32,10 @@
 .member-score { color: #60806c; font-size: 38rpx; font-weight: 730; }
 .member-track { height: 8rpx; margin-top: 20rpx; border-radius: 999rpx; background: #edf0ec; overflow: hidden; }
 .member-track view { height: 100%; min-width: 6rpx; border-radius: inherit; background: #79a188; }
-.member-metrics { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 24rpx; }
+.member-metrics { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 24rpx; }
 .member-metrics view { text-align: center; border-right: 1rpx solid #edf0ed; }
 .member-metrics view:last-child { border-right: 0; }
-.member-metrics text { display: block; color: #3b4941; font-size: 27rpx; font-weight: 670; }
+.member-metrics text { display: block; color: #3b4941; font-size: 23rpx; font-weight: 670; }
 .member-metrics text:last-child { margin-top: 5rpx; color: #a1aaa4; font-size: 16rpx; font-weight: 400; }
 .weight-trend { display: flex; align-items: center; justify-content: space-between; margin-top: 23rpx; padding-top: 20rpx; border-top: 1rpx solid #eff1ef; color: #98a29b; font-size: 18rpx; }
 .weight-trend text:last-child { color: #68776e; }

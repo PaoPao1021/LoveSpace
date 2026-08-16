@@ -7,7 +7,8 @@ const _ = db.command
 
 const GOAL_TYPES = ['fat-loss', 'muscle', 'shape']
 const PRIVACY_TYPES = ['private', 'trend', 'shared']
-const WORKOUT_TYPES = ['rest', 'strength', 'run', 'walk', 'cycle', 'swim', 'yoga', 'other']
+const WORKOUT_TYPES = ['strength', 'run', 'walk', 'cycle', 'swim', 'yoga', 'other']
+const MAX_DAILY_WORKOUTS = 12
 const CHALLENGE_PRESETS = {
   workouts: { title: '共同完成 6 次运动', metric: 'workouts', target: 6, unit: '次', rewardPoints: 10 },
   minutes: { title: '合计运动 300 分钟', metric: 'minutes', target: 300, unit: '分钟', rewardPoints: 10 },
@@ -66,6 +67,86 @@ function asNumber(value, min, max, label, optional = false) {
   const number = Number(value)
   if (!Number.isFinite(number) || number < min || number > max) throw new Error(`${label}需要在 ${min}-${max} 之间`)
   return Math.round(number * 10) / 10
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value))
+}
+
+function workoutsForCheckin(checkin) {
+  if (!checkin) return []
+  if (Array.isArray(checkin.workouts)) return checkin.workouts
+  if (checkin.workoutType && checkin.workoutType !== 'rest' && Number(checkin.minutes) > 0) {
+    return [{
+      id: 'legacy',
+      type: checkin.workoutType,
+      startTime: '',
+      minutes: Number(checkin.minutes),
+      calories: Number(checkin.calories || 0)
+    }]
+  }
+  return []
+}
+
+function buildNutritionPlan(goal, checkin) {
+  const recordedWeight = Number(checkin && checkin.weight)
+  const goalWeight = Number(goal && goal.currentWeight)
+  const weight = recordedWeight > 0 ? recordedWeight : goalWeight > 0 ? goalWeight : 0
+  if (!weight) {
+    return {
+      ready: false,
+      message: '填写当前体重后，才能生成你的饮食参考。'
+    }
+  }
+
+  const workouts = workoutsForCheckin(checkin)
+  const workoutMinutes = workouts.reduce((sum, item) => sum + Number(item.minutes || 0), 0)
+  const workoutCalories = workouts.reduce((sum, item) => sum + Number(item.calories || 0), 0)
+  const hasStrength = workouts.some(item => item.type === 'strength')
+  const intensity = workoutMinutes >= 75 || workoutCalories >= 600
+    ? '高训练量'
+    : workoutMinutes >= 35 || workoutCalories >= 280
+      ? '中等训练量'
+      : workouts.length
+        ? '轻训练量'
+        : '休息日'
+  const goalType = goal && goal.goalType ? goal.goalType : 'shape'
+  const baseRates = { 'fat-loss': 28, muscle: 33, shape: 30 }
+  const baseCalories = clamp(Math.round((weight * baseRates[goalType]) / 10) * 10, 1400, 3200)
+  const trainingRecovery = clamp(Math.round((workoutCalories * 0.35) / 10) * 10, 0, 500)
+  const calories = clamp(baseCalories + trainingRecovery, 1400, 3600)
+  const proteinRate = goalType === 'muscle' ? 1.8 : goalType === 'fat-loss' ? 1.7 : 1.6
+  const adjustedProteinRate = clamp(proteinRate + (hasStrength || intensity === '高训练量' ? 0.1 : 0), 1.4, 2)
+  const protein = clamp(Math.round(weight * adjustedProteinRate), 50, 200)
+  const fat = Math.round((calories * 0.25) / 9)
+  const carbohydrates = Math.max(100, Math.round((calories - protein * 4 - fat * 9) / 4))
+  const totalMacroCalories = carbohydrates * 4 + protein * 4 + fat * 9
+  const ratio = value => Math.round((value / totalMacroCalories) * 100)
+
+  return {
+    ready: true,
+    calories,
+    weight,
+    intensity,
+    workoutMinutes,
+    workoutCalories,
+    trainingRecovery,
+    summary: workouts.length
+      ? `已结合今天 ${workouts.length} 条训练、${workoutMinutes} 分钟和 ${workoutCalories} 大卡消耗估算。`
+      : '今天按休息日估算，训练后保存记录会自动调整。',
+    macros: [
+      { key: 'carbohydrates', name: '碳水', grams: carbohydrates, ratio: ratio(carbohydrates * 4), color: '#c99857' },
+      { key: 'protein', name: '蛋白质', grams: protein, ratio: ratio(protein * 4), color: '#5f8f76' },
+      { key: 'fat', name: '脂肪', grams: fat, ratio: ratio(fat * 9), color: '#9b776b' }
+    ],
+    foodGroups: [
+      { key: 'carbohydrates', name: '优质碳水', foods: '燕麦、糙米、全麦面、土豆、玉米和水果', note: intensity === '休息日' ? '均匀分配到三餐' : '训练前后优先安排一部分' },
+      { key: 'protein', name: '优质蛋白', foods: '鸡蛋、鱼虾、鸡胸、瘦牛肉、牛奶、豆腐', note: '分到 3—4 餐，比集中一餐更容易执行' },
+      { key: 'fat', name: '健康脂肪', foods: '坚果、牛油果、橄榄油和深海鱼', note: '优先不饱和脂肪，控制油炸食品' },
+      { key: 'vegetables', name: '蔬果与纤维', foods: '深色蔬菜、菌菇、豆类和低糖水果', note: '每天至少安排两种蔬菜和一种水果' }
+    ],
+    disclaimer: '仅供健康成年人作日常参考；未结合身高、年龄、体脂及疾病情况，不替代医生或注册营养师方案。'
+  }
 }
 
 function defaultGoal(userId, coupleId) {
@@ -130,8 +211,9 @@ async function getCheckins(coupleId, userIds, start, end) {
 
 function memberStats(checkins, goal, userId) {
   const mine = checkins.filter(item => item.userId === userId)
-  const workouts = mine.filter(item => Number(item.minutes || 0) >= 20).length
+  const workouts = mine.reduce((sum, item) => sum + workoutsForCheckin(item).length, 0)
   const minutes = mine.reduce((sum, item) => sum + Number(item.minutes || 0), 0)
+  const calories = mine.reduce((sum, item) => sum + Number(item.calories || 0), 0)
   const totalSteps = mine.reduce((sum, item) => sum + Number(item.steps || 0), 0)
   const stepGoalDays = mine.filter(item => Number(item.steps || 0) >= Number(goal.dailySteps || 8000)).length
   const healthyMealDays = mine.filter(item => item.healthyMeal).length
@@ -145,6 +227,7 @@ function memberStats(checkins, goal, userId) {
     checkinDays: mine.length,
     workouts,
     minutes,
+    calories,
     totalSteps,
     averageSteps: mine.length ? Math.round(totalSteps / mine.length) : 0,
     stepGoalDays,
@@ -180,7 +263,7 @@ function challengeValue(challenge, checkins) {
   const relevant = checkins.filter(item => item.date >= challenge.startDate && item.date <= challenge.endDate)
   if (challenge.metric === 'minutes') return relevant.reduce((sum, item) => sum + Number(item.minutes || 0), 0)
   if (challenge.metric === 'steps') return relevant.reduce((sum, item) => sum + Number(item.steps || 0), 0)
-  if (challenge.metric === 'workouts') return relevant.filter(item => Number(item.minutes || 0) >= 20).length
+  if (challenge.metric === 'workouts') return relevant.reduce((sum, item) => sum + workoutsForCheckin(item).length, 0)
   return relevant.length
 }
 
@@ -228,6 +311,7 @@ async function buildDashboard(openid) {
     myStats,
     partnerStats: partnerStats ? sanitizePartnerStats(partnerStats, partnerGoal) : null,
     todayCheckin: todayMine,
+    nutritionPlan: buildNutritionPlan(myGoal, todayMine),
     partnerCheckedIn: Boolean(todayPartner),
     partnerTodayMinutes: todayPartner ? Number(todayPartner.minutes || 0) : 0,
     teamProgress: Math.round(members.reduce((sum, item) => sum + item.progress, 0) / members.length),
@@ -257,15 +341,40 @@ async function saveGoal(openid, data) {
   return { code: 0, goal: { ...goal, configured: true } }
 }
 
+function normalizeWorkouts(data) {
+  if (!Array.isArray(data.workouts)) {
+    const legacyType = String(data.workoutType || 'rest')
+    if (legacyType === 'rest' || !Number(data.minutes)) return []
+    if (!WORKOUT_TYPES.includes(legacyType)) throw new Error('运动类型无效')
+    return [{ id: 'legacy', type: legacyType, startTime: '', minutes: Math.round(asNumber(data.minutes, 1, 600, '运动时长')), calories: Math.round(asNumber(data.calories || 0, 0, 5000, '消耗热量')) }]
+  }
+  if (data.workouts.length > MAX_DAILY_WORKOUTS) throw new Error(`每天最多添加 ${MAX_DAILY_WORKOUTS} 条运动记录`)
+  return data.workouts.map((item, index) => {
+    const type = String(item && item.type || '')
+    if (!WORKOUT_TYPES.includes(type)) throw new Error(`第 ${index + 1} 条运动类型无效`)
+    const startTime = String(item && item.startTime || '').trim()
+    if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(startTime)) throw new Error(`请选择第 ${index + 1} 条运动的开始时间`)
+    const rawId = String(item && item.id || '')
+    return {
+      id: /^[\w-]{1,40}$/.test(rawId) ? rawId : `workout-${index + 1}`,
+      type,
+      startTime,
+      minutes: Math.round(asNumber(item.minutes, 1, 600, `第 ${index + 1} 条运动时长`)),
+      calories: Math.round(asNumber(item.calories, 1, 5000, `第 ${index + 1} 条消耗热量`))
+    }
+  })
+}
+
 function normalizeCheckin(data) {
-  const workoutType = String(data.workoutType || 'rest')
-  if (!WORKOUT_TYPES.includes(workoutType)) throw new Error('运动类型无效')
-  const minutes = Math.round(asNumber(data.minutes || 0, 0, 600, '运动时长'))
-  if (workoutType === 'rest' && minutes > 0) throw new Error('休息日不需要填写运动时长')
-  if (workoutType !== 'rest' && minutes <= 0) throw new Error('请填写运动时长')
+  const workouts = normalizeWorkouts(data)
+  const minutes = workouts.reduce((sum, item) => sum + item.minutes, 0)
+  const calories = workouts.reduce((sum, item) => sum + item.calories, 0)
   return {
-    workoutType,
+    workouts,
+    workoutCount: workouts.length,
+    workoutType: workouts.length ? workouts[0].type : 'rest',
     minutes,
+    calories,
     steps: Math.round(asNumber(data.steps || 0, 0, 100000, '今日步数')),
     water: Math.round(asNumber(data.water || 0, 0, 20, '饮水杯数')),
     sleep: asNumber(data.sleep || 0, 0, 24, '睡眠时长'),
@@ -431,6 +540,7 @@ async function weeklyReport(openid, data) {
   const statsList = partnerStats ? [myStats, partnerStats] : [myStats]
   const teamScore = Math.round(statsList.reduce((sum, item) => sum + item.progress, 0) / statsList.length)
   const totalMinutes = statsList.reduce((sum, item) => sum + item.minutes, 0)
+  const totalCalories = statsList.reduce((sum, item) => sum + item.calories, 0)
   const totalSteps = statsList.reduce((sum, item) => sum + item.totalSteps, 0)
   const workouts = statsList.reduce((sum, item) => sum + item.workouts, 0)
   const activeDays = new Set(checkins.map(item => item.date)).size
@@ -444,6 +554,7 @@ async function weeklyReport(openid, data) {
       range,
       teamScore,
       totalMinutes,
+      totalCalories,
       totalSteps,
       workouts,
       activeDays,
@@ -456,6 +567,10 @@ async function weeklyReport(openid, data) {
       ]
     }
   }
+}
+
+if (process.env.NODE_ENV === 'test') {
+  exports.__test = { buildNutritionPlan, normalizeCheckin, workoutsForCheckin }
 }
 
 exports.main = async (event = {}) => {

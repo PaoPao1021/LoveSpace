@@ -70,6 +70,14 @@ foreach ($file in $jsFiles) {
   }
 }
 
+$fitnessTest = Join-Path $PSScriptRoot 'test-fitness-domain.js'
+if (Test-Path -LiteralPath $fitnessTest) {
+  & node $fitnessTest
+  if ($LASTEXITCODE -ne 0) {
+    $errors.Add('健身领域测试未通过')
+  }
+}
+
 $businessJs = Get-ChildItem -LiteralPath $miniRoot -Recurse -File -Filter '*.js' |
   Where-Object { $_.FullName -notmatch '\\(node_modules|miniprogram_npm)\\' }
 foreach ($file in $businessJs) {

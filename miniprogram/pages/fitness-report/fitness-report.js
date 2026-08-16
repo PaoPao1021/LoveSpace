@@ -40,9 +40,11 @@ Page({
       const report = result.report
       report.periodLabel = `${shortDate(report.range.start)} — ${shortDate(report.range.end)}`
       report.totalStepsLabel = Number(report.totalSteps || 0).toLocaleString()
+      report.totalCaloriesLabel = Number(report.totalCalories || 0).toLocaleString()
       report.members = (report.members || []).map(member => ({
         ...member,
         weightCopy: weightCopy(member),
+        caloriesLabel: Number(member.stats.calories || 0).toLocaleString(),
         stepsLabel: Number(member.stats.totalSteps || 0).toLocaleString()
       }))
       this.setData({ report, loading: false })
