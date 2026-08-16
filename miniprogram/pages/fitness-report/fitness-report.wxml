@@ -1,0 +1,58 @@
+<view class="weekly-page">
+  <view class="weekly-glow"></view>
+  <view class="weekly-head">
+    <view><text class="weekly-kicker">OUR HEALTH WEEK</text><text class="weekly-title">双人健康周报</text></view>
+    <picker mode="selector" range="{{weekOptions}}" range-key="label" value="{{weekIndex}}" bindchange="onWeekChange">
+      <view class="week-picker">{{weekOptions[weekIndex].label}}⌄</view>
+    </picker>
+  </view>
+
+  <view class="report-loading" wx:if="{{loading}}">
+    <view class="skeleton score-skeleton"></view>
+    <view class="skeleton metric-skeleton"></view>
+  </view>
+
+  <block wx:elif="{{report}}">
+    <view class="weekly-hero">
+      <view class="score-ring" style="background: conic-gradient(#a9cdb7 {{report.teamScore * 3.6}}deg, rgba(255,255,255,.14) 0deg);">
+        <view class="score-core"><text class="score-number">{{report.teamScore}}</text><text class="score-label">共同完成</text></view>
+      </view>
+      <view class="hero-copy"><text class="hero-date">{{report.periodLabel}}</text><text class="hero-title">{{report.headline}}</text><text class="hero-note">比较各自的过去，不比较彼此。</text></view>
+    </view>
+
+    <view class="report-section">
+      <text class="section-kicker">TOGETHER</text><text class="section-title">这周一起做到</text>
+      <view class="metric-grid">
+        <view class="metric-card accent"><text class="metric-value">{{report.workouts}}</text><text class="metric-label">次有效运动</text></view>
+        <view class="metric-card"><text class="metric-value">{{report.totalMinutes}}</text><text class="metric-label">分钟运动</text></view>
+        <view class="metric-card"><text class="metric-value small">{{report.totalStepsLabel}}</text><text class="metric-label">步共同前进</text></view>
+        <view class="metric-card"><text class="metric-value">{{report.activeDays}}</text><text class="metric-label">天留下记录</text></view>
+      </view>
+    </view>
+
+    <view class="habit-card">
+      <view class="habit-mark">✓</view>
+      <view><text class="habit-label">本周最稳定的习惯</text><text class="habit-title">{{report.bestHabit}}</text></view>
+    </view>
+
+    <view class="report-section">
+      <text class="section-kicker">INDIVIDUAL PACE</text><text class="section-title">各自的节奏</text>
+      <view class="member-card" wx:for="{{report.members}}" wx:key="name">
+        <view class="member-top"><view><text class="member-name">{{item.name}}</text><text class="member-role">{{item.isMe ? '我的本周' : 'TA 的本周'}}</text></view><text class="member-score">{{item.stats.progress}}%</text></view>
+        <view class="member-track"><view style="width: {{item.stats.progress}}%;"></view></view>
+        <view class="member-metrics">
+          <view><text>{{item.stats.workouts}}</text><text>运动次数</text></view>
+          <view><text>{{item.stats.minutes}}</text><text>运动分钟</text></view>
+          <view><text>{{item.stepsLabel}}</text><text>本周步数</text></view>
+        </view>
+        <view class="weight-trend"><text>趋势</text><text>{{item.weightCopy}}</text></view>
+      </view>
+    </view>
+
+    <view class="insight-card"><text class="insight-label">下周建议</text><text class="insight-copy">{{report.insight}}</text></view>
+    <view class="report-ending">数据不是评分。休息、恢复和真实记录，同样是计划的一部分。</view>
+    <button class="back-button" bindtap="goFitness">返回一起变好</button>
+  </block>
+
+  <view class="report-empty" wx:else><text>周报暂时无法生成</text><text>下拉页面再试一次</text></view>
+</view>

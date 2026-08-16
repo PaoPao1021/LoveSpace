@@ -1,11 +1,12 @@
 const { callFunction } = require('../../utils/cloud')
-const { daysUntil, daysSince, getNextAnniversaryDate, formatDate } = require('../../utils/date')
+const { daysUntil, daysSince, getNextAnniversaryDate } = require('../../utils/date')
 
 Page({
   data: {
     loaded: false,
     list: [],
     showAdd: false,
+    editingId: '',
     form: {
       name: '',
       date: '',
@@ -20,6 +21,10 @@ Page({
       { label: '见面', value: 'meet' },
       { label: '自定义', value: 'custom' }
     ]
+  },
+
+  onLoad(options) {
+    if (options && options.editId) this.loadEdit(options.editId)
   },
 
   onShow() {
@@ -65,8 +70,29 @@ Page({
   onAdd() {
     this.setData({
       showAdd: true,
+      editingId: '',
       form: { name: '', date: '', type: 'custom', note: '', isRepeat: true }
     })
+  },
+
+  async loadEdit(id) {
+    try {
+      const result = await callFunction('anniversary', { action: 'get', data: { id } })
+      const item = result.data
+      this.setData({
+        editingId: id,
+        showAdd: true,
+        form: {
+          name: item.name || '',
+          date: item.date || '',
+          type: item.type || 'custom',
+          note: item.note || '',
+          isRepeat: item.isRepeat !== false
+        }
+      })
+    } catch (error) {
+      setTimeout(() => wx.navigateBack(), 800)
+    }
   },
 
   onCloseAdd() {
@@ -103,13 +129,21 @@ Page({
 
     wx.showLoading({ title: '保存中...' })
     try {
+      const editingId = this.data.editingId
       await callFunction('anniversary', {
-        action: 'add',
-        data: { name: name.trim(), date, type, note, isRepeat, remindDaysBefore: 3 }
+        action: editingId ? 'update' : 'add',
+        data: {
+          ...(editingId ? { id: editingId } : { remindDaysBefore: 3 }),
+          name: name.trim(), date, type, note, isRepeat
+        }
       })
-      wx.showToast({ title: '添加成功', icon: 'success' })
-      this.setData({ showAdd: false })
-      this.loadList()
+      wx.showToast({ title: editingId ? '修改成功' : '添加成功', icon: 'success' })
+      this.setData({ showAdd: false, editingId: '' })
+      if (editingId) {
+        setTimeout(() => wx.navigateBack(), 500)
+      } else {
+        this.loadList()
+      }
     } catch (e) {
       console.error(e)
     } finally {

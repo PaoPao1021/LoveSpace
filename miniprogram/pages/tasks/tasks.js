@@ -106,19 +106,25 @@ Page({
   // ===== 完成任务 =====
   async onComplete() {
     const task = this.data.detailTask
-    if (!task || task.isCompleted) return
+    if (!task || task.isCompleted || this.data.submitting) return
 
     wx.showModal({
       title: '确认完成',
       content: `完成「${task.title}」可获得 ${task.rewardPoints} 积分`,
       confirmText: '确认完成',
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
-          await callFunction('task', { action: 'complete', data: { id: task._id } })
-          wx.showToast({ title: `完成！+${task.rewardPoints}积分`, icon: 'success' })
-          this.setData({ showDetail: false })
-          this.loadTasks()
+          if (this.data.submitting) return
+          this.setData({ submitting: true })
+          try {
+            await callFunction('task', { action: 'complete', data: { id: task._id } })
+            wx.showToast({ title: `完成！+${task.rewardPoints}积分`, icon: 'success' })
+            this.setData({ showDetail: false })
+            this.loadTasks()
+          } finally {
+            this.setData({ submitting: false })
+          }
         }
       }
     })
@@ -127,16 +133,23 @@ Page({
   // ===== 删除任务 =====
   async onDelete() {
     const task = this.data.detailTask
+    if (!task || this.data.submitting) return
     wx.showModal({
       title: '删除任务',
       content: '确定删除此任务吗？',
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
-          await callFunction('task', { action: 'delete', data: { id: task._id } })
-          wx.showToast({ title: '已删除', icon: 'success' })
-          this.setData({ showDetail: false })
-          this.loadTasks()
+          if (this.data.submitting) return
+          this.setData({ submitting: true })
+          try {
+            await callFunction('task', { action: 'delete', data: { id: task._id } })
+            wx.showToast({ title: '已删除', icon: 'success' })
+            this.setData({ showDetail: false })
+            this.loadTasks()
+          } finally {
+            this.setData({ submitting: false })
+          }
         }
       }
     })

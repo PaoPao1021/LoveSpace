@@ -6,7 +6,7 @@
   border-radius: var(--radius-widget);
   padding: 5rpx;
   margin-bottom: 28rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4, #D4C5B0);
+  background: linear-gradient(135deg, #ECA8B4, #F6DDE2, #D4C5B0);
   background-size: 300% 300%;
   animation: energyShift 7s ease infinite;
   box-shadow: var(--shadow-float);
@@ -33,7 +33,7 @@
 .score-item { text-align: center; }
 .score-num {
   display: block; font-size: 64rpx; font-weight: 800;
-  background: linear-gradient(135deg, #D4B8B8, #E8D0D0);
+  background: linear-gradient(135deg, #D4B8B8, #ECA8B4);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   line-height: 1.1;
 }
@@ -45,7 +45,7 @@
 .progress-bar { height: 10rpx; background: #F5F0EB; border-radius: var(--radius-pill); overflow: hidden; }
 .progress-fill {
   height: 100%; border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(90deg, #ECA8B4, #F6DDE2);
   transition: width 0.6s ease-out;
 }
 
@@ -82,7 +82,7 @@
 }
 .reason-icon { display: block; font-size: 38rpx; margin-bottom: 6rpx; }
 .reason-label { display: block; font-size: 22rpx; color: var(--color-text-secondary); font-weight: 500; }
-.reason-points { display: block; font-size: 22rpx; color: #B89A9A; margin-top: 4rpx; font-weight: 600; }
+.reason-points { display: block; font-size: 22rpx; color: #A05A67; margin-top: 4rpx; font-weight: 600; }
 
 /* 兑换网格 — 强制4列 */
 .exchange-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14rpx; }
@@ -101,7 +101,7 @@
 .exchange-icon { display: block; font-size: 38rpx; margin-bottom: 6rpx; }
 .exchange-name { display: block; font-size: 22rpx; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 4rpx; }
 .exchange-cost {
-  display: inline-block; font-size: 20rpx; color: #B89A9A; font-weight: 600;
+  display: inline-block; font-size: 20rpx; color: #A05A67; font-weight: 600;
   padding: 2rpx 14rpx; background: #F8EDED; border-radius: var(--radius-pill);
 }
 
@@ -116,7 +116,7 @@
 .history-info { flex: 1; }
 .history-name { display: block; font-size: 26rpx; color: var(--color-text); }
 .history-time { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 2rpx; }
-.history-cost { font-size: 26rpx; color: #B89A9A; font-weight: 600; }
+.history-cost { font-size: 26rpx; color: #A05A67; font-weight: 600; }
 
 .card-link { display: flex; justify-content: space-between; align-items: center; }
 .card-link .card-title { margin-bottom: 0; }
@@ -130,7 +130,7 @@
 .popup-actions { display: flex; gap: 20rpx; margin-top: 28rpx; }
 .btn-outline, .btn-primary { flex: 1; height: 80rpx; border-radius: var(--radius-pill); border: none; font-size: 28rpx; display: flex; align-items: center; justify-content: center; }
 .btn-outline { background: #F7F2ED; color: var(--color-text-secondary); }
-.btn-primary { background: linear-gradient(135deg, #E8D0D0, #F2D4D4); color: #FFF; }
+.btn-primary { background: linear-gradient(135deg, #E85D75, #F08A9B); color: #FFF; }
 .btn-sm { font-size: 24rpx; padding: 12rpx 28rpx; }
 .popup-divider { height: 1rpx; background: #F0EDEA; margin: 24rpx 0; }
 .quick-action { display: flex; align-items: center; justify-content: space-between; }

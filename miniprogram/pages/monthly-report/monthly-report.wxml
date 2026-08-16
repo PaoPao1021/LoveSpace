@@ -1,0 +1,53 @@
+<view class="report-page">
+  <view class="report-head">
+    <view>
+      <text class="report-kicker">OUR MONTH</text>
+      <text class="report-title">你们的关系月报</text>
+    </view>
+    <picker mode="selector" range="{{months}}" range-key="label" value="{{monthIndex}}" bindchange="onMonthChange">
+      <view class="month-picker">{{months[monthIndex].month}} 月⌄</view>
+    </picker>
+  </view>
+
+  <view class="report-loading" wx:if="{{loading}}">
+    <view class="skeleton score-skeleton"></view>
+    <view class="report-grid"><view class="skeleton tile-skeleton"></view><view class="skeleton tile-skeleton"></view></view>
+  </view>
+
+  <block wx:elif="{{report}}">
+    <view class="score-card">
+      <view class="score-ring" style="background: conic-gradient(#e85d75 {{report.connectionScore * 3.6}}deg, rgba(255,255,255,.22) 0deg);">
+        <view class="score-core"><text class="score-number">{{report.connectionScore}}</text><text class="score-unit">连接度</text></view>
+      </view>
+      <view class="score-copy">
+        <text class="score-label">{{report.year}} / {{report.month}}</text>
+        <text class="score-title">本月关系温度</text>
+        <text class="score-desc">{{connectionCopy}}</text>
+      </view>
+    </view>
+
+    <view class="report-section">
+      <text class="section-title">一起完成</text>
+      <view class="report-grid">
+        <view class="metric-card accent"><text class="metric-value">{{report.questions.together}}</text><text class="metric-label">次坦诚问答</text><text class="metric-note">共开启 {{report.questions.days}} 个话题</text></view>
+        <view class="metric-card"><text class="metric-value">{{report.mood.together}}</text><text class="metric-label">天互相看见心情</text><text class="metric-note">我的打卡率 {{report.mood.checkinRate}}%</text></view>
+        <view class="metric-card"><text class="metric-value">{{report.moments.count}}</text><text class="metric-label">段共同回忆</text><text class="metric-note">包含 {{report.moments.photos}} 张照片</text></view>
+        <view class="metric-card"><text class="metric-value">{{report.points.total}}</text><text class="metric-label">点爱心流动</text><text class="metric-note">发生 {{report.points.exchanges}} 次兑换</text></view>
+      </view>
+    </view>
+
+    <view class="insight-card" wx:if="{{topMood}}">
+      <text class="insight-emoji">{{topMood.emoji}}</text>
+      <view><text class="insight-label">这个月最常出现的心情</text><text class="insight-title">{{topMood.label}}</text></view>
+    </view>
+
+    <view class="report-section" wx:if="{{report.anniversaries.length}}">
+      <text class="section-title">本月纪念</text>
+      <view class="anniversary-row" wx:for="{{report.anniversaries}}" wx:key="date"><text>{{item.name}}</text><text>{{item.date}}</text></view>
+    </view>
+
+    <view class="report-ending">数据不是评分，是提醒我们曾经认真陪伴彼此。</view>
+  </block>
+
+  <view class="empty" wx:else><text class="empty-text">月报暂时生成失败</text><text class="empty-sub">下拉页面再试一次</text></view>
+</view>

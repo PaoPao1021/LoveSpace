@@ -23,20 +23,24 @@
     "pages/settings/settings",
     "pages/profile/profile",
     "pages/menu-order/menu-order",
-    "pages/order-history/order-history"
+    "pages/order-history/order-history",
+    "pages/daily-question/daily-question",
+    "pages/monthly-report/monthly-report",
+    "pages/fitness/fitness",
+    "pages/fitness-report/fitness-report"
   ],
   "window": {
-    "backgroundColor": "#F8F0F4",
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#FAFAF8",
+    "backgroundColor": "#F8F5F3",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#F8F5F3",
     "navigationBarTitleText": "LoveSpace",
     "navigationBarTextStyle": "black",
     "navigationStyle": "default"
   },
   "tabBar": {
     "custom": true,
-    "color": "#BFBAB5",
-    "selectedColor": "#B89A9A",
+    "color": "#A79DA0",
+    "selectedColor": "#E85D75",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [

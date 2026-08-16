@@ -55,6 +55,7 @@ function daysSince(startDate) {
  */
 function getNextAnniversaryDate(anniversaryDate) {
   const today = new Date()
+  today.setHours(0, 0, 0, 0)
   const ann = new Date(anniversaryDate)
   const thisYear = today.getFullYear()
 

@@ -1,0 +1,152 @@
+<view class="fitness-page">
+  <view class="fitness-glow"></view>
+
+  <view class="fitness-loading" wx:if="{{loading}}">
+    <view class="skeleton hero-skeleton"></view>
+    <view class="skeleton block-skeleton"></view>
+    <view class="skeleton block-skeleton"></view>
+  </view>
+
+  <block wx:elif="{{dashboard}}">
+    <view class="fitness-head">
+      <view>
+        <text class="fitness-kicker">BETTER TOGETHER</text>
+        <text class="fitness-title">一起变好</text>
+        <text class="fitness-subtitle">奖励坚持，不比较体重</text>
+      </view>
+      <view class="report-entry" bindtap="goReport"><text>周报</text><text>↗</text></view>
+    </view>
+
+    <view class="team-hero">
+      <view class="team-meta">
+        <view><text class="hero-label">本周共同完成</text><text class="hero-date">{{weekLabel}}</text></view>
+        <view class="team-score"><text>{{dashboard.teamProgress}}</text><text class="score-unit">%</text></view>
+      </view>
+      <view class="hero-track"><view class="hero-progress" style="width: {{dashboard.teamProgress}}%;"></view></view>
+      <text class="hero-copy">{{teamCopy}}</text>
+      <view class="member-row">
+        <view class="member-item">
+          <image class="member-avatar" src="{{dashboard.me.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
+          <view class="member-copy"><text>{{dashboard.me.name}}</text><text>{{dashboard.myStats.workouts}} 次运动 · {{dashboard.myStats.progress}}%</text></view>
+        </view>
+        <view class="member-divider"></view>
+        <view class="member-item" wx:if="{{dashboard.partner}}">
+          <image class="member-avatar" src="{{dashboard.partner.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
+          <view class="member-copy"><text>{{dashboard.partner.name}}</text><text>{{dashboard.partnerStats.workouts}} 次运动 · {{dashboard.partnerStats.progress}}%</text></view>
+        </view>
+        <view class="member-item awaiting" wx:else><text>等待 TA 加入</text></view>
+      </view>
+    </view>
+
+    <view class="section-head">
+      <view><text class="section-kicker">MY PLAN</text><text class="section-title">我的健康目标</text></view>
+      <text class="section-action" bindtap="openGoalEditor">{{dashboard.myGoal.configured ? '调整' : '设置'}}</text>
+    </view>
+    <view class="goal-card" bindtap="openGoalEditor">
+      <view class="goal-badge">{{goalTypeLabel}}</view>
+      <view class="goal-main">
+        <view class="goal-metric"><text class="goal-value">{{dashboard.myGoal.weeklyWorkouts}}</text><text class="goal-unit">次 / 周运动</text></view>
+        <view class="goal-metric"><text class="goal-value">{{dashboard.myGoal.dailySteps}}</text><text class="goal-unit">步 / 日</text></view>
+      </view>
+      <text class="goal-privacy">体重隐私：{{dashboard.myGoal.privacy === 'shared' ? '双方可见' : dashboard.myGoal.privacy === 'private' ? '仅自己可见' : '仅分享趋势'}}</text>
+    </view>
+
+    <view class="section-head today-head">
+      <view><text class="section-kicker">TODAY</text><text class="section-title">今天的记录</text></view>
+      <view class="partner-status {{dashboard.partnerCheckedIn ? 'done' : ''}}">{{dashboard.partnerCheckedIn ? 'TA 已打卡' : '等待 TA'}}</view>
+    </view>
+    <view class="checkin-card">
+      <view class="form-row">
+        <view class="form-copy"><text class="form-label">今日运动</text><text class="form-note">休息也是计划的一部分</text></view>
+        <picker mode="selector" range="{{workoutLabels}}" value="{{workoutIndex}}" bindchange="onWorkoutChange">
+          <view class="picker-value">{{workoutOptions[workoutIndex].label}}⌄</view>
+        </picker>
+      </view>
+      <view class="form-grid">
+        <view class="field-card {{checkinForm.workoutType === 'rest' ? 'disabled' : ''}}">
+          <text class="field-label">运动时长</text>
+          <view class="field-input"><input type="number" value="{{checkinForm.minutes}}" disabled="{{checkinForm.workoutType === 'rest'}}" data-field="minutes" bindinput="onCheckinInput" placeholder="0" /><text>分钟</text></view>
+        </view>
+        <view class="field-card">
+          <text class="field-label">今日步数</text>
+          <view class="field-input"><input type="number" value="{{checkinForm.steps}}" data-field="steps" bindinput="onCheckinInput" placeholder="0" /><text>步</text></view>
+        </view>
+        <view class="field-card">
+          <text class="field-label">饮水</text>
+          <view class="field-input"><input type="number" value="{{checkinForm.water}}" data-field="water" bindinput="onCheckinInput" placeholder="0" /><text>杯</text></view>
+        </view>
+        <view class="field-card">
+          <text class="field-label">昨晚睡眠</text>
+          <view class="field-input"><input type="digit" value="{{checkinForm.sleep}}" data-field="sleep" bindinput="onCheckinInput" placeholder="0" /><text>小时</text></view>
+        </view>
+      </view>
+      <view class="weight-row">
+        <view><text class="form-label">今日体重</text><text class="form-note">可选，不用于双方排名</text></view>
+        <view class="weight-input"><input type="digit" value="{{checkinForm.weight}}" data-field="weight" bindinput="onCheckinInput" placeholder="未记录" /><text>kg</text></view>
+      </view>
+      <view class="meal-row">
+        <view><text class="form-label">今天吃得符合计划</text><text class="form-note">不追求完美，只记录真实</text></view>
+        <switch checked="{{checkinForm.healthyMeal}}" color="#5f8f76" bindchange="onHealthyMealChange" />
+      </view>
+      <button class="save-checkin" loading="{{saving}}" disabled="{{saving}}" bindtap="saveCheckin">{{dashboard.todayCheckin ? '更新今日记录' : '完成今日打卡'}}</button>
+    </view>
+
+    <view class="section-head">
+      <view><text class="section-kicker">CHALLENGES</text><text class="section-title">双人挑战</text></view>
+      <text class="section-action" bindtap="openChallengePicker">发起挑战</text>
+    </view>
+    <view class="challenge-list" wx:if="{{dashboard.challenges.length}}">
+      <view class="challenge-card {{item.status === 'completed' ? 'completed' : ''}}" wx:for="{{dashboard.challenges}}" wx:key="_id">
+        <view class="challenge-top">
+          <view><text class="challenge-state">{{item.status === 'completed' ? 'COMPLETED' : 'IN PROGRESS'}}</text><text class="challenge-title">{{item.title}}</text></view>
+          <text class="challenge-reward">＋{{item.rewardPoints}} 分/人</text>
+        </view>
+        <view class="challenge-track"><view class="challenge-progress" style="width: {{item.percent}}%;"></view></view>
+        <view class="challenge-bottom"><text>{{item.current}} / {{item.target}} {{item.unit}}</text><text>{{item.endDate}} 截止</text></view>
+      </view>
+    </view>
+    <view class="challenge-empty" wx:else bindtap="openChallengePicker">
+      <text class="empty-symbol">＋</text><text class="empty-title">开启你们的第一个健康挑战</text><text class="empty-copy">共同进度，不做输赢排名</text>
+    </view>
+
+    <view class="health-note">健康记录用于陪伴和趋势观察，不替代医生或营养师建议。</view>
+  </block>
+
+  <view class="fitness-empty" wx:else><text>健康模块暂时无法打开</text><text>下拉页面再试一次</text></view>
+</view>
+
+<view class="sheet-mask" wx:if="{{showGoalEditor}}" bindtap="closeGoalEditor">
+  <view class="sheet-panel" catchtap="stopPropagation">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title-row"><view><text class="sheet-kicker">MY GOAL</text><text class="sheet-title">设置我的目标</text></view><text class="sheet-close" bindtap="closeGoalEditor">×</text></view>
+    <text class="editor-label">当前方向</text>
+    <view class="choice-row">
+      <view class="choice-chip {{goalForm.goalType === 'fat-loss' ? 'selected' : ''}}" data-value="fat-loss" bindtap="selectGoalType">减脂</view>
+      <view class="choice-chip {{goalForm.goalType === 'muscle' ? 'selected' : ''}}" data-value="muscle" bindtap="selectGoalType">增肌</view>
+      <view class="choice-chip {{goalForm.goalType === 'shape' ? 'selected' : ''}}" data-value="shape" bindtap="selectGoalType">塑形</view>
+    </view>
+    <view class="editor-grid">
+      <view class="editor-field"><text>当前体重（可选）</text><view><input type="digit" value="{{goalForm.currentWeight}}" data-field="currentWeight" bindinput="onGoalInput" placeholder="--" /><text>kg</text></view></view>
+      <view class="editor-field"><text>目标体重（可选）</text><view><input type="digit" value="{{goalForm.targetWeight}}" data-field="targetWeight" bindinput="onGoalInput" placeholder="--" /><text>kg</text></view></view>
+      <view class="editor-field"><text>每周运动</text><view><input type="number" value="{{goalForm.weeklyWorkouts}}" data-field="weeklyWorkouts" bindinput="onGoalInput" /><text>次</text></view></view>
+      <view class="editor-field"><text>每日步数</text><view><input type="number" value="{{goalForm.dailySteps}}" data-field="dailySteps" bindinput="onGoalInput" /><text>步</text></view></view>
+    </view>
+    <text class="editor-label privacy-label">体重隐私</text>
+    <view class="privacy-list">
+      <view class="privacy-item {{goalForm.privacy === 'trend' ? 'selected' : ''}}" data-value="trend" bindtap="selectPrivacy"><view><text>仅分享趋势</text><text>TA 只能看到增减趋势，看不到具体数值</text></view><text>✓</text></view>
+      <view class="privacy-item {{goalForm.privacy === 'private' ? 'selected' : ''}}" data-value="private" bindtap="selectPrivacy"><view><text>仅自己可见</text><text>体重和变化都不会展示给 TA</text></view><text>✓</text></view>
+      <view class="privacy-item {{goalForm.privacy === 'shared' ? 'selected' : ''}}" data-value="shared" bindtap="selectPrivacy"><view><text>双方可见</text><text>TA 可以看到体重数值和变化</text></view><text>✓</text></view>
+    </view>
+    <button class="sheet-submit" loading="{{saving}}" disabled="{{saving}}" bindtap="saveGoal">保存目标</button>
+  </view>
+</view>
+
+<view class="sheet-mask" wx:if="{{showChallengePicker}}" bindtap="closeChallengePicker">
+  <view class="sheet-panel challenge-sheet" catchtap="stopPropagation">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title-row"><view><text class="sheet-kicker">NEW CHALLENGE</text><text class="sheet-title">这周一起完成</text></view><text class="sheet-close" bindtap="closeChallengePicker">×</text></view>
+    <view class="preset-card" wx:for="{{dashboard.challengePresets}}" wx:key="id" data-id="{{item.id}}" bindtap="createChallenge">
+      <view><text class="preset-title">{{item.title}}</text><text class="preset-note">7 天挑战 · 完成后双方各得 {{item.rewardPoints}} 积分</text></view><text class="preset-arrow">＋</text>
+    </view>
+  </view>
+</view>

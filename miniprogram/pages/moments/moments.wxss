@@ -13,7 +13,7 @@
 .timeline { position: relative; padding-left: 40rpx; }
 .timeline::before {
   content: ''; position: absolute; left: 11rpx; top: 0; bottom: 0;
-  width: 2rpx; background: linear-gradient(180deg, #E8D0D0, #F0E8DE);
+  width: 2rpx; background: linear-gradient(180deg, #ECA8B4, #F0E8DE);
 }
 .timeline-item { position: relative; margin-bottom: 28rpx; }
 .timeline-item:active { opacity: 0.88; }
@@ -21,7 +21,7 @@
 .timeline-dot {
   position: absolute; left: -35rpx; top: 24rpx;
   width: 12rpx; height: 12rpx; border-radius: 50%;
-  background: #E8D0D0; border: 3rpx solid #FFFFFF;
+  background: #ECA8B4; border: 3rpx solid #FFFFFF;
   box-shadow: 0 2rpx 8rpx rgba(200,160,160,0.2);
 }
 .timeline-card {
@@ -36,7 +36,7 @@
 
 .timeline-tags { display: flex; flex-wrap: wrap; gap: 10rpx; margin-top: 10rpx; }
 .timeline-tag {
-  font-size: 22rpx; color: #B89A9A; background: #F8EDED;
+  font-size: 22rpx; color: #A05A67; background: #F8EDED;
   padding: 4rpx 16rpx; border-radius: var(--radius-pill);
 }
 .timeline-time { display: block; font-size: 22rpx; color: var(--color-text-light); margin-top: 10rpx; }
@@ -52,7 +52,7 @@
   position: fixed; right: 40rpx;
   bottom: calc(140rpx + env(safe-area-inset-bottom));
   width: 96rpx; height: 96rpx; border-radius: 50%;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 10rpx 28rpx rgba(200,160,160,0.22);
   z-index: 20;

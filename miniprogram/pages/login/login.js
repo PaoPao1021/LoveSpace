@@ -1,4 +1,4 @@
-const { callFunction, getDb, uploadImage } = require('../../utils/cloud')
+const { callFunction, uploadImage } = require('../../utils/cloud')
 
 Page({
   data: {
@@ -13,8 +13,9 @@ Page({
     loading: false
   },
 
-  onShow() {
+  async onShow() {
     const app = getApp()
+    await app.ensureReady()
     if (app.globalData.openid && app.globalData.coupleId) {
       wx.switchTab({ url: '/pages/index/index' })
       return
@@ -58,28 +59,11 @@ Page({
 
     this.setData({ loading: true })
     try {
-      const loginRes = await callFunction('login')
-      const { openid } = loginRes
-
+      const { openid } = await callFunction('login')
       const app = getApp()
       app.globalData.openid = openid
-
-      const db = getDb()
-      try {
-        await db.collection('users').doc(openid).get()
-      } catch (e) {
-        await db.collection('users').add({
-          data: {
-            _id: openid,
-            nickName,
-            avatarUrl: this.data.avatarUrl,
-            coupleId: '',
-            createdAt: new Date().toISOString()
-          }
-        })
-      }
-
-      await db.collection('users').doc(openid).update({
+      await callFunction('user', {
+        action: 'updateProfile',
         data: { nickName, avatarUrl: this.data.avatarUrl }
       })
 
@@ -131,8 +115,6 @@ Page({
           step: 'invite',
           inviteCode: res.inviteCode
         })
-      } else {
-        wx.showToast({ title: res.message || '创建失败', icon: 'none' })
       }
     } catch (e) {
       console.error(e)
@@ -167,8 +149,6 @@ Page({
         setTimeout(() => {
           wx.switchTab({ url: '/pages/index/index' })
         }, 1500)
-      } else {
-        wx.showToast({ title: res.message || '加入失败', icon: 'none' })
       }
     } catch (e) {
       console.error(e)

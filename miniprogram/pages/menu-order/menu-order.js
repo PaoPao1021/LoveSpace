@@ -1,5 +1,6 @@
-const { callFunction } = require('../../utils/cloud')
+const { callFunction, createRequestId } = require('../../utils/cloud')
 const { DISH_CATEGORIES } = require('../../utils/theme')
+const { orderTemplateId } = require('../../config/index')
 
 Page({
   data: {
@@ -16,7 +17,8 @@ Page({
     showSpec: false,
     specDish: null,
     selectedSpecs: {},
-    specQuantity: 1
+    specQuantity: 1,
+    submitting: false
   },
 
   onLoad() {
@@ -184,13 +186,18 @@ Page({
   },
 
   onPlaceOrder() {
+    if (this.data.submitting) return
     if (this.data.cart.length === 0) {
       wx.showToast({ title: '请先选择菜品', icon: 'none' })
       return
     }
     // 先请求订阅消息授权（必须在用户点击事件同步调用）
+    if (!orderTemplateId) {
+      this._showOrderConfirm()
+      return
+    }
     wx.requestSubscribeMessage({
-      tmplIds: ['Q1IwjM7zcg5qC16G5sTmNBCfMkTZ6AYDeyZhqm3nTH8'],
+      tmplIds: [orderTemplateId],
       complete: () => {
         // 无论授权与否，都弹确认框
         this._showOrderConfirm()
@@ -202,21 +209,22 @@ Page({
     wx.showModal({
       title: '确认点单',
       content: `共 ${this.data.cartCount} 件，合计 ¥${this.data.cartTotal}\n让TA给你做~`,
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
+          if (this.data.submitting) return
+          this.setData({ submitting: true })
           wx.showLoading({ title: '下单中...' })
           try {
             const cartSnapshot = [...this.data.cart]
-            const totalSnapshot = this.data.cartTotal
-            await callFunction('menu', {
+            const orderResult = await callFunction('menu', {
               action: 'addOrder',
-              data: { items: cartSnapshot, note: '' }
+              data: { items: cartSnapshot, note: '', requestId: createRequestId('order') }
             })
             // 通知对方
             callFunction('notification', {
               action: 'orderNotify',
-              data: { items: cartSnapshot, totalPrice: totalSnapshot }
+              data: { orderId: orderResult.id }
             }).catch(() => {})
             this.calcCart([])
             this.setData({ cartVisible: false })
@@ -225,6 +233,7 @@ Page({
             wx.showToast({ title: '下单失败', icon: 'none' })
           } finally {
             wx.hideLoading()
+            this.setData({ submitting: false })
           }
         }
       }

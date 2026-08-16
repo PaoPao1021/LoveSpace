@@ -25,7 +25,7 @@
       <text class="input-label">你的昵称</text>
       <input class="input-field" placeholder="TA怎么叫你？" value="{{nickName}}" bindinput="onNickNameInput" />
     </view>
-    <button class="btn-primary" bindtap="onGetUserInfo">开始使用</button>
+    <button class="btn-primary" bindtap="onGetUserInfo" loading="{{loading}}" disabled="{{loading}}">开始使用</button>
   </view>
 
   <!-- 已登录，选择创建或加入 -->
@@ -61,7 +61,7 @@
       </picker>
     </view>
 
-    <button class="btn-primary" bindtap="onCreateCouple">生成邀请码</button>
+    <button class="btn-primary" bindtap="onCreateCouple" loading="{{loading}}" disabled="{{loading}}">生成邀请码</button>
   </view>
 
   <!-- 邀请码展示 -->
@@ -86,7 +86,7 @@
       <input class="input-field code-input" placeholder="输入6位邀请码" value="{{inputCode}}" bindinput="onCodeInput" maxlength="6" />
     </view>
 
-    <button class="btn-primary" bindtap="onJoinCouple">加入</button>
+    <button class="btn-primary" bindtap="onJoinCouple" loading="{{loading}}" disabled="{{loading}}">加入</button>
     <view class="link-text" bindtap="onBack">返回</view>
   </view>
 </view>

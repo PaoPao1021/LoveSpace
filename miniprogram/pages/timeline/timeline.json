@@ -2,7 +2,6 @@
   "navigationBarTitleText": "回忆时间轴",
   "usingComponents": {
     "bg-layer": "/components/bg-layer/bg-layer",
-    "van-popup": "@vant/weapp/popup/index",
-    "floating-particles": "/components/floating-particles/floating-particles"
+    "van-popup": "@vant/weapp/popup/index"
   }
 }

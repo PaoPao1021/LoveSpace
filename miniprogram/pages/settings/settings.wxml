@@ -16,7 +16,7 @@
       <text class="setting-label">在一起日期</text>
       <text class="setting-value">{{startDate}}</text>
     </view>
-    <view class="setting-item">
+    <view class="setting-item" wx:if="{{!hasPartner}}" bindtap="onCopyInvite">
       <text class="setting-label">邀请码</text>
       <text class="setting-value">{{inviteCode}}</text>
     </view>
@@ -36,11 +36,11 @@
     </view>
   </view>
 
-  <!-- 数据 -->
+  <!-- 隐私 -->
   <view class="glass-card">
-    <text class="card-title">数据</text>
-    <view class="setting-item" bindtap="onExport">
-      <text class="setting-label">导出数据</text>
+    <text class="card-title">隐私与数据</text>
+    <view class="setting-item" bindtap="onPrivacyInfo">
+      <view class="setting-copy"><text class="setting-label">双人空间保护</text><text class="setting-desc">内容仅通过云函数按情侣关系校验访问</text></view>
       <text class="setting-arrow">›</text>
     </view>
   </view>
@@ -50,7 +50,7 @@
     <text class="card-title">关于</text>
     <view class="setting-item">
       <text class="setting-label">版本</text>
-      <text class="setting-value">1.0.0</text>
+      <text class="setting-value">2.0.0</text>
     </view>
   </view>
 
@@ -87,7 +87,7 @@
           min="10"
           max="100"
           value="{{bgOpacity}}"
-          active-color="#FF6B81"
+          active-color="#E85D75"
           background-color="#F0E8E8"
           block-size="24"
           bindchange="onOpacityChange"

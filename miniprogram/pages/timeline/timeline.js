@@ -168,7 +168,7 @@ Page({
       content: item.content,
       showCancel: false,
       confirmText: '知道了',
-      confirmColor: '#FF6B81'
+      confirmColor: '#E85D75'
     })
   },
 

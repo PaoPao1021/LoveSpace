@@ -10,7 +10,8 @@ Page({
     daysTogether: 0,
     showEditNickname: false,
     editNickname: '',
-    loading: true
+    loading: true,
+    isBound: false
   },
 
   onShow() {
@@ -44,6 +45,7 @@ Page({
           partnerAvatar,
           partnerName: (partner && partner.nickName) ? partner.nickName : 'TA',
           daysTogether: couple ? daysSince(couple.startDate) : 0,
+          isBound: Boolean(couple),
           loading: false
         })
       } else {
@@ -154,5 +156,9 @@ Page({
     const url = e.currentTarget.dataset.url
     if (!url) return
     wx.navigateTo({ url })
+  },
+
+  goLogin() {
+    wx.navigateTo({ url: '/pages/login/login' })
   }
 })

@@ -18,7 +18,7 @@
   box-shadow: var(--shadow-card);
 }
 .countdown-item { flex: 1; text-align: center; }
-.countdown-num { display: block; font-size: 68rpx; font-weight: 800; color: #B89A9A; }
+.countdown-num { display: block; font-size: 68rpx; font-weight: 800; color: #A05A67; }
 .countdown-label { display: block; font-size: 24rpx; color: var(--color-text-light); margin-top: 6rpx; }
 .countdown-divider { width: 2rpx; background: #F5F2EF; margin: 0 24rpx; }
 
@@ -37,5 +37,5 @@
   border: 1rpx solid #F0EDEA; border-radius: var(--radius-pill);
   font-size: 28rpx; display: flex; align-items: center; justify-content: center;
 }
-.btn-action.danger { color: #D4B8B8; border-color: #E8D0D0; }
+.btn-action.danger { color: #D4B8B8; border-color: #ECA8B4; }
 .btn-action::after { border: none; }

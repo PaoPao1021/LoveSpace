@@ -5,33 +5,24 @@ Component({
       {
         pagePath: '/pages/index/index',
         text: '首页',
-        sticker: '🐰',
-        bgClass: 'sticker-bg-blush'
+        icon: '⌂'
       },
       {
         pagePath: '/pages/album/album',
         text: '相册',
-        sticker: '🐻',
-        bgClass: 'sticker-bg-cream'
+        icon: '▧'
       },
       {
         pagePath: '/pages/moments/moments',
         text: '点滴',
-        sticker: '🐶',
-        bgClass: 'sticker-bg-lavender'
+        icon: '✦'
       },
       {
         pagePath: '/pages/profile/profile',
         text: '我的',
-        sticker: '🌸',
-        bgClass: 'sticker-bg-peach'
+        icon: '○'
       }
     ]
-  },
-
-  lifetimes: {
-    attached() {
-    }
   },
 
   methods: {
@@ -39,8 +30,11 @@ Component({
       const data = e.currentTarget.dataset
       const url = data.path
       const index = data.index
-      wx.switchTab({ url })
-      this.setData({ selected: index })
+      if (index === this.data.selected) return
+      wx.switchTab({
+        url,
+        success: () => this.setData({ selected: index })
+      })
     }
   }
 })

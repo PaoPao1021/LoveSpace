@@ -21,7 +21,7 @@ Page({
     const next = status === 'todo' ? 'doing' : status === 'doing' ? 'done' : 'todo'
     wx.showModal({
       title: next === 'done' ? '🎉 实现了！' : '更新状态',
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
           await callFunction('wish', { action: 'update', data: { id, status: next } })

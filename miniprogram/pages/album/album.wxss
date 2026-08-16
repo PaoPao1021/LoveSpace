@@ -43,7 +43,7 @@
 
 .btn-upload {
   flex: 1;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFF; border: none; border-radius: var(--radius-pill);
   font-size: 28rpx; height: 80rpx; display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-button);
@@ -53,7 +53,7 @@
 .btn-add-album {
   flex: 1;
   background: #FFFFFF;
-  color: #B89A9A; border: 1rpx solid #F0EDEA;
+  color: #A05A67; border: 1rpx solid #F0EDEA;
   border-radius: var(--radius-pill);
   font-size: 28rpx; height: 80rpx; display: flex; align-items: center; justify-content: center;
 }

@@ -4,7 +4,7 @@
 /* 点餐横幅 */
 .order-banner {
   display: flex; align-items: center; justify-content: space-between;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   border-radius: var(--radius-widget);
   padding: 28rpx 32rpx;
   margin-bottom: 20rpx;
@@ -35,7 +35,7 @@
 }
 .menu-action-btn:active { transform: scale(0.96); }
 .menu-action-btn.recommend { color: #8A7A7A; border: 1rpx solid #F0EDEA; }
-.menu-action-btn.add { color: #B89A9A; border: 2rpx dashed rgba(200,180,160,0.4); }
+.menu-action-btn.add { color: #A05A67; border: 2rpx dashed rgba(200,180,160,0.4); }
 .menu-action-emoji { font-size: 30rpx; }
 
 /* 卡片 */
@@ -57,7 +57,7 @@
 .rec-left { display: flex; align-items: center; gap: 10rpx; }
 .rec-emoji { font-size: 28rpx; }
 .rec-name { font-size: 28rpx; font-weight: 500; }
-.rec-rating { font-size: 24rpx; color: #B89A9A; }
+.rec-rating { font-size: 24rpx; color: #A05A67; }
 
 /* 分类 */
 .category-scroll { margin-bottom: 20rpx; white-space: nowrap; }
@@ -70,7 +70,7 @@
   transition: all 0.2s;
 }
 .cat-tag.active {
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFFFFF;
   box-shadow: var(--shadow-button);
 }
@@ -98,10 +98,10 @@
 .dish-name { display: block; font-size: 28rpx; font-weight: 600; color: var(--color-text); }
 .dish-meta { display: flex; align-items: center; gap: 10rpx; margin-top: 6rpx; }
 .dish-cat { font-size: 22rpx; color: var(--color-text-light); }
-.dish-rating { font-size: 22rpx; color: #B89A9A; }
+.dish-rating { font-size: 22rpx; color: #A05A67; }
 .dish-eaten-btn {
   padding: 10rpx 24rpx;
-  background: #F8EDED; color: #B89A9A;
+  background: #F8EDED; color: #A05A67;
   border-radius: var(--radius-pill);
   font-size: 24rpx; font-weight: 500;
   flex-shrink: 0;
@@ -143,7 +143,7 @@
   color: var(--color-text-secondary); border: 2rpx solid transparent;
 }
 .cat-option.active {
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4); color: #FFF;
+  background: linear-gradient(135deg, #E85D75, #F08A9B); color: #FFF;
 }
 .rating-row { display: flex; gap: 16rpx; }
 .star { font-size: 38rpx; opacity: 0.2; transition: opacity 0.15s; }
@@ -151,7 +151,7 @@
 
 .btn-save {
   width: 100%; height: 88rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFF; border: none; border-radius: var(--radius-pill);
   font-size: 30rpx; font-weight: 600; letter-spacing: 2rpx;
   display: flex; align-items: center; justify-content: center;

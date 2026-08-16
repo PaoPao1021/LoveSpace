@@ -1,0 +1,39 @@
+.ritual-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 48rpx 32rpx calc(64rpx + env(safe-area-inset-bottom));
+  background: #f8f5f3;
+  position: relative;
+  overflow: hidden;
+}
+
+.ritual-page > view,
+.ritual-page > block { position: relative; z-index: 1; }
+.ritual-orb { position: fixed; border-radius: 50%; filter: blur(10rpx); pointer-events: none; }
+.ritual-orb-a { width: 420rpx; height: 420rpx; right: -220rpx; top: 80rpx; background: rgba(232, 93, 117, 0.09); }
+.ritual-orb-b { width: 320rpx; height: 320rpx; left: -180rpx; bottom: 120rpx; background: rgba(218, 177, 137, 0.12); }
+.ritual-kicker { font-size: 21rpx; letter-spacing: 3rpx; color: #a05a67; font-weight: 700; margin: 12rpx 4rpx 24rpx; }
+.question-card { background: #2d2729; color: #fff; border-radius: 36rpx; padding: 38rpx 36rpx 42rpx; box-shadow: 0 18rpx 50rpx rgba(45, 39, 41, 0.14); }
+.question-number { display: block; font: italic 54rpx/1 Georgia, serif; color: rgba(255,255,255,.2); margin-bottom: 32rpx; }
+.question-text { display: block; font-size: 38rpx; line-height: 1.55; font-weight: 650; letter-spacing: 1rpx; }
+.question-note { display: block; margin-top: 32rpx; color: rgba(255,255,255,.55); font-size: 23rpx; line-height: 1.6; }
+.answer-editor, .answer-card, .waiting-card { margin-top: 28rpx; background: rgba(255,255,255,.92); border: 1rpx solid rgba(80,50,55,.06); border-radius: 30rpx; padding: 32rpx; box-shadow: 0 10rpx 32rpx rgba(70,45,50,.05); }
+.section-eyebrow, .answer-owner { display: block; color: #9b6b73; font-size: 23rpx; font-weight: 700; letter-spacing: 1rpx; margin-bottom: 20rpx; }
+.answer-input { width: 100%; min-height: 220rpx; box-sizing: border-box; color: #2d2729; font-size: 30rpx; line-height: 1.75; }
+.answer-footer { margin-top: 24rpx; display: flex; align-items: center; justify-content: space-between; }
+.answer-count { font-size: 21rpx; color: #aaa0a2; }
+.ritual-submit { margin: 0; padding: 0 32rpx; height: 76rpx; line-height: 76rpx; border: none; border-radius: 999rpx; background: #e85d75; color: #fff; font-size: 27rpx; font-weight: 650; }
+.ritual-submit::after { border: none; }
+.ritual-submit[disabled] { opacity: .4; }
+.answer-card.mine { border-left: 6rpx solid #e85d75; }
+.answer-card.partner { border-left: 6rpx solid #d7b48d; animation: reveal .45s ease-out; }
+.answer-text { display: block; font-size: 30rpx; line-height: 1.8; color: #342d30; white-space: pre-wrap; }
+.waiting-card { text-align: center; padding: 48rpx 32rpx; }
+.waiting-mark { font: 48rpx/1 Georgia, serif; color: #e85d75; letter-spacing: 8rpx; }
+.waiting-title { display: block; font-size: 30rpx; font-weight: 650; color: #342d30; margin: 18rpx 0 12rpx; }
+.waiting-copy { display: block; font-size: 24rpx; line-height: 1.65; color: #93898c; }
+.ritual-footnote { text-align: center; color: #aaa0a2; font-size: 22rpx; margin: 48rpx 0 8rpx; }
+.ritual-loading { padding-top: 40rpx; }
+.ritual-skeleton { height: 360rpx; border-radius: 36rpx; }
+.answer-skeleton { height: 300rpx; border-radius: 30rpx; margin-top: 28rpx; }
+@keyframes reveal { from { opacity: 0; transform: translateY(16rpx); } to { opacity: 1; transform: none; } }

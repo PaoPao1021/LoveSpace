@@ -22,13 +22,8 @@ Page({
 
   async loadQuizzes() {
     try {
-      const db = wx.cloud.database()
-      const res = await db.collection('quizzes')
-        .where({ coupleId: getApp().globalData.coupleId })
-        .orderBy('createdAt', 'desc')
-        .get()
-
-      this.setData({ list: res.data, loaded: true })
+      const res = await callFunction('quiz', { action: 'list' })
+      this.setData({ list: res.list || [], loaded: true })
     } catch (e) {
       this.setData({ loaded: true })
     }
@@ -60,43 +55,10 @@ Page({
     const answer = currentQuiz.options[selectedIndex]
 
     try {
-      const db = wx.cloud.database()
-      const openid = getApp().globalData.openid
-      const coupleId = getApp().globalData.coupleId
-
-      // 查找是否已有这道题
-      const existing = await db.collection('quizzes')
-        .where({ coupleId, question: currentQuiz.question })
-        .get()
-
-      if (existing.data.length > 0) {
-        const quiz = existing.data[0]
-        const updateData = {}
-
-        if (quiz.user1Answer && quiz.user1Answer !== answer) {
-          // 第二个人答题
-          updateData.user2Answer = answer
-          updateData.user2Id = openid
-          updateData.isMatched = quiz.user1Answer === answer
-        } else if (!quiz.user1Answer) {
-          updateData.user1Answer = answer
-          updateData.user1Id = openid
-        }
-
-        await db.collection('quizzes').doc(quiz._id).update({ data: updateData })
-      } else {
-        await db.collection('quizzes').add({
-          data: {
-            coupleId,
-            question: currentQuiz.question,
-            options: currentQuiz.options,
-            user1Answer: answer,
-            user1Id: openid,
-            isMatched: false,
-            createdAt: new Date().toISOString()
-          }
-        })
-      }
+      await callFunction('quiz', {
+        action: 'submit',
+        data: { question: currentQuiz.question, answer }
+      })
 
       this.setData({ submitted: true })
       wx.showToast({ title: '提交成功', icon: 'success' })

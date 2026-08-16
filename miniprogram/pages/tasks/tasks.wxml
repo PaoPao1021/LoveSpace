@@ -1,5 +1,4 @@
 <bg-layer />
-<floating-particles count="5" type="sparkle" />
 <view class="page">
   <!-- 任务列表 -->
   <view class="section-title" wx:if="{{list.length > 0}}">

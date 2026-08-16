@@ -1,3 +1,5 @@
+const { cloudEnvId } = require('./config/index')
+
 App({
   onLaunch() {
     if (!wx.cloud) {
@@ -5,12 +7,11 @@ App({
       return
     }
     wx.cloud.init({
-      env: 'cloudbase-d1ge15ed4f58fe910',
+      env: cloudEnvId,
       traceUser: true
     })
-    this.globalData = {}
     this.loadBgSettings()
-    this.checkLogin()
+    this.ready = this.checkLogin()
   },
 
   loadBgSettings() {
@@ -21,18 +22,20 @@ App({
   async checkLogin() {
     try {
       const res = await wx.cloud.callFunction({ name: 'login' })
-      const { openid } = res.result
+      const { openid, userInfo } = res.result || {}
+      if (!openid) throw new Error('登录结果异常')
       this.globalData.openid = openid
-
-      const db = wx.cloud.database()
-      const userRes = await db.collection('users').doc(openid).get().catch(() => null)
-      if (userRes && userRes.data) {
-        this.globalData.userInfo = userRes.data
-        this.globalData.coupleId = userRes.data.coupleId
-      }
+      this.globalData.userInfo = userInfo || null
+      this.globalData.coupleId = (userInfo && userInfo.coupleId) || ''
+      return this.globalData
     } catch (e) {
       console.error('登录检查失败:', e)
+      return this.globalData
     }
+  },
+
+  ensureReady() {
+    return this.ready || Promise.resolve(this.globalData)
   },
 
   /**

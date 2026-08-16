@@ -2,48 +2,47 @@
  * 云函数调用封装
  */
 
-const db = wx.cloud.database()
-const _ = db.command
-
 /**
  * 调用云函数
  */
-async function callFunction(name, data = {}) {
+async function callFunction(name, data = {}, options = {}) {
   try {
+    const app = getApp()
+    if (app && typeof app.ensureReady === 'function') await app.ensureReady()
     const res = await wx.cloud.callFunction({ name, data })
-    if (res.result && res.result.code === -1) {
-      throw new Error(res.result.message || '操作失败')
+    const result = res && res.result
+    if (!result) throw new Error('服务暂时没有响应')
+    if (result.code !== undefined && result.code !== 0) {
+      throw new Error(result.message || result.msg || '操作失败')
     }
-    return res.result
+    return result
   } catch (e) {
     console.error(`云函数 ${name} 调用失败:`, e)
-    wx.showToast({ title: e.message || '网络错误', icon: 'none' })
+    const message = e && e.message ? e.message : '网络开小差了，请稍后重试'
+    if (!options.silent) wx.showToast({ title: message, icon: 'none', duration: 2200 })
     throw e
   }
 }
 
 /**
- * 获取当前用户 coupleId
+ * 为有副作用的请求生成幂等键，避免用户连点或网络重试造成重复写入。
  */
-function getCoupleId() {
-  const app = getApp()
-  return app.globalData.coupleId || ''
-}
-
-/**
- * 获取当前用户 openid
- */
-function getOpenid() {
-  const app = getApp()
-  return app.globalData.openid || ''
+function createRequestId(prefix = 'request') {
+  const random = Math.random().toString(36).slice(2, 10)
+  return `${prefix}_${Date.now()}_${random}`
 }
 
 /**
  * 上传图片到云存储
  */
 async function uploadImage(filePath) {
-  const ext = filePath.split('.').pop()
-  const cloudPath = `images/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+  const app = getApp()
+  if (app && typeof app.ensureReady === 'function') await app.ensureReady()
+  const match = String(filePath).match(/\.([a-zA-Z0-9]+)(?:\?|$)/)
+  const rawExt = match ? match[1].toLowerCase() : 'jpg'
+  const ext = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(rawExt) ? rawExt : 'jpg'
+  const coupleId = (app.globalData && app.globalData.coupleId) || 'unbound'
+  const cloudPath = `images/${coupleId}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`
   const res = await wx.cloud.uploadFile({
     cloudPath,
     filePath
@@ -57,17 +56,6 @@ async function uploadImage(filePath) {
 async function uploadImages(filePaths) {
   const tasks = filePaths.map(path => uploadImage(path))
   return Promise.all(tasks)
-}
-
-/**
- * 获取数据库引用
- */
-function getDb() {
-  return db
-}
-
-function getCommand() {
-  return _
 }
 
 async function getTempFileURL(fileID) {
@@ -85,11 +73,8 @@ async function getTempFileURL(fileID) {
 
 module.exports = {
   callFunction,
-  getCoupleId,
-  getOpenid,
+  createRequestId,
   uploadImage,
   uploadImages,
-  getTempFileURL,
-  getDb,
-  getCommand
+  getTempFileURL
 }

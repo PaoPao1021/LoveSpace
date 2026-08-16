@@ -37,7 +37,7 @@
   <!-- 添加弹窗 -->
   <van-popup show="{{showAdd}}" position="bottom" round custom-style="max-height: 85vh;" bind:close="onCloseAdd">
     <view class="add-popup">
-      <text class="popup-title">添加纪念日</text>
+      <text class="popup-title">{{editingId ? '编辑纪念日' : '添加纪念日'}}</text>
 
       <view class="form-group">
         <text class="form-label">名称</text>
@@ -70,7 +70,7 @@
 
       <view class="form-group flex-between">
         <text class="form-label">每年提醒</text>
-        <switch checked="{{form.isRepeat}}" bindchange="onRepeatChange" color="#E8D0D0" />
+        <switch checked="{{form.isRepeat}}" bindchange="onRepeatChange" color="#ECA8B4" />
       </view>
 
       <button class="btn-save" bindtap="onSave">保存</button>

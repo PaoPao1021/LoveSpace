@@ -1,4 +1,4 @@
-const { callFunction } = require('../../utils/cloud')
+const { callFunction, createRequestId } = require('../../utils/cloud')
 const { POINT_REASONS, getLevelByPoints } = require('../../utils/theme')
 
 Page({
@@ -29,7 +29,8 @@ Page({
     editingIndex: -1,
     // 兑换历史
     exchangeHistory: [],
-    showHistory: false
+    showHistory: false,
+    submitting: false
   },
 
   onShow() {
@@ -99,6 +100,7 @@ Page({
 
   // ===== 快速加分 =====
   async onGivePoints(e) {
+    if (this.data.submitting) return
     const reason = e.currentTarget.dataset.reason
     wx.showModal({
       title: `给TA加 ${reason.points} 积分`,
@@ -106,17 +108,24 @@ Page({
       editable: true,
       placeholderText: '补充说明（可选）',
       confirmText: '确认',
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
+          this.setData({ submitting: true })
           try {
             await callFunction('points', {
               action: 'add',
-              data: { amount: reason.points, reason: reason.label, note: res.content || '' }
+              data: {
+                amount: reason.points,
+                reason: reason.label,
+                note: res.content || '',
+                requestId: createRequestId('point')
+              }
             })
             wx.showToast({ title: '加分成功！', icon: 'success' })
             this.loadScore()
           } catch (e) { /* toast handled by callFunction */ }
+          finally { this.setData({ submitting: false }) }
         }
       }
     })
@@ -145,16 +154,27 @@ Page({
       content: `项目：${customForm.label}`,
       editable: true,
       placeholderText: '补充说明（可选）',
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
-          await callFunction('points', {
-            action: 'add',
-            data: { amount: points, reason: customForm.label, note: res.content || '' }
-          })
-          wx.showToast({ title: points > 0 ? '加分成功！' : '减分成功', icon: 'success' })
-          this.setData({ showCustom: false })
-          this.loadScore()
+          if (this.data.submitting) return
+          this.setData({ submitting: true })
+          try {
+            await callFunction('points', {
+              action: 'add',
+              data: {
+                amount: points,
+                reason: customForm.label,
+                note: res.content || '',
+                requestId: createRequestId('point')
+              }
+            })
+            wx.showToast({ title: points > 0 ? '加分成功！' : '减分成功', icon: 'success' })
+            this.setData({ showCustom: false })
+            this.loadScore()
+          } finally {
+            this.setData({ submitting: false })
+          }
         }
       }
     })
@@ -205,7 +225,7 @@ Page({
   onDeleteCustomReason(e) {
     const index = e.currentTarget.dataset.index
     wx.showModal({
-      title: '删除', content: '确定删除？', confirmColor: '#FF6B81',
+      title: '删除', content: '确定删除？', confirmColor: '#E85D75',
       success: (res) => {
         if (res.confirm) {
           const customReasons = [...this.data.customReasons]
@@ -252,7 +272,7 @@ Page({
   onDeleteCustomExchange(e) {
     const item = e.currentTarget.dataset.item
     wx.showModal({
-      title: '删除', content: `确定删除「${item.name}」？`, confirmColor: '#FF6B81',
+      title: '删除', content: `确定删除「${item.name}」？`, confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
           await callFunction('points', { action: 'deleteExchange', data: { id: item._id } })
@@ -273,16 +293,27 @@ Page({
       title: '确认兑换',
       content: `消耗 ${item.cost} 积分兑换「${item.name}」\n当前积分：${this.data.myScore}\n兑换后：${this.data.myScore - item.cost}`,
       confirmText: '确认兑换',
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
-          await callFunction('points', {
-            action: 'exchange',
-            data: { amount: item.cost, item: item.name, exchangeId: item._id || '' }
-          })
-          wx.showToast({ title: '兑换成功！', icon: 'success' })
-          this.loadScore()
-          this.loadExchangeHistory()
+          if (this.data.submitting) return
+          this.setData({ submitting: true })
+          try {
+            await callFunction('points', {
+              action: 'exchange',
+              data: {
+                amount: item.cost,
+                item: item.name,
+                exchangeId: item._id || '',
+                requestId: createRequestId('exchange')
+              }
+            })
+            wx.showToast({ title: '兑换成功！', icon: 'success' })
+            this.loadScore()
+            this.loadExchangeHistory()
+          } finally {
+            this.setData({ submitting: false })
+          }
         }
       }
     })

@@ -20,7 +20,7 @@ Page({
 
   onDelete() {
     wx.showModal({
-      title: '确认删除', confirmColor: '#FF6B81',
+      title: '确认删除', confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
           await callFunction('menu', { action: 'delete', data: { id: this.data.data._id } })

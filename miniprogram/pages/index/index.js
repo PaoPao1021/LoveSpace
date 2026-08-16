@@ -1,6 +1,6 @@
 const { callFunction } = require('../../utils/cloud')
 const { daysSince, formatDate, getNextAnniversaryDate, daysUntil, timeAgo } = require('../../utils/date')
-const { MOOD_TYPES, getMoodByType } = require('../../utils/theme')
+const { getMoodByType } = require('../../utils/theme')
 
 Page({
   data: {
@@ -11,253 +11,202 @@ Page({
     startDate: '',
     myAvatar: '',
     partnerAvatar: '',
-    myName: '',
-    partnerName: '',
+    myName: '我',
+    partnerName: 'TA',
     myMood: {},
     partnerMood: {},
+    moodSummary: '今天还没有打卡',
     nextAnniversary: null,
     recentList: [],
     notifications: [],
-    // 恋爱能量
     loveEnergy: 0,
-    energyLevel: '',
-    energyTip: '',
-    // 每日一句
-    dailyQuote: '',
-    // 贴纸导航
-    navItems: [
-      { emoji: '📅', label: '纪念日', bg: 'sticker-bg-blush', tap: 'goAnniversary' },
-      { emoji: '📸', label: '相册', bg: 'sticker-bg-cream', tap: 'goAlbum' },
-      { emoji: '💝', label: '能量', bg: 'sticker-bg-lavender', tap: 'goPoints' },
-      { emoji: '🍜', label: '点菜', bg: 'sticker-bg-mint', tap: 'goMenu' },
-      { emoji: '✅', label: '任务', bg: 'sticker-bg-sky', tap: 'goTasks' },
-      { emoji: '🌟', label: '愿望', bg: 'sticker-bg-peach', tap: 'goWishes' },
-      { emoji: '💌', label: '胶囊', bg: 'sticker-bg-blush', tap: 'goCapsule' },
-      { emoji: '📖', label: '时间轴', bg: 'sticker-bg-cream', tap: 'goTimeline' }
+    energyLevel: '正在萌芽',
+    energyTip: '从一次真诚互动开始',
+    dailyQuestion: {},
+    dailyQuestionStatus: '去回答',
+    fitnessSummary: {
+      teamProgress: 0,
+      myWorkouts: 0,
+      checkedIn: false,
+      partnerCheckedIn: false
+    },
+    fitnessCopy: '从一次打卡开始',
+    quickActions: [
+      { icon: '＋', label: '记录此刻', note: '照片与文字', url: '/pages/moment-edit/moment-edit', tone: 'rose' },
+      { icon: '✓', label: '共同任务', note: '一起完成', url: '/pages/tasks/tasks', tone: 'sage' },
+      { icon: '⌁', label: '今天吃什么', note: '替选择减负', url: '/pages/menu/menu', tone: 'sand' },
+      { icon: '☆', label: '愿望清单', note: '约定未来', url: '/pages/wishes/wishes', tone: 'lilac' },
+      { icon: '□', label: '时光胶囊', note: '写给未来', url: '/pages/capsule/capsule', tone: 'blue' },
+      { icon: '▧', label: '共同相册', note: '收藏回忆', url: '/pages/album/album', tab: true, tone: 'peach' }
     ]
   },
 
-  onShow() {
-    this.loadData()
-    this.setAtmosphere()
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 0 })
-    }
-  },
-
-  setAtmosphere() {
-    const h = new Date().getHours()
-    let atmoClass = ''
-    if (h >= 20 || h < 6) atmoClass = 'atmosphere-night'
-    else if (h >= 17) atmoClass = 'atmosphere-dusk'
-    else atmoClass = 'atmosphere-day'
-    // 应用到页面
-    const pageEl = '.page'
-    this.setData({ atmoClass })
+  async onShow() {
+    const app = getApp()
+    await app.ensureReady()
+    await this.loadData()
+    const tabBar = typeof this.getTabBar === 'function' && this.getTabBar()
+    if (tabBar) tabBar.setData({ selected: 0 })
   },
 
   async loadData() {
     const app = getApp()
-    const coupleId = app.globalData.coupleId
-
+    const coupleId = app.globalData.coupleId || ''
     if (!coupleId) {
-      this.setData({ loaded: true, coupleId: '' })
+      this.setData({ loaded: true, coupleId: '', greeting: this.getGreeting() })
       return
     }
 
+    this.setData({ coupleId, greeting: this.getGreeting() })
     try {
-      const coupleRes = await callFunction('couple', { action: 'getInfo' })
-      if (coupleRes.code === 0 && coupleRes.couple) {
-        const { couple, user, partner } = coupleRes
-        const startDate = couple.startDate
-        const days = daysSince(startDate)
-
-        this.setData({
-          coupleId,
-          daysTogether: days,
-          startDate,
-          greeting: this.getGreeting(),
-          dailyQuote: this.getRandomQuote(),
-          myAvatar: (user && user.avatarUrl) || this.data.myAvatar || '',
-          partnerAvatar: (partner && partner.avatarUrl) || this.data.partnerAvatar || '',
-          myName: (user && user.nickName) ? user.nickName : '我',
-          partnerName: (partner && partner.nickName) ? partner.nickName : 'TA',
-          loaded: true
-        })
-
-        this.loadMood()
-        this.loadAnniversaries()
-        this.loadRecent()
-        this.loadNotifications()
-        this.loadLoveEnergy()
-      } else {
-        this.setData({ loaded: true })
+      const result = await callFunction('couple', { action: 'getInfo' })
+      if (!result.couple) {
+        this.setData({ loaded: true, coupleId: '' })
+        return
       }
-    } catch (e) {
-      console.error(e)
+
+      const { couple, user, partner } = result
+      this.setData({
+        daysTogether: daysSince(couple.startDate),
+        startDate: formatDate(couple.startDate, 'YYYY.MM.DD'),
+        myAvatar: (user && user.avatarUrl) || '',
+        partnerAvatar: (partner && partner.avatarUrl) || '',
+        myName: (user && user.nickName) || '我',
+        partnerName: (partner && partner.nickName) || 'TA',
+        loaded: true
+      })
+
+      await Promise.allSettled([
+        this.loadDailyQuestion(),
+        this.loadMood(),
+        this.loadAnniversaries(),
+        this.loadRecent(),
+        this.loadNotifications(),
+        this.loadLoveEnergy(),
+        this.loadFitness()
+      ])
+    } catch (error) {
+      console.error('首页加载失败:', error)
       this.setData({ loaded: true })
     }
   },
 
   getGreeting() {
-    const h = new Date().getHours()
-    if (h < 6) return '夜深了，晚安'
-    if (h < 9) return '早安，新的一天'
-    if (h < 12) return '上午好'
-    if (h < 14) return '中午好'
-    if (h < 18) return '下午好'
-    if (h < 21) return '傍晚好'
-    return '晚上好'
+    const hour = new Date().getHours()
+    if (hour < 6) return '夜深了，记得好好休息'
+    if (hour < 11) return '早安，今天也好好相爱'
+    if (hour < 14) return '午间好，留一点时间给彼此'
+    if (hour < 18) return '下午好，分享今天的小事吧'
+    if (hour < 22) return '晚上好，聊聊今天的心情'
+    return '晚安，把今天温柔收好'
   },
 
-  getRandomQuote() {
-    const quotes = [
-      '你是我见过的最美的风景',
-      '今天也想见到你',
-      '和你在一起的每一天都值得纪念',
-      '你笑起来真好看',
-      '谢谢你来到我的世界',
-      '今天比昨天更喜欢你了',
-      '想念是会呼吸的甜',
-      '你是我最大的幸运'
-    ]
-    return quotes[Math.floor(Math.random() * quotes.length)]
+  async loadDailyQuestion() {
+    const result = await callFunction('daily-question', { action: 'getToday' }, { silent: true })
+    let status = '去回答'
+    if (result.bothAnswered) status = '已揭晓'
+    else if (result.myAnswer) status = '等 TA 回答'
+    else if (result.partnerAnswered) status = 'TA 已回答'
+    this.setData({ dailyQuestion: result, dailyQuestionStatus: status })
   },
 
   async loadMood() {
-    try {
-      const [myRes, partnerRes] = await Promise.all([
-        callFunction('mood', { action: 'getToday' }),
-        callFunction('mood', { action: 'getPartner', data: {} })
-      ])
-      const myMood = myRes.data ? getMoodByType(myRes.data.moodType) : {}
-      const partnerMood = partnerRes.data ? getMoodByType(partnerRes.data.moodType) : {}
-      this.setData({
-        myMood: { emoji: myMood.emoji || '😶', label: myMood.label || '未打卡' },
-        partnerMood: { emoji: partnerMood.emoji || '😶', label: partnerMood.label || '未打卡' }
-      })
-    } catch (e) {
-      console.error(e)
-    }
+    const [mine, partner] = await Promise.all([
+      callFunction('mood', { action: 'getToday' }, { silent: true }),
+      callFunction('mood', { action: 'getPartner', data: {} }, { silent: true })
+    ])
+    const myMood = mine.data ? getMoodByType(mine.data.moodType) : {}
+    const partnerMood = partner.data ? getMoodByType(partner.data.moodType) : {}
+    const summary = myMood.label && partnerMood.label ? `${myMood.label} / ${partnerMood.label}` : myMood.label ? `我：${myMood.label}` : partnerMood.label ? `TA：${partnerMood.label}` : '今天还没有打卡'
+    this.setData({ myMood, partnerMood, moodSummary: summary })
   },
 
   async loadAnniversaries() {
-    try {
-      const res = await callFunction('anniversary', { action: 'list' })
-      if (res.code === 0 && res.list.length > 0) {
-        let nearest = null
-        let minDays = Infinity
-        for (const ann of res.list) {
-          const nextDate = getNextAnniversaryDate(ann.date)
-          const d = daysUntil(nextDate)
-          if (d >= 0 && d < minDays) {
-            minDays = d
-            nearest = {
-              name: ann.name,
-              date: formatDate(nextDate, 'MM月DD日'),
-              daysLeft: d,
-              isToday: d === 0
-            }
-          }
-        }
-        this.setData({ nextAnniversary: nearest })
+    const result = await callFunction('anniversary', { action: 'list' }, { silent: true })
+    let nearest = null
+    ;(result.list || []).forEach(item => {
+      const nextDate = item.isRepeat === false ? new Date(item.date) : getNextAnniversaryDate(item.date)
+      const daysLeft = daysUntil(nextDate)
+      if (daysLeft >= 0 && (!nearest || daysLeft < nearest.daysLeft)) {
+        nearest = { name: item.name, date: formatDate(nextDate, 'MM月DD日'), daysLeft, isToday: daysLeft === 0 }
       }
-    } catch (e) {
-      console.error(e)
-    }
+    })
+    this.setData({ nextAnniversary: nearest })
   },
 
   async loadRecent() {
-    try {
-      const res = await callFunction('moments', { action: 'list', data: { pageSize: 3 } })
-      if (res.code === 0 && res.list.length > 0) {
-        const recentList = res.list.slice(0, 3).map(item => ({
-          _id: item._id,
-          text: item.title || item.content.slice(0, 60),
-          time: timeAgo(item.createdAt),
-          hasImage: !!(item.images && item.images.length > 0),
-          image: item.images && item.images.length > 0 ? item.images[0] : ''
-        }))
-        this.setData({ recentList })
+    const result = await callFunction('moments', { action: 'list', data: { pageSize: 3 } }, { silent: true })
+    const recentList = (result.list || []).slice(0, 3).map(item => {
+      const content = item.title || item.content || '共同记下的一刻'
+      return {
+        _id: item._id,
+        text: content.slice(0, 36),
+        time: timeAgo(item.createdAt),
+        hasImage: Boolean(item.images && item.images.length),
+        image: item.images && item.images[0]
       }
-    } catch (e) {
-      console.error(e)
-    }
+    })
+    this.setData({ recentList })
   },
 
   async loadLoveEnergy() {
-    try {
-      const res = await callFunction('points', { action: 'getScore' })
-      if (res.code === 0) {
-        const total = (res.myScore || 0) + (res.partnerScore || 0)
-        const percent = Math.min(100, Math.floor(total / 20))
-        let level = '初绽'
-        let tip = '多互动，让爱意生长'
-        if (percent >= 90) { level = '满糖'; tip = '甜度爆表，继续甜蜜~'; }
-        else if (percent >= 70) { level = '浓情'; tip = '爱的能量正在发光'; }
-        else if (percent >= 40) { level = '升温'; tip = '再多一点点互动吧'; }
-        else if (percent >= 15) { level = '萌芽'; tip = '每天一点小互动就很棒'; }
+    const result = await callFunction('points', { action: 'getScore' }, { silent: true })
+    const total = Math.max(0, Number(result.myScore || 0) + Number(result.partnerScore || 0))
+    const percent = Math.min(100, Math.round(total / 20))
+    let energyLevel = '正在萌芽'
+    let energyTip = '从一次真诚互动开始'
+    if (percent >= 85) { energyLevel = '默契发光'; energyTip = '你们正在稳定回应彼此' }
+    else if (percent >= 60) { energyLevel = '持续升温'; energyTip = '爱被放进了具体行动里' }
+    else if (percent >= 30) { energyLevel = '温柔生长'; energyTip = '一点一滴都算数' }
+    this.setData({ loveEnergy: percent, energyLevel, energyTip })
+  },
 
-        this.setData({
-          loveEnergy: percent,
-          energyLevel: level,
-          energyTip: tip
-        })
-      }
-    } catch (e) {
-      console.error(e)
-    }
+  async loadFitness() {
+    const result = await callFunction('fitness', { action: 'dashboard' }, { silent: true })
+    const teamProgress = Number(result.teamProgress || 0)
+    let fitnessCopy = '从一次打卡开始'
+    if (teamProgress >= 85) fitnessCopy = '这周节奏很稳，记得认真恢复'
+    else if (teamProgress >= 60) fitnessCopy = '共同节奏正在形成'
+    else if (teamProgress >= 30) fitnessCopy = '今天再一起完成一小步'
+    this.setData({
+      fitnessSummary: {
+        teamProgress,
+        myWorkouts: Number(result.myStats && result.myStats.workouts || 0),
+        checkedIn: Boolean(result.todayCheckin),
+        partnerCheckedIn: Boolean(result.partnerCheckedIn)
+      },
+      fitnessCopy
+    })
   },
 
   async loadNotifications() {
-    try {
-      const res = await callFunction('notification', { action: 'list' })
-      if (res.code === 0) {
-        this.setData({ notifications: res.list.slice(0, 2) })
-      }
-    } catch (e) {
-      console.error(e)
-    }
+    const result = await callFunction('notification', { action: 'list' }, { silent: true })
+    this.setData({ notifications: (result.list || []).slice(0, 2) })
   },
 
-  onNotificationTap(e) {
-    const item = e.currentTarget.dataset.item
-    callFunction('notification', { action: 'read', data: { id: item._id } })
-    if (item.type === 'order') {
-      wx.navigateTo({ url: '/pages/order-history/order-history' })
-    }
-    const notifications = this.data.notifications.filter(n => n._id !== item._id)
-    this.setData({ notifications })
+  onNotificationTap(event) {
+    const item = event.currentTarget.dataset.item
+    callFunction('notification', { action: 'read', data: { id: item._id } }, { silent: true }).catch(() => {})
+    if (item.type === 'order') wx.navigateTo({ url: '/pages/order-history/order-history' })
+    if (item.type === 'fitness') wx.navigateTo({ url: '/pages/fitness/fitness' })
+    this.setData({ notifications: this.data.notifications.filter(note => note._id !== item._id) })
   },
 
-  goLogin() {
-    wx.navigateTo({ url: '/pages/login/login' })
+  onPullDownRefresh() {
+    this.loadData().finally(() => wx.stopPullDownRefresh())
   },
-  goMood() {
-    wx.navigateTo({ url: '/pages/mood/mood' })
+
+  goQuickAction(event) {
+    const { url, tab } = event.currentTarget.dataset
+    if (tab) wx.switchTab({ url })
+    else wx.navigateTo({ url })
   },
-  goAnniversary() {
-    wx.navigateTo({ url: '/pages/anniversary/anniversary' })
-  },
-  goAlbum() {
-    wx.switchTab({ url: '/pages/album/album' })
-  },
-  goPoints() {
-    wx.navigateTo({ url: '/pages/points/points' })
-  },
-  goMenu() {
-    wx.navigateTo({ url: '/pages/menu/menu' })
-  },
-  goTasks() {
-    wx.navigateTo({ url: '/pages/tasks/tasks' })
-  },
-  goCapsule() {
-    wx.navigateTo({ url: '/pages/capsule/capsule' })
-  },
-  goWishes() {
-    wx.navigateTo({ url: '/pages/wishes/wishes' })
-  },
-  goTimeline() {
-    wx.navigateTo({ url: '/pages/timeline/timeline' })
-  }
+  goLogin() { wx.navigateTo({ url: '/pages/login/login' }) },
+  goDailyQuestion() { wx.navigateTo({ url: '/pages/daily-question/daily-question' }) },
+  goMonthlyReport() { wx.navigateTo({ url: '/pages/monthly-report/monthly-report' }) },
+  goFitness() { wx.navigateTo({ url: '/pages/fitness/fitness' }) },
+  goMood() { wx.navigateTo({ url: '/pages/mood/mood' }) },
+  goAnniversary() { wx.navigateTo({ url: '/pages/anniversary/anniversary' }) },
+  goTimeline() { wx.navigateTo({ url: '/pages/timeline/timeline' }) },
+  goMoments() { wx.switchTab({ url: '/pages/moments/moments' }) }
 })

@@ -6,7 +6,7 @@
 .login-page {
   min-height: 100vh;
   padding: 60rpx 32rpx;
-  background: linear-gradient(175deg, #FCFAF7 0%, #F7F2ED 50%, #F0ECF8 100%);
+  background: linear-gradient(175deg, #F8F5F3 0%, #F7F2ED 50%, #F0ECF8 100%);
   position: relative;
   overflow: hidden;
 }
@@ -17,7 +17,7 @@
   position: absolute;
   top: -180rpx; right: -150rpx;
   width: 460rpx; height: 460rpx;
-  background: radial-gradient(circle, rgba(232,208,208,0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(232,93,117,0.18) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -49,7 +49,7 @@
 .app-name {
   display: block;
   font-size: 52rpx; font-weight: 800;
-  background: linear-gradient(135deg, #B89A9A, #D4C5B0);
+  background: linear-gradient(135deg, #A05A67, #D4C5B0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 8rpx;
@@ -189,7 +189,7 @@
 }
 .code-text {
   font-size: 68rpx; font-weight: 800;
-  background: linear-gradient(135deg, #B89A9A, #D4C5B0);
+  background: linear-gradient(135deg, #A05A67, #D4C5B0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 16rpx;
@@ -199,7 +199,7 @@
 
 /* 返回链接 */
 .link-text {
-  text-align: center; color: #B89A9A;
+  text-align: center; color: #A05A67;
   font-size: 28rpx; margin-top: 24rpx; font-weight: 600;
   letter-spacing: 1rpx;
 }

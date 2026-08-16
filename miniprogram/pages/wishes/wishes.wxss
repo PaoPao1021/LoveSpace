@@ -9,7 +9,7 @@
   border: 2rpx dashed rgba(200,180,160,0.3);
 }
 .add-entry-icon { font-size: 30rpx; }
-.add-entry-text { font-size: 28rpx; color: #B89A9A; font-weight: 500; }
+.add-entry-text { font-size: 28rpx; color: #A05A67; font-weight: 500; }
 
 .wish-list { display: flex; flex-direction: column; gap: 12rpx; }
 
@@ -37,7 +37,7 @@
   position: fixed; right: 40rpx;
   bottom: calc(140rpx + env(safe-area-inset-bottom));
   width: 96rpx; height: 96rpx; border-radius: 50%;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 10rpx 28rpx rgba(200,160,160,0.22);
   z-index: 20;
@@ -51,7 +51,7 @@
 .form-input { width: 100%; height: 80rpx; background: #F7F5F2; border-radius: var(--radius-card); padding: 0 24rpx; font-size: 28rpx; box-sizing: border-box; }
 .btn-save {
   width: 100%; height: 88rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFF; border: none; border-radius: var(--radius-pill);
   font-size: 30rpx; font-weight: 600; letter-spacing: 2rpx;
   display: flex; align-items: center; justify-content: center;

@@ -1,0 +1,30 @@
+.report-page { min-height: 100vh; box-sizing: border-box; padding: 38rpx 30rpx calc(64rpx + env(safe-area-inset-bottom)); background: #f8f5f3; }
+.report-head { display: flex; align-items: flex-end; justify-content: space-between; margin: 12rpx 4rpx 34rpx; }
+.report-kicker { display: block; font-size: 20rpx; letter-spacing: 4rpx; color: #a05a67; font-weight: 700; margin-bottom: 10rpx; }
+.report-title { display: block; font-size: 40rpx; color: #2d2729; font-weight: 700; }
+.month-picker { padding: 14rpx 22rpx; background: #fff; border-radius: 999rpx; color: #655b5e; font-size: 24rpx; box-shadow: 0 6rpx 20rpx rgba(55,35,40,.05); }
+.score-card { display: flex; align-items: center; gap: 32rpx; padding: 36rpx; border-radius: 36rpx; color: #fff; background: linear-gradient(145deg, #372f32, #201c1e); box-shadow: 0 18rpx 54rpx rgba(45,39,41,.16); }
+.score-ring { width: 176rpx; height: 176rpx; border-radius: 50%; padding: 12rpx; box-sizing: border-box; flex-shrink: 0; }
+.score-core { width: 100%; height: 100%; border-radius: 50%; background: #2b2527; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.score-number { font-size: 56rpx; line-height: 1; font-weight: 750; }
+.score-unit { font-size: 20rpx; color: rgba(255,255,255,.55); margin-top: 8rpx; }
+.score-copy { flex: 1; }
+.score-label { display: block; font-size: 21rpx; color: #e9a7b3; letter-spacing: 2rpx; }
+.score-title { display: block; font-size: 32rpx; font-weight: 700; margin: 12rpx 0; }
+.score-desc { display: block; color: rgba(255,255,255,.62); font-size: 23rpx; line-height: 1.6; }
+.report-section { margin-top: 40rpx; }
+.section-title { display: block; font-size: 30rpx; color: #2d2729; font-weight: 700; margin: 0 4rpx 20rpx; }
+.report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18rpx; }
+.metric-card { min-height: 220rpx; box-sizing: border-box; padding: 28rpx; border-radius: 28rpx; background: #fff; box-shadow: 0 8rpx 28rpx rgba(60,40,45,.045); }
+.metric-card.accent { background: #f8e4e8; }
+.metric-value { display: block; font-size: 54rpx; line-height: 1.2; font-weight: 750; color: #2d2729; }
+.metric-label { display: block; font-size: 25rpx; color: #4c4245; font-weight: 650; margin-top: 16rpx; }
+.metric-note { display: block; font-size: 21rpx; color: #9b9194; line-height: 1.5; margin-top: 8rpx; }
+.insight-card { display: flex; align-items: center; gap: 26rpx; padding: 30rpx; margin-top: 24rpx; border-radius: 28rpx; background: #fff; }
+.insight-emoji { font-size: 58rpx; }
+.insight-label { display: block; font-size: 22rpx; color: #9b9194; }
+.insight-title { display: block; font-size: 30rpx; color: #2d2729; font-weight: 700; margin-top: 6rpx; }
+.anniversary-row { display: flex; justify-content: space-between; padding: 26rpx 28rpx; margin-bottom: 12rpx; border-radius: 24rpx; background: #fff; font-size: 25rpx; color: #51474a; }
+.report-ending { text-align: center; color: #aaa0a2; font-size: 22rpx; line-height: 1.6; margin: 54rpx 30rpx 10rpx; }
+.score-skeleton { height: 250rpx; border-radius: 36rpx; }
+.tile-skeleton { height: 220rpx; margin-top: 26rpx; border-radius: 28rpx; }

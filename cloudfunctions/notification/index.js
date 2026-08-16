@@ -1,25 +1,48 @@
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
-const _ = db.command
+const crypto = require('crypto')
+const ORDER_TEMPLATE_ID = process.env.ORDER_TEMPLATE_ID || 'Q1IwjM7zcg5qC16G5sTmNBCfMkTZ6AYDeyZhqm3nTH8'
+const ANNIVERSARY_TEMPLATE_ID = process.env.ANNIVERSARY_TEMPLATE_ID || ''
 
 exports.main = async (event) => {
-  const wxContext = cloud.getWXContext()
-  const openid = wxContext.OPENID
-  const { action, data } = event
-
-  switch (action) {
-    case 'checkReminders': return checkAnniversaryReminders()
-    case 'orderNotify': return orderNotify(openid, data)
-    case 'list': return listNotifications(openid)
-    case 'read': return markRead(openid, data)
-    default: return { code: -1, message: '未知操作' }
+  try {
+    const openid = cloud.getWXContext().OPENID
+    const { action, data = {} } = event || {}
+    const isTimer = !openid && (
+      process.env.TRIGGER_SRC === 'timer' ||
+      event.Type === 'Timer' ||
+      event.type === 'timer' ||
+      Boolean(event.TriggerName || event.triggerName)
+    )
+    if (isTimer) return checkAnniversaryReminders()
+    if (action === 'checkReminders') {
+      return { code: -1, message: '仅允许定时触发器调用' }
+    }
+    if (!openid) return { code: -1, message: '登录状态无效' }
+    switch (action) {
+      case 'orderNotify': return orderNotify(openid, data)
+      case 'list': return listNotifications(openid)
+      case 'read': return markRead(openid, data)
+      default: return { code: -1, message: '未知操作' }
+    }
+  } catch (error) {
+    console.error('notification failed:', error)
+    return { code: -1, message: error.message || '通知服务暂时不可用' }
   }
+}
+
+function hashId(value) {
+  return crypto.createHash('sha256').update(value).digest('hex').slice(0, 32)
 }
 
 // 下单通知
 async function orderNotify(openid, data) {
-  const { items, totalPrice } = data
+  if (!data.orderId) return { code: -1, message: '缺少订单ID' }
+  const order = await db.collection('orders').doc(data.orderId).get()
+  if (!order.data || order.data.orderedBy !== openid) return { code: -1, message: '订单不存在或无权通知' }
+  const { items, totalPrice } = order.data
+  if (!Array.isArray(items) || !items.length || items.length > 30) return { code: -1, message: '通知内容无效' }
 
   // 获取对方 openid
   const partnerId = await getPartnerOpenid(openid)
@@ -27,33 +50,44 @@ async function orderNotify(openid, data) {
 
   // 获取发送者昵称
   const senderName = await getNickName(openid)
-  const itemNames = items.map(i => i.name).join('、')
+  const itemNames = items.map(i => String(i.name || '').slice(0, 20)).filter(Boolean).join('、')
 
-  // 存入通知表
-  await db.collection('notifications').add({
-    data: {
-      coupleId: await getCoupleId(openid),
+  // 同一个订单只生成一次站内通知。
+  const notificationId = hashId(`order-notification:${data.orderId}:${partnerId}`)
+  let duplicated = false
+  await db.runTransaction(async transaction => {
+    const ref = transaction.collection('notifications').doc(notificationId)
+    const existing = await ref.get().catch(() => null)
+    if (existing && existing.data) {
+      duplicated = true
+      return
+    }
+    await ref.set({ data: {
+      coupleId: order.data.coupleId,
       toUser: partnerId,
       fromUser: openid,
       fromName: senderName,
       type: 'order',
       title: 'TA想点菜',
-      content: `${senderName}想吃${itemNames}，快来做吧~`,
+      content: `${senderName}想和你一起吃：${itemNames}`.slice(0, 100),
+      relatedId: data.orderId,
       read: false,
       createdAt: db.serverDate()
-    }
+    } })
   })
+  if (duplicated) return { code: 0, duplicated: true }
 
   // 发送订阅消息
   try {
+    if (!ORDER_TEMPLATE_ID) return { code: 0 }
     await cloud.openapi.subscribeMessage.send({
       touser: partnerId,
-      templateId: 'Q1IwjM7zcg5qC16G5sTmNBCfMkTZ6AYDeyZhqm3nTH8',
+      templateId: ORDER_TEMPLATE_ID,
       page: 'pages/index/index',
       data: {
         thing1: { value: senderName + '想点菜' },
         thing2: { value: itemNames.slice(0, 20) },
-        amount3: { value: totalPrice + '元' }
+        amount3: { value: Math.max(0, Number(totalPrice) || 0) + '元' }
       }
     })
   } catch (e) {
@@ -80,6 +114,9 @@ async function listNotifications(openid) {
 // 标记已读
 async function markRead(openid, data) {
   const { id } = data
+  if (!id) return { code: -1, message: '缺少通知ID' }
+  const notification = await db.collection('notifications').doc(id).get()
+  if (!notification.data || notification.data.toUser !== openid) return { code: -1, message: '无权操作该通知' }
   await db.collection('notifications').doc(id).update({
     data: { read: true }
   })
@@ -112,63 +149,103 @@ async function getNickName(openid) {
   }
 }
 
-function formatDate(date) {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  const h = String(date.getHours()).padStart(2, '0')
-  const min = String(date.getMinutes()).padStart(2, '0')
-  return `${y}-${m}-${d} ${h}:${min}`
+async function fetchAll(collection, where) {
+  const list = []
+  let skip = 0
+  while (true) {
+    const page = await db.collection(collection).where(where).skip(skip).limit(100).get()
+    list.push(...page.data)
+    if (page.data.length < 100) return list
+    skip += 100
+  }
+}
+
+function getChinaToday() {
+  const now = new Date(Date.now() + 8 * 60 * 60 * 1000)
+  const year = now.getUTCFullYear()
+  const month = now.getUTCMonth() + 1
+  const day = now.getUTCDate()
+  return {
+    year,
+    month,
+    day,
+    date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+    utcDay: Date.UTC(year, month - 1, day)
+  }
 }
 
 // 纪念日提醒（保留原有功能）
 async function checkAnniversaryReminders() {
-  const today = new Date()
-  const todayStr = today.toISOString().slice(0, 10)
+  const today = getChinaToday()
+  const couples = await fetchAll('couples', { status: 'active' })
+  let created = 0
 
-  const couples = await db.collection('couples')
-    .where({ status: 'active' })
-    .get()
+  for (const couple of couples) {
+    const anniversaries = await fetchAll('anniversaries', { coupleId: couple._id })
 
-  for (const couple of couples.data) {
-    const anniversaries = await db.collection('anniversaries')
-      .where({ coupleId: couple._id })
-      .get()
+    for (const ann of anniversaries) {
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ann.date || ''))
+      if (!match) continue
+      let year = ann.isRepeat ? today.year : Number(match[1])
+      const month = Number(match[2])
+      const day = Number(match[3])
+      let target = Date.UTC(year, month - 1, day)
+      if (ann.isRepeat && target < today.utcDay) target = Date.UTC(year + 1, month - 1, day)
+      const daysUntil = Math.round((target - today.utcDay) / 86400000)
+      const remindDaysBefore = Math.min(365, Math.max(0, Number(ann.remindDaysBefore) || 0))
 
-    for (const ann of anniversaries.data) {
-      const annDate = new Date(ann.date)
-      const thisYearAnn = new Date(today.getFullYear(), annDate.getMonth(), annDate.getDate())
-      if (thisYearAnn < today && ann.isRepeat) {
-        thisYearAnn.setFullYear(today.getFullYear() + 1)
-      }
-
-      const daysUntil = Math.ceil((thisYearAnn - today) / (1000 * 60 * 60 * 24))
-
-      if (daysUntil >= 0 && daysUntil <= ann.remindDaysBefore) {
+      if (daysUntil >= 0 && daysUntil <= remindDaysBefore) {
         if (couple.creator) {
-          await sendReminder(couple.creator, ann.name, daysUntil)
+          created += (await sendReminder(couple.creator, couple._id, ann, daysUntil, today.date)) ? 1 : 0
         }
         if (couple.partner) {
-          await sendReminder(couple.partner, ann.name, daysUntil)
+          created += (await sendReminder(couple.partner, couple._id, ann, daysUntil, today.date)) ? 1 : 0
         }
       }
     }
   }
-  return { code: 0 }
+  return { code: 0, created }
 }
 
-async function sendReminder(openid, annName, daysUntil) {
+async function sendReminder(openid, coupleId, anniversary, daysUntil, todayStr) {
+  const reminderId = hashId(`anniversary:${anniversary._id}:${openid}:${todayStr}`)
+  let duplicated = false
+  await db.runTransaction(async transaction => {
+    const ref = transaction.collection('notifications').doc(reminderId)
+    const existing = await ref.get().catch(() => null)
+    if (existing && existing.data) {
+      duplicated = true
+      return
+    }
+    const timing = daysUntil === 0 ? '就是今天' : `还有 ${daysUntil} 天`
+    await ref.set({ data: {
+      coupleId,
+      toUser: openid,
+      fromUser: '',
+      fromName: 'LoveSpace',
+      type: 'anniversary',
+      title: '纪念日提醒',
+      content: `${anniversary.name}${timing}`.slice(0, 100),
+      relatedId: anniversary._id,
+      read: false,
+      createdAt: db.serverDate()
+    } })
+  })
+  if (duplicated) return false
+
   try {
+    if (!ANNIVERSARY_TEMPLATE_ID) return true
     await cloud.openapi.subscribeMessage.send({
       touser: openid,
-      templateId: '',
+      templateId: ANNIVERSARY_TEMPLATE_ID,
       page: 'pages/index/index',
       data: {
-        thing1: { value: annName },
+        thing1: { value: String(anniversary.name || '纪念日').slice(0, 20) },
         number2: { value: daysUntil }
       }
     })
   } catch (e) {
     console.error('发送提醒失败:', e)
   }
+  return true
 }

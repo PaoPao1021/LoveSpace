@@ -1,100 +1,57 @@
-<bg-layer />
-<floating-particles count="5" type="sparkle" />
-<view class="page">
-  <!-- 加载中 -->
-  <view class="loading-block" wx:if="{{loading}}">
-    <view class="loading-spinner"></view>
+<view class="profile-page">
+  <view class="profile-loading" wx:if="{{loading}}"><view class="skeleton profile-skeleton"></view><view class="skeleton menu-skeleton"></view></view>
+
+  <view class="profile-unbound" wx:elif="{{!isBound}}">
+    <view class="unbound-mark">LS</view>
+    <text class="unbound-title">还差一个人，才是 LoveSpace</text>
+    <text class="unbound-copy">创建空间或输入 TA 的邀请码，开始你们的共同记录。</text>
+    <button class="unbound-action" bindtap="goLogin">开始绑定</button>
   </view>
 
-  <block wx:if="{{!loading}}">
-    <!-- 用户信息 · 贴纸头部 -->
-    <view class="profile-header breath-card">
-      <view class="tape-piece"></view>
-      <view class="cuddle-avatars">
-        <view class="avatar-edit-wrap" bindtap="onTapAvatar">
-          <image class="avatar my-avatar" src="{{myAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
-          <view class="avatar-edit-badge">
-            <text class="avatar-edit-icon">📷</text>
-          </view>
+  <block wx:else>
+    <view class="profile-hero">
+      <text class="profile-kicker">OUR SPACE</text>
+      <view class="couple-avatars">
+        <view class="avatar-wrap" bindtap="onTapAvatar">
+          <image class="profile-avatar" src="{{myAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+          <view class="edit-badge">＋</view>
         </view>
-        <view class="hero-heart-wrap heartbeat">
-          <text class="hero-heart">💕</text>
-        </view>
-        <image class="avatar partner-avatar" src="{{partnerAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="avatar-connector"><view></view><text>♥</text><view></view></view>
+        <image class="profile-avatar" src="{{partnerAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
       </view>
-      <view class="name-row">
-        <text class="profile-name my-name" bindtap="onTapNickname">{{myName}}</text>
-        <text class="name-edit-hint" bindtap="onTapNickname">✏️</text>
-        <text class="name-separator"> & </text>
-        <text class="profile-name">{{partnerName}}</text>
-      </view>
-      <text class="profile-days">在一起 {{daysTogether}} 天</text>
+      <view class="profile-names"><text bindtap="onTapNickname">{{myName}}</text><text class="and"> & </text><text>{{partnerName}}</text></view>
+      <text class="profile-days">共同走过 {{daysTogether}} 天</text>
     </view>
 
-    <!-- 功能入口 -->
-    <view class="menu-group">
-      <view class="menu-item" bindtap="goPage" data-url="/pages/anniversary/anniversary">
-        <text class="menu-icon">📅</text>
-        <text class="menu-label">纪念日</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <view class="menu-item" bindtap="goPage" data-url="/pages/mood/mood">
-        <text class="menu-icon">😊</text>
-        <text class="menu-label">心情打卡</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <view class="menu-item" bindtap="goPage" data-url="/pages/points/points">
-        <text class="menu-icon">⭐</text>
-        <text class="menu-label">爱心积分</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <view class="menu-item" bindtap="goPage" data-url="/pages/menu/menu">
-        <text class="menu-icon">🍜</text>
-        <text class="menu-label">今天吃什么</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <view class="menu-item" bindtap="goPage" data-url="/pages/tasks/tasks">
-        <text class="menu-icon">✅</text>
-        <text class="menu-label">情侣任务</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <view class="menu-item" bindtap="goPage" data-url="/pages/wishes/wishes">
-        <text class="menu-icon">🌟</text>
-        <text class="menu-label">愿望清单</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <view class="menu-item" bindtap="goPage" data-url="/pages/capsule/capsule">
-        <text class="menu-icon">💌</text>
-        <text class="menu-label">时光胶囊</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <view class="menu-item" bindtap="goPage" data-url="/pages/thanks/thanks">
-        <text class="menu-icon">🙏</text>
-        <text class="menu-label">感谢墙</text>
-        <text class="menu-arrow">›</text>
-      </view>
-      <view class="menu-item" bindtap="goPage" data-url="/pages/timeline/timeline">
-        <text class="menu-icon">📖</text>
-        <text class="menu-label">回忆时间轴</text>
-        <text class="menu-arrow">›</text>
-      </view>
+    <view class="featured-links">
+      <view class="featured-card question" bindtap="goPage" data-url="/pages/daily-question/daily-question"><text class="featured-kicker">每天 5 分钟</text><text class="featured-title">今日问答</text><text class="featured-arrow">→</text></view>
+      <view class="featured-card report" bindtap="goPage" data-url="/pages/monthly-report/monthly-report"><text class="featured-kicker">看见关系变化</text><text class="featured-title">关系月报</text><text class="featured-arrow">→</text></view>
     </view>
 
-    <view class="menu-group">
-      <view class="menu-item" bindtap="goPage" data-url="/pages/settings/settings">
-        <text class="menu-icon">⚙️</text>
-        <text class="menu-label">设置</text>
-        <text class="menu-arrow">›</text>
-      </view>
+    <text class="group-title">共同生活</text>
+    <view class="profile-menu">
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/anniversary/anniversary"><view class="menu-symbol rose">◇</view><text class="menu-label">纪念日</text><text class="menu-note">重要日期</text><text class="menu-arrow">›</text></view>
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/mood/mood"><view class="menu-symbol sand">◌</view><text class="menu-label">心情记录</text><text class="menu-note">彼此看见</text><text class="menu-arrow">›</text></view>
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/tasks/tasks"><view class="menu-symbol sage">✓</view><text class="menu-label">共同任务</text><text class="menu-note">一起完成</text><text class="menu-arrow">›</text></view>
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/menu/menu"><view class="menu-symbol peach">⌁</view><text class="menu-label">今天吃什么</text><text class="menu-note">共同点菜</text><text class="menu-arrow">›</text></view>
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/points/points"><view class="menu-symbol lilac">♡</view><text class="menu-label">爱心积分</text><text class="menu-note">让付出被看见</text><text class="menu-arrow">›</text></view>
+    </view>
+
+    <text class="group-title">珍藏与互动</text>
+    <view class="profile-menu">
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/wishes/wishes"><view class="menu-symbol blue">☆</view><text class="menu-label">愿望清单</text><text class="menu-arrow">›</text></view>
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/capsule/capsule"><view class="menu-symbol rose">□</view><text class="menu-label">时光胶囊</text><text class="menu-arrow">›</text></view>
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/thanks/thanks"><view class="menu-symbol sage">＋</view><text class="menu-label">感谢墙</text><text class="menu-arrow">›</text></view>
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/quiz/quiz"><view class="menu-symbol sand">?</view><text class="menu-label">默契测试</text><text class="menu-arrow">›</text></view>
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/timeline/timeline"><view class="menu-symbol peach">⌇</view><text class="menu-label">回忆时间轴</text><text class="menu-arrow">›</text></view>
+    </view>
+
+    <view class="profile-menu settings-menu">
+      <view class="profile-menu-item" bindtap="goPage" data-url="/pages/settings/settings"><view class="menu-symbol neutral">··</view><text class="menu-label">设置与隐私</text><text class="menu-arrow">›</text></view>
     </view>
   </block>
 
-  <!-- 昵称编辑弹窗 -->
   <van-popup show="{{showEditNickname}}" round position="bottom" custom-style="padding: 32rpx;" bind:close="onCloseEditNickname">
-    <view class="edit-popup">
-      <text class="popup-title">修改昵称</text>
-      <input class="form-input" value="{{editNickname}}" bindinput="onNicknameInput" placeholder="输入新昵称" maxlength="20" />
-      <button class="btn-save" bindtap="onSaveNickname">保存</button>
-    </view>
+    <view class="edit-popup"><text class="popup-title">修改昵称</text><input class="form-input" value="{{editNickname}}" bindinput="onNicknameInput" placeholder="输入新昵称" maxlength="20" /><button class="btn-save" bindtap="onSaveNickname">保存</button></view>
   </van-popup>
 </view>

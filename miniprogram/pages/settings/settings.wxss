@@ -46,6 +46,9 @@
   font-weight: 500;
 }
 
+.setting-copy { flex: 1; min-width: 0; }
+.setting-desc { display: block; margin-top: 7rpx; color: var(--color-text-light); font-size: 21rpx; line-height: 1.45; }
+
 .setting-value {
   font-size: 26rpx;
   color: var(--color-text-secondary);

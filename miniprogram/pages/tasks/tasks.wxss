@@ -27,7 +27,7 @@
   font-size: 20rpx; padding: 4rpx 14rpx; border-radius: var(--radius-pill);
 }
 .tag-me { background: #F0ECF6; color: #7C7A9A; }
-.tag-ta { background: #F8EDED; color: #B89A9A; }
+.tag-ta { background: #F8EDED; color: #A05A67; }
 .tag-both { background: #F7F2ED; color: #8A7A6A; }
 
 .task-desc {
@@ -36,7 +36,7 @@
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .task-meta { display: flex; align-items: center; gap: 14rpx; margin-top: 8rpx; }
-.task-reward { font-size: 22rpx; color: #B89A9A; font-weight: 600; }
+.task-reward { font-size: 22rpx; color: #A05A67; font-weight: 600; }
 .task-time { font-size: 20rpx; color: var(--color-text-light); }
 
 /* 空状态 */
@@ -50,7 +50,7 @@
   position: fixed; right: 40rpx;
   bottom: calc(140rpx + env(safe-area-inset-bottom));
   width: 96rpx; height: 96rpx; border-radius: 50%;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 10rpx 28rpx rgba(200,160,160,0.22);
   z-index: 20;
@@ -76,15 +76,15 @@
   border: 2rpx solid transparent; transition: all 0.2s;
 }
 .assignee-option.active {
-  border-color: #E8D0D0;
-  background: rgba(232,208,208,0.12);
+  border-color: #ECA8B4;
+  background: rgba(232,93,117,0.12);
 }
 .assignee-icon { display: block; font-size: 34rpx; margin-bottom: 4rpx; }
 .assignee-label { font-size: 24rpx; color: var(--color-text-secondary); }
 
 .btn-save {
   width: 100%; height: 88rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFF; border: none; border-radius: var(--radius-pill);
   font-size: 30rpx; font-weight: 600; letter-spacing: 2rpx;
   display: flex; align-items: center; justify-content: center;
@@ -111,12 +111,12 @@
 .detail-info-item:nth-child(odd) { border-right: 1rpx solid #F5F2EF; }
 .info-label { display: block; font-size: 22rpx; color: var(--color-text-light); margin-bottom: 6rpx; }
 .info-value { font-size: 26rpx; color: var(--color-text); font-weight: 500; }
-.info-value.points { color: #B89A9A; font-weight: 700; }
+.info-value.points { color: #A05A67; font-weight: 700; }
 
 .detail-actions { display: flex; flex-direction: column; gap: 14rpx; }
 .btn-complete {
   width: 100%; height: 88rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFF; border: none; border-radius: var(--radius-pill);
   font-size: 28rpx; font-weight: 600; letter-spacing: 1rpx;
   display: flex; align-items: center; justify-content: center;

@@ -20,7 +20,7 @@
   position: fixed; right: 40rpx;
   bottom: calc(140rpx + env(safe-area-inset-bottom));
   width: 96rpx; height: 96rpx; border-radius: 50%;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 10rpx 28rpx rgba(200,160,160,0.22);
   z-index: 20;

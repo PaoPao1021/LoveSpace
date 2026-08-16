@@ -36,7 +36,7 @@
   padding: 12rpx 24rpx; background: #F7F5F2; border-radius: var(--radius-pill);
   font-size: 24rpx; color: var(--color-text-secondary);
 }
-.tag-item.active { background: linear-gradient(135deg, #E8D0D0, #F2D4D4); color: #FFF; }
+.tag-item.active { background: linear-gradient(135deg, #E85D75, #F08A9B); color: #FFF; }
 
 .bottom-bar {
   position: fixed; left: 0; right: 0; bottom: 0;
@@ -48,7 +48,7 @@
 }
 .btn-save {
   flex: 1; height: 80rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFF; border: none; border-radius: var(--radius-pill);
   font-size: 28rpx; display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-button);

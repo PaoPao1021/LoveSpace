@@ -112,7 +112,7 @@ Page({
     wx.showModal({
       title: '确认删除',
       content: '删除后无法恢复',
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
           await callFunction('moments', { action: 'delete', data: { id: this.data.id } })

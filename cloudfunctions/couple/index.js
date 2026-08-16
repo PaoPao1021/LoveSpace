@@ -2,81 +2,98 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
+const crypto = require('crypto')
 
-exports.main = async (event, context) => {
-  const wxContext = cloud.getWXContext()
-  const openid = wxContext.OPENID
-  const { action, data } = event
-
-  switch (action) {
-    case 'create':
-      return createCouple(openid, data)
-    case 'join':
-      return joinCouple(openid, data)
-    case 'getInfo':
-      return getCoupleInfo(openid)
-    case 'dissolve':
-      return dissolveCouple(openid)
-    default:
-      return { code: -1, message: '未知操作' }
+async function assertSafeText(content) {
+  if (!String(content || '').trim()) return
+  try {
+    const result = await cloud.openapi.security.msgSecCheck({ content: String(content).slice(0, 20) })
+    const suggest = result && result.result && result.result.suggest
+    if (suggest && suggest !== 'pass') throw new Error('CONTENT_RISKY')
+  } catch (error) {
+    const code = Number(error.errCode || error.errcode)
+    if (code === 87014 || String(error.message || '').includes('87014') || error.message === 'CONTENT_RISKY') throw new Error('昵称包含不适合发布的信息，请修改后重试')
+    console.error('msgSecCheck failed:', error)
+    throw new Error('内容安全检查暂时不可用，请稍后重试')
   }
 }
 
-// 创建情侣关系（生成邀请码）
-async function createCouple(openid, data) {
-  const { startDate, nickName, avatarUrl } = data
+function createInviteCode() {
+  const alphabet = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'
+  const bytes = crypto.randomBytes(6)
+  return Array.from(bytes, byte => alphabet[byte % alphabet.length]).join('')
+}
 
-  // 检查是否已绑定
-  const userRes = await db.collection('users').doc(openid).get()
-  if (userRes.data.coupleId) {
-    return { code: -1, message: '已经绑定过了' }
+function hashId(value) {
+  return crypto.createHash('sha256').update(value).digest('hex').slice(0, 32)
+}
+
+function isValidDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''))
+  if (!match) return false
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])))
+  return date.getUTCFullYear() === Number(match[1]) && date.getUTCMonth() + 1 === Number(match[2]) && date.getUTCDate() === Number(match[3])
+}
+
+function todayInChina() {
+  return new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10)
+}
+
+function normalizeProfile(data) {
+  const nickName = String(data.nickName || '').trim()
+  if (!nickName || nickName.length > 20) throw new Error('昵称需要 1-20 个字')
+  const avatarUrl = String(data.avatarUrl || '')
+  if (avatarUrl && !avatarUrl.startsWith('cloud://') && !avatarUrl.startsWith('https://')) throw new Error('头像地址无效')
+  return { nickName, avatarUrl }
+}
+
+exports.main = async (event, context) => {
+  try {
+    const openid = cloud.getWXContext().OPENID
+    const { action, data = {} } = event || {}
+    if (!openid) return { code: -1, message: '登录状态无效' }
+    switch (action) {
+      case 'create': return createCouple(openid, data)
+      case 'join': return joinCouple(openid, data)
+      case 'getInfo': return getCoupleInfo(openid)
+      case 'dissolve': return dissolveCouple(openid)
+      default: return { code: -1, message: '未知操作' }
+    }
+  } catch (error) {
+    console.error('couple failed:', error)
+    return { code: -1, message: error.message || '情侣空间服务暂时不可用' }
   }
+}
 
-  // 生成6位邀请码
-  const inviteCode = Math.random().toString(36).slice(2, 8).toUpperCase()
-
-  // 创建情侣关系
-  const coupleRes = await db.collection('couples').add({
-    data: {
-      creator: openid,
-      partner: '',
-      startDate,
-      status: 'active',
-      inviteCode,
-      createdAt: db.serverDate()
-    }
-  })
-
-  const coupleId = coupleRes._id
-
-  // 更新创建者信息
-  await db.collection('users').doc(openid).update({
-    data: {
-      nickName,
-      avatarUrl,
-      coupleId,
-      role: 'creator',
-      updatedAt: db.serverDate()
-    }
-  })
-
-  // 创建默认相册
+async function ensureDefaults(coupleId, startDate) {
   const defaultAlbums = ['日常', '约会', '旅行', '美食', '自拍', '节日']
   for (const name of defaultAlbums) {
-    await db.collection('albums').add({
-      data: {
+    const id = hashId(`default-album:${coupleId}:${name}`)
+    let exists = false
+    try {
+      const current = await db.collection('albums').doc(id).get()
+      exists = Boolean(current.data)
+    } catch (error) {}
+    if (!exists) {
+      await db.collection('albums').doc(id).set({ data: {
         coupleId,
         name,
         coverUrl: '',
         photoCount: 0,
+        isDefault: true,
         createdAt: db.serverDate()
-      }
-    })
+      } })
+    }
   }
 
-  // 创建默认纪念日
-  await db.collection('anniversaries').add({
-    data: {
+  const anniversaryId = hashId(`default-anniversary:${coupleId}`)
+  let anniversaryExists = false
+  try {
+    const current = await db.collection('anniversaries').doc(anniversaryId).get()
+    anniversaryExists = Boolean(current.data)
+  } catch (error) {}
+  if (!anniversaryExists) {
+    await db.collection('anniversaries').doc(anniversaryId).set({ data: {
       coupleId,
       name: '在一起纪念日',
       date: startDate,
@@ -88,15 +105,80 @@ async function createCouple(openid, data) {
       isTop: true,
       createdAt: db.serverDate(),
       updatedAt: db.serverDate()
-    }
+    } })
+  }
+}
+
+// 创建情侣关系（生成邀请码）
+async function createCouple(openid, data) {
+  const { nickName, avatarUrl } = normalizeProfile(data)
+  await assertSafeText(nickName)
+  const startDate = String(data.startDate || '')
+  if (!isValidDate(startDate) || startDate > todayInChina()) {
+    return { code: -1, message: '请选择正确的在一起日期' }
+  }
+
+  // 生成6位邀请码
+  let inviteCode = createInviteCode()
+  for (let i = 0; i < 3; i++) {
+    const duplicate = await db.collection('couples').where({ inviteCode, status: 'active' }).count()
+    if (!duplicate.total) break
+    inviteCode = createInviteCode()
+  }
+
+  const coupleId = hashId(`couple:${openid}:${Date.now()}:${crypto.randomBytes(8).toString('hex')}`)
+
+  // 关系、用户归属和邀请码锁必须同时写入。
+  await db.runTransaction(async transaction => {
+    const userRef = transaction.collection('users').doc(openid)
+    const coupleRef = transaction.collection('couples').doc(coupleId)
+    const inviteRef = transaction.collection('couple_invites').doc(inviteCode)
+    const [user, invite] = await Promise.all([userRef.get(), inviteRef.get().catch(() => null)])
+    if (!user.data) throw new Error('用户信息不存在，请重新进入小程序')
+    if (user.data.coupleId) throw new Error('已经绑定过了')
+    if (invite && invite.data) throw new Error('邀请码生成冲突，请重试')
+
+    await coupleRef.set({ data: {
+      creator: openid,
+      partner: '',
+      startDate,
+      status: 'active',
+      inviteCode,
+      schemaVersion: 2,
+      createdAt: db.serverDate()
+    } })
+    await userRef.update({ data: {
+      nickName,
+      avatarUrl,
+      coupleId,
+      role: 'creator',
+      updatedAt: db.serverDate()
+    } })
+    await inviteRef.set({ data: {
+      coupleId,
+      status: 'active',
+      createdBy: openid,
+      createdAt: db.serverDate()
+    } })
   })
 
-  return { code: 0, coupleId, inviteCode }
+  let defaultsReady = true
+  try {
+    await ensureDefaults(coupleId, startDate)
+  } catch (error) {
+    defaultsReady = false
+    console.error('初始化默认数据失败，将在下次获取空间时重试:', error)
+  }
+
+  return { code: 0, coupleId, inviteCode, defaultsReady }
 }
 
 // 加入情侣关系
 async function joinCouple(openid, data) {
-  const { inviteCode, nickName, avatarUrl } = data
+  const { nickName, avatarUrl } = normalizeProfile(data)
+  await assertSafeText(nickName)
+  const inviteCode = String(data.inviteCode || '').trim().toUpperCase()
+  if (!/^[23456789A-HJ-NP-Z]{6}$/.test(inviteCode)) return { code: -1, message: '邀请码格式不正确' }
 
   // 查找邀请码对应的couple
   const coupleRes = await db.collection('couples')
@@ -108,6 +190,7 @@ async function joinCouple(openid, data) {
   }
 
   const couple = coupleRes.data[0]
+  if (couple.creator === openid) return { code: -1, message: '不能加入自己创建的空间' }
 
   // 检查是否已绑定
   const userRes = await db.collection('users').doc(openid).get()
@@ -116,19 +199,27 @@ async function joinCouple(openid, data) {
   }
 
   // 更新couple
-  await db.collection('couples').doc(couple._id).update({
-    data: { partner: openid }
-  })
-
-  // 更新加入者信息
-  await db.collection('users').doc(openid).update({
-    data: {
-      nickName,
-      avatarUrl,
-      coupleId: couple._id,
-      role: 'partner',
-      updatedAt: db.serverDate()
-    }
+  await db.runTransaction(async transaction => {
+    const coupleRef = transaction.collection('couples').doc(couple._id)
+    const userRef = transaction.collection('users').doc(openid)
+    const [currentCouple, currentUser] = await Promise.all([coupleRef.get(), userRef.get()])
+    if (!currentCouple.data || currentCouple.data.status !== 'active') throw new Error('邀请码无效')
+    if (currentCouple.data.creator === openid) throw new Error('不能加入自己创建的空间')
+    if (currentCouple.data.partner) throw new Error('邀请码已被使用')
+    if (currentUser.data.coupleId) throw new Error('你已经绑定过了')
+    await coupleRef.update({ data: { partner: openid } })
+    await userRef.update({
+      data: {
+        nickName,
+        avatarUrl,
+        coupleId: couple._id,
+        role: 'partner',
+        updatedAt: db.serverDate()
+      }
+    })
+    const inviteRef = transaction.collection('couple_invites').doc(inviteCode)
+    const invite = await inviteRef.get().catch(() => null)
+    if (invite && invite.data) await inviteRef.update({ data: { status: 'used', usedBy: openid, usedAt: db.serverDate() } })
   })
 
   return { code: 0, coupleId: couple._id }
@@ -145,6 +236,13 @@ async function getCoupleInfo(openid) {
 
   const coupleRes = await db.collection('couples').doc(user.coupleId).get()
   const couple = coupleRes.data
+  if (!couple || (couple.creator !== openid && couple.partner !== openid) || couple.status !== 'active') {
+    return { code: -1, message: '情侣空间状态异常，请联系客服处理' }
+  }
+
+  if (couple.schemaVersion === 2) {
+    try { await ensureDefaults(user.coupleId, couple.startDate) } catch (error) { console.error('修复默认数据失败:', error) }
+  }
 
   // 获取对方信息
   const partnerId = couple.creator === openid ? couple.partner : couple.creator
@@ -191,22 +289,30 @@ async function dissolveCouple(openid) {
     return { code: -1, message: '未绑定' }
   }
 
-  await db.collection('couples').doc(coupleId).update({
-    data: { status: 'dissolved' }
-  })
-
-  // 清除双方coupleId
   const coupleRes = await db.collection('couples').doc(coupleId).get()
   const { creator, partner } = coupleRes.data
+  if (creator !== openid && partner !== openid) return { code: -1, message: '无权解除该空间' }
 
-  await db.collection('users').doc(creator).update({
-    data: { coupleId: '', role: '', updatedAt: db.serverDate() }
-  })
-  if (partner) {
-    await db.collection('users').doc(partner).update({
+  await db.runTransaction(async transaction => {
+    const coupleRef = transaction.collection('couples').doc(coupleId)
+    const current = await coupleRef.get()
+    if (!current.data || current.data.status !== 'active') throw new Error('空间已经解除')
+    if (current.data.creator !== openid && current.data.partner !== openid) throw new Error('无权解除该空间')
+    await coupleRef.update({ data: { status: 'dissolved', dissolvedAt: db.serverDate(), dissolvedBy: openid } })
+    await transaction.collection('users').doc(current.data.creator).update({
       data: { coupleId: '', role: '', updatedAt: db.serverDate() }
     })
-  }
+    if (current.data.partner) {
+      await transaction.collection('users').doc(current.data.partner).update({
+        data: { coupleId: '', role: '', updatedAt: db.serverDate() }
+      })
+    }
+    if (current.data.inviteCode) {
+      const inviteRef = transaction.collection('couple_invites').doc(current.data.inviteCode)
+      const invite = await inviteRef.get().catch(() => null)
+      if (invite && invite.data) await inviteRef.update({ data: { status: 'dissolved', updatedAt: db.serverDate() } })
+    }
+  })
 
   return { code: 0 }
 }

@@ -1,163 +1,127 @@
-<bg-layer />
-<!-- 浮动粒子 -->
-<floating-particles count="10" type="mix" />
+<view class="home-page" wx:if="{{loaded}}">
+  <view class="home-glow"></view>
 
-<!-- 情绪氛围层 -->
-<view class="atmo-layer"></view>
-
-<view class="page" wx:if="{{loaded}}">
-  <!-- 未绑定 -->
-  <view class="welcome-prompt" wx:if="{{!coupleId}}" bindtap="goLogin">
-    <view class="sticker-card spring-in">
-      <text class="welcome-emoji">💕</text>
-      <text class="welcome-title">欢迎来到 LoveSpace</text>
-      <text class="welcome-desc">属于你们两个人的私密空间</text>
-      <view class="sticker-btn">✨ 开始你们的故事</view>
-    </view>
+  <view class="welcome-state" wx:if="{{!coupleId}}">
+    <view class="welcome-monogram">LS</view>
+    <text class="welcome-eyebrow">A PRIVATE SPACE FOR TWO</text>
+    <text class="welcome-title">把爱落在每一天</text>
+    <text class="welcome-copy">记录、倾听、一起计划。这里只属于你们两个人。</text>
+    <button class="primary-action" bindtap="goLogin">创建双人空间</button>
   </view>
 
-  <block wx:if="{{coupleId}}">
-    <!-- ═══ Hero：会呼吸的恋人头像卡片 ═══ -->
-    <view class="hero-card breath-card spring-in">
-      <!-- 透明胶带装饰 -->
-      <view class="tape-piece"></view>
-
-      <text class="hero-greeting">{{greeting}}</text>
-
-      <!-- 贴贴近头像 -->
-      <view class="cuddle-avatars">
-        <view class="hero-avatar-wrap">
-          <image class="hero-avatar" src="{{myAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
-        </view>
-        <view class="hero-heart-wrap heartbeat">
-          <text class="hero-heart">💕</text>
-        </view>
-        <view class="hero-avatar-wrap">
-          <image class="hero-avatar hero-avatar-partner" src="{{partnerAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
-        </view>
+  <block wx:else>
+    <view class="home-header">
+      <view>
+        <text class="home-brand">LoveSpace</text>
+        <text class="home-greeting">{{greeting}}</text>
       </view>
-
-      <!-- 天数 -->
-      <view class="hero-days">
-        <text class="hero-days-label">在一起的第</text>
-        <view class="hero-days-row">
-          <text class="hero-days-num">{{daysTogether}}</text>
-          <text class="hero-days-unit">天</text>
-        </view>
-        <text class="hero-days-date">从 {{startDate}} 开始</text>
-      </view>
-
-      <!-- 手绘波浪线 -->
-      <view class="wavy-line"></view>
-
-      <!-- 装饰圆点 -->
-      <view class="dot-cluster">
-        <view></view><view></view><view></view>
+      <view class="header-avatars">
+        <image class="header-avatar" src="{{myAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+        <image class="header-avatar partner" src="{{partnerAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
       </view>
     </view>
 
-    <!-- 通知 — 便签风格 -->
-    <view class="sticker-note spring-in" wx:for="{{notifications}}" wx:key="_id" bindtap="onNotificationTap" data-item="{{item}}" style="animation-delay: {{index * 0.08}}s;">
-      <text class="notif-dot"></text>
-      <text class="notif-text">{{item.title}} · {{item.content}}</text>
+    <view class="relationship-hero">
+      <view class="hero-copy">
+        <text class="hero-eyebrow">{{myName}} & {{partnerName}}</text>
+        <view class="days-line"><text class="days-number">{{daysTogether}}</text><text class="days-unit">天</text></view>
+        <text class="days-caption">从 {{startDate}} 开始，认真相爱</text>
+      </view>
+      <view class="hero-heart"><text>♥</text></view>
     </view>
 
-    <!-- ═══ 恋爱电量 · 呼吸光晕 ═══ -->
-    <view class="energy-card breath-card animate-glow">
-      <view class="energy-header">
-        <text class="energy-title">💝 恋爱电量</text>
-        <view class="bear-tag">{{energyLevel}}</view>
-      </view>
-      <view class="energy-bar">
-        <view class="energy-fill" style="width: {{loveEnergy}}%;"></view>
-      </view>
-      <text class="energy-tip">{{energyTip}}</text>
-      <!-- 缝线装饰 -->
-      <view class="stitch-line"></view>
+    <view class="notice-card" wx:for="{{notifications}}" wx:key="_id" bindtap="onNotificationTap" data-item="{{item}}">
+      <view class="notice-dot"></view>
+      <text class="notice-text">{{item.title}} · {{item.content}}</text>
+      <text class="notice-arrow">›</text>
     </view>
 
-    <!-- ═══ 纪念日 · 拍立得贴纸 ═══ -->
-    <view class="countdown-card sticker-card breath-card" wx:if="{{nextAnniversary}}" bindtap="goAnniversary">
-      <view class="clip-decor"></view>
-      <view class="countdown-polaroid">
-        <view class="polaroid-inner float-up">
-          <text class="polaroid-emoji">📅</text>
+    <view class="section-heading">
+      <view><text class="section-kicker">TODAY</text><text class="section-title">今天，靠近一点</text></view>
+      <text class="section-action" bindtap="goDailyQuestion">进入问答</text>
+    </view>
+
+    <view class="daily-card" bindtap="goDailyQuestion">
+      <view class="daily-meta"><text class="daily-category">{{dailyQuestion.category || '每日一问'}}</text><text class="daily-status {{dailyQuestion.myAnswer ? 'done' : ''}}">{{dailyQuestionStatus}}</text></view>
+      <text class="daily-question">{{dailyQuestion.question || '留五分钟给彼此，回答今天的问题。'}}</text>
+      <view class="daily-footer">
+        <view class="answer-progress">
+          <view class="answer-person {{dailyQuestion.myAnswer ? 'answered' : ''}}">我</view>
+          <view class="progress-line"></view>
+          <view class="answer-person {{dailyQuestion.partnerAnswered ? 'answered' : ''}}">TA</view>
+        </view>
+        <text class="daily-arrow">→</text>
+      </view>
+    </view>
+
+    <view class="snapshot-grid">
+      <view class="snapshot-card" bindtap="goMood">
+        <view class="snapshot-top"><text class="snapshot-label">今日心情</text><text class="snapshot-symbol">◌</text></view>
+        <view class="mood-pair-compact"><text>{{myMood.emoji || '–'}}</text><text class="mood-divider">/</text><text>{{partnerMood.emoji || '–'}}</text></view>
+        <text class="snapshot-caption">{{moodSummary}}</text>
+      </view>
+
+      <view class="snapshot-card anniversary-snapshot" bindtap="goAnniversary">
+        <view class="snapshot-top"><text class="snapshot-label">下个纪念日</text><text class="snapshot-symbol">◇</text></view>
+        <view wx:if="{{nextAnniversary}}"><view class="countdown-line"><text class="countdown-number">{{nextAnniversary.daysLeft}}</text><text class="countdown-unit">天</text></view><text class="snapshot-caption">{{nextAnniversary.name}}</text></view>
+        <view wx:else><text class="snapshot-empty">去添加</text><text class="snapshot-caption">记住重要的日子</text></view>
+      </view>
+    </view>
+
+    <view class="fitness-home-card" bindtap="goFitness">
+      <view class="fitness-home-top">
+        <view class="fitness-home-copy">
+          <view class="fitness-home-label"><text class="fitness-home-mark">↗</text><text>一起变好</text></view>
+          <text class="fitness-home-title">本周共同完成 {{fitnessSummary.teamProgress}}%</text>
+          <text class="fitness-home-note">{{fitnessCopy}}</text>
+        </view>
+        <view class="fitness-home-score"><text>{{fitnessSummary.myWorkouts}}</text><text>次运动</text></view>
+      </view>
+      <view class="fitness-home-track"><view style="width: {{fitnessSummary.teamProgress}}%;"></view></view>
+      <view class="fitness-home-status">
+        <text class="{{fitnessSummary.checkedIn ? 'done' : ''}}">{{fitnessSummary.checkedIn ? '我已打卡' : '我待打卡'}}</text>
+        <view></view>
+        <text class="{{fitnessSummary.partnerCheckedIn ? 'done' : ''}}">{{fitnessSummary.partnerCheckedIn ? 'TA 已打卡' : 'TA 待打卡'}}</text>
+        <text class="fitness-home-arrow">→</text>
+      </view>
+    </view>
+
+    <view class="energy-card" bindtap="goMonthlyReport">
+      <view class="energy-copy"><text class="energy-label">本期恋爱能量</text><text class="energy-title">{{energyLevel}}</text><text class="energy-caption">{{energyTip}} · 查看关系月报</text></view>
+      <view class="energy-score"><text>{{loveEnergy}}</text><text class="energy-percent">%</text></view>
+      <view class="energy-track"><view class="energy-progress" style="width: {{loveEnergy}}%;"></view></view>
+    </view>
+
+    <view class="section-heading memory-heading">
+      <view><text class="section-kicker">MEMORIES</text><text class="section-title">最近的我们</text></view>
+      <text class="section-action" bindtap="goTimeline">时间轴</text>
+    </view>
+
+    <scroll-view class="memory-scroll" scroll-x enhanced show-scrollbar="{{false}}" wx:if="{{recentList.length}}">
+      <view class="memory-list">
+        <view class="memory-card" wx:for="{{recentList}}" wx:key="_id" bindtap="goTimeline">
+          <image class="memory-image" wx:if="{{item.hasImage}}" src="{{item.image}}" mode="aspectFill" />
+          <view class="memory-image memory-placeholder" wx:else><text>“</text></view>
+          <text class="memory-text">{{item.text}}</text>
+          <text class="memory-time">{{item.time}}</text>
         </view>
       </view>
-      <view class="countdown-body">
-        <text class="countdown-label journal-label">即将到来</text>
-        <text class="countdown-name hand-underline">{{nextAnniversary.name}}</text>
-        <text class="countdown-date">{{nextAnniversary.date}}</text>
-      </view>
-      <view class="countdown-badge heart-sticker">
-        <text class="countdown-num" wx:if="{{!nextAnniversary.isToday}}">{{nextAnniversary.daysLeft}}</text>
-        <text class="countdown-now" wx:else>今天</text>
-        <text class="countdown-unit">天</text>
+    </scroll-view>
+    <view class="memory-empty" wx:else bindtap="goMoments"><text>记录第一段共同回忆</text><text>＋</text></view>
+
+    <view class="section-heading tools-heading"><view><text class="section-kicker">TOGETHER</text><text class="section-title">一起去做</text></view></view>
+    <view class="quick-grid">
+      <view class="quick-item" wx:for="{{quickActions}}" wx:key="label" bindtap="goQuickAction" data-url="{{item.url}}" data-tab="{{item.tab}}">
+        <view class="quick-icon {{item.tone}}">{{item.icon}}</view>
+        <text class="quick-label">{{item.label}}</text>
+        <text class="quick-note">{{item.note}}</text>
       </view>
     </view>
-
-    <!-- ═══ 今日心情 · 对称贴纸 ═══ -->
-    <view class="mood-card breath-card" bindtap="goMood">
-      <view class="mood-header">
-        <text class="mood-title">今日心情</text>
-        <text class="journal-label">打卡</text>
-      </view>
-      <view class="mood-pair">
-        <view class="mood-slot sticker-peel">
-          <text class="mood-emoji twinkle">{{myMood.emoji || '😶'}}</text>
-          <text class="mood-owner">我</text>
-          <text class="mood-status">{{myMood.label || '还没打卡'}}</text>
-        </view>
-        <view class="mood-divider"></view>
-        <view class="mood-slot sticker-peel">
-          <text class="mood-emoji twinkle" style="animation-delay: 1.2s;">{{partnerMood.emoji || '😶'}}</text>
-          <text class="mood-owner">TA</text>
-          <text class="mood-status">{{partnerMood.label || '还没打卡'}}</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- ═══ 照片回忆 · 拍立得胶带 ═══ -->
-    <view class="photo-card breath-card" wx:if="{{recentList.length > 0}}" bindtap="goTimeline">
-      <view class="photo-header">
-        <text class="photo-title">📸 最近瞬间</text>
-        <text class="journal-label">全部</text>
-      </view>
-      <view class="photo-list">
-        <view class="photo-item sticker-peel" wx:for="{{recentList}}" wx:key="_id">
-          <image class="photo-thumb" wx:if="{{item.hasImage}}" src="{{item.image}}" mode="aspectFill" />
-          <view class="photo-thumb photo-placeholder" wx:else>
-            <text>💭</text>
-          </view>
-          <text class="photo-text">{{item.text}}</text>
-          <text class="photo-time date-stamp">{{item.time}}</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- ═══ 今日一句 · 手绘标签 ═══ -->
-    <view class="quote-card gentle-sway">
-      <text class="quote-mark">"</text>
-      <text class="quote-text">{{dailyQuote}}</text>
-    </view>
-
-    <!-- ═══ 贴纸导航 ═══ -->
-    <view class="sticker-nav">
-      <view class="sticker-nav-item spring-in" wx:for="{{navItems}}" wx:key="label" bindtap="{{item.tap}}" style="animation-delay: {{index * 0.06}}s;">
-        <view class="sticker-nav-icon {{item.bg}}">
-          <text>{{item.emoji}}</text>
-        </view>
-        <text class="sticker-nav-label">{{item.label}}</text>
-      </view>
-    </view>
-
-    <!-- 底部呼吸空间 -->
-    <view style="height: 80rpx;"></view>
   </block>
 </view>
 
-<!-- 加载 -->
-<view class="loading-page" wx:if="{{!loaded}}">
-  <text class="loading-emoji heartbeat">💕</text>
-  <text class="loading-text">加载你们的世界...</text>
+<view class="home-loading" wx:else>
+  <view class="loading-brand">LoveSpace</view>
+  <view class="loading-pulse"><view></view></view>
+  <text>正在打开你们的空间</text>
 </view>

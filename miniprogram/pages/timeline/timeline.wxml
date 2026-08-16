@@ -1,5 +1,4 @@
 <bg-layer />
-<floating-particles count="6" type="mix" />
 <view class="page">
   <!-- 时间轴列表 -->
   <block wx:if="{{list.length > 0}}">

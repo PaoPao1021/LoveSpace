@@ -4,7 +4,7 @@
 .month-nav { display: flex; align-items: center; justify-content: space-between; padding: 20rpx 0; }
 .nav-btn {
   width: 64rpx; height: 64rpx; display: flex; align-items: center; justify-content: center;
-  background: #FFFFFF; border-radius: 50%; font-size: 32rpx; color: #B89A9A;
+  background: #FFFFFF; border-radius: 50%; font-size: 32rpx; color: #A05A67;
   box-shadow: var(--shadow-card);
 }
 .month-title { font-size: 32rpx; font-weight: 700; color: var(--color-text); letter-spacing: 1rpx; }
@@ -32,5 +32,5 @@
 .legend { display: flex; justify-content: center; gap: 32rpx; margin-top: 32rpx; }
 .legend-item { display: flex; align-items: center; gap: 8rpx; font-size: 24rpx; color: var(--color-text-secondary); }
 .legend-dot { width: 16rpx; height: 16rpx; border-radius: 50%; }
-.legend-dot.my { background: #E8D0D0; }
+.legend-dot.my { background: #ECA8B4; }
 .legend-dot.partner { background: #C4B5FD; }

@@ -25,7 +25,8 @@ exports.main = async (event, context) => {
         createdAt: db.serverDate(),
         updatedAt: db.serverDate()
       }
-      await db.collection('users').add({ data: user })
+      const { _id, ...userData } = user
+      await db.collection('users').doc(openid).set({ data: userData })
     }
 
     return {

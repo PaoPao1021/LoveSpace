@@ -6,7 +6,7 @@
   border-radius: var(--radius-widget);
   padding: 5rpx;
   margin-bottom: 28rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4, #D4C5B0);
+  background: linear-gradient(135deg, #ECA8B4, #F6DDE2, #D4C5B0);
   background-size: 300% 300%;
   animation: gradientShift 8s ease infinite;
   overflow: hidden;
@@ -69,12 +69,12 @@
   transition: all 0.2s;
 }
 .vis-option.active {
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4); color: #FFF;
+  background: linear-gradient(135deg, #E85D75, #F08A9B); color: #FFF;
 }
 
 .btn-save {
   width: 100%; height: 88rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFF; border: none; border-radius: var(--radius-pill);
   font-size: 30rpx; font-weight: 600; letter-spacing: 2rpx;
   display: flex; align-items: center; justify-content: center;

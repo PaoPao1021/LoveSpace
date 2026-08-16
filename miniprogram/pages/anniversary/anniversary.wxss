@@ -11,7 +11,7 @@
   transition: all 0.2s;
 }
 .ann-card:active { background: #FBFAF8; }
-.ann-card.is-top { border-left: 4rpx solid #E8D0D0; }
+.ann-card.is-top { border-left: 4rpx solid #ECA8B4; }
 
 .ann-cover {
   width: 88rpx; height: 100rpx;
@@ -30,7 +30,7 @@
 .ann-badge { text-align: center; flex-shrink: 0; }
 .ann-countdown {
   display: block; font-size: 36rpx; font-weight: 800;
-  color: #B89A9A; line-height: 1.1;
+  color: #A05A67; line-height: 1.1;
 }
 .ann-countdown-label {
   display: block; font-size: 20rpx; color: var(--color-text-light);
@@ -47,7 +47,7 @@
   position: fixed; right: 40rpx;
   bottom: calc(140rpx + env(safe-area-inset-bottom));
   width: 96rpx; height: 96rpx; border-radius: 50%;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 10rpx 28rpx rgba(200,160,160,0.22);
   z-index: 20;
@@ -70,7 +70,7 @@
   font-size: 24rpx; color: var(--color-text-secondary);
   border: 2rpx solid transparent; transition: all 0.2s;
 }
-.type-option.active { border-color: #E8D0D0; background: rgba(232,208,208,0.1); color: #B89A9A; }
+.type-option.active { border-color: #ECA8B4; background: rgba(232,93,117,0.1); color: #A05A67; }
 
 .date-picker { display: flex; align-items: center; gap: 12rpx; height: 80rpx; background: #F7F5F2; border-radius: var(--radius-card); padding: 0 24rpx; }
 .date-picker-icon { font-size: 30rpx; }
@@ -81,7 +81,7 @@
 
 .btn-save {
   width: 100%; height: 88rpx;
-  background: linear-gradient(135deg, #E8D0D0, #F2D4D4);
+  background: linear-gradient(135deg, #E85D75, #F08A9B);
   color: #FFF; border: none; border-radius: var(--radius-pill);
   font-size: 30rpx; font-weight: 600; letter-spacing: 2rpx;
   display: flex; align-items: center; justify-content: center;

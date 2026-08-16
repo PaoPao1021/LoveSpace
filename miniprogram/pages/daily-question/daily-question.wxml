@@ -1,0 +1,47 @@
+<view class="ritual-page">
+  <view class="ritual-orb ritual-orb-a"></view>
+  <view class="ritual-orb ritual-orb-b"></view>
+
+  <view class="ritual-loading" wx:if="{{loading}}">
+    <view class="skeleton ritual-skeleton"></view>
+    <view class="skeleton answer-skeleton"></view>
+  </view>
+
+  <block wx:else>
+    <view class="ritual-kicker">DAILY CONNECTION · {{category}}</view>
+    <view class="question-card">
+      <text class="question-number">01</text>
+      <text class="question-text">{{question}}</text>
+      <text class="question-note">先独立作答，双方完成后才能看到彼此的答案</text>
+    </view>
+
+    <view class="answer-editor" wx:if="{{!myAnswer}}">
+      <text class="section-eyebrow">我的回答</text>
+      <textarea class="answer-input" value="{{draft}}" bindinput="onDraftInput" maxlength="500" auto-height placeholder="慢慢写，真实比完美更重要…" />
+      <view class="answer-footer">
+        <text class="answer-count">{{draft.length}} / 500</text>
+        <button class="ritual-submit" bindtap="onSubmit" loading="{{submitting}}" disabled="{{!draft || submitting}}">保存回答</button>
+      </view>
+    </view>
+
+    <block wx:else>
+      <view class="answer-card mine">
+        <text class="answer-owner">我的回答</text>
+        <text class="answer-text">{{myAnswer}}</text>
+      </view>
+
+      <view class="answer-card partner" wx:if="{{bothAnswered}}">
+        <text class="answer-owner">TA 的回答</text>
+        <text class="answer-text">{{partnerAnswer}}</text>
+      </view>
+
+      <view class="waiting-card" wx:else>
+        <view class="waiting-mark">···</view>
+        <text class="waiting-title">等待 TA 的回答</text>
+        <text class="waiting-copy">{{partnerAnswered ? 'TA 已经回答，刷新后即可揭晓' : '不催促，也是一种温柔。回答会为你保密。'}}</text>
+      </view>
+    </block>
+
+    <view class="ritual-footnote">每天一个问题，把重要的话留给彼此。</view>
+  </block>
+</view>

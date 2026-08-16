@@ -1,0 +1,107 @@
+.fitness-page { min-height: 100vh; box-sizing: border-box; padding: 28rpx 28rpx calc(70rpx + env(safe-area-inset-bottom)); color: #28322d; background: #f4f6f2; position: relative; overflow: hidden; }
+.fitness-glow { position: absolute; width: 560rpx; height: 560rpx; right: -250rpx; top: -260rpx; border-radius: 50%; background: radial-gradient(circle, rgba(112,154,130,.18), rgba(112,154,130,0) 70%); pointer-events: none; }
+.fitness-head { display: flex; align-items: flex-end; justify-content: space-between; padding: 18rpx 4rpx 28rpx; position: relative; z-index: 1; }
+.fitness-kicker, .section-kicker, .sheet-kicker { display: block; color: #698471; font-size: 18rpx; font-weight: 750; letter-spacing: 3rpx; }
+.fitness-title { display: block; margin-top: 8rpx; color: #26312b; font-size: 52rpx; font-weight: 760; letter-spacing: -2rpx; }
+.fitness-subtitle { display: block; margin-top: 7rpx; color: #929d96; font-size: 22rpx; }
+.report-entry { display: flex; align-items: center; gap: 12rpx; padding: 15rpx 20rpx; border-radius: 999rpx; color: #557362; background: rgba(255,255,255,.74); font-size: 23rpx; box-shadow: 0 6rpx 20rpx rgba(44,67,54,.05); }
+.team-hero { padding: 34rpx; border-radius: 36rpx; color: #fff; background: linear-gradient(145deg, #375344, #263a30); box-shadow: 0 20rpx 50rpx rgba(45,75,58,.16); position: relative; overflow: hidden; }
+.team-hero::after { content: ''; position: absolute; right: -70rpx; top: -90rpx; width: 270rpx; height: 270rpx; border: 1rpx solid rgba(255,255,255,.08); border-radius: 50%; box-shadow: 0 0 0 42rpx rgba(255,255,255,.025), 0 0 0 84rpx rgba(255,255,255,.015); }
+.team-meta { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+.hero-label { display: block; font-size: 26rpx; font-weight: 680; }
+.hero-date { display: block; margin-top: 8rpx; color: rgba(255,255,255,.46); font-size: 20rpx; letter-spacing: 1rpx; }
+.team-score { display: flex; align-items: baseline; font-size: 66rpx; line-height: 1; font-weight: 760; }
+.score-unit { margin-left: 5rpx; color: #b9d2c2; font-size: 24rpx; }
+.hero-track, .challenge-track { height: 10rpx; margin-top: 28rpx; border-radius: 999rpx; background: rgba(255,255,255,.13); overflow: hidden; }
+.hero-progress { height: 100%; min-width: 8rpx; border-radius: inherit; background: linear-gradient(90deg, #c5ddce, #8ec0a1); }
+.hero-copy { display: block; margin-top: 15rpx; color: rgba(255,255,255,.66); font-size: 21rpx; }
+.member-row { display: flex; align-items: stretch; margin-top: 30rpx; padding-top: 27rpx; border-top: 1rpx solid rgba(255,255,255,.1); position: relative; z-index: 1; }
+.member-item { flex: 1; min-width: 0; display: flex; align-items: center; }
+.member-avatar { width: 56rpx; height: 56rpx; flex-shrink: 0; margin-right: 14rpx; border-radius: 50%; border: 3rpx solid rgba(255,255,255,.28); }
+.member-copy { min-width: 0; }
+.member-copy text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 22rpx; }
+.member-copy text:last-child { margin-top: 5rpx; color: rgba(255,255,255,.45); font-size: 18rpx; }
+.member-divider { width: 1rpx; margin: 0 20rpx; background: rgba(255,255,255,.1); }
+.member-item.awaiting { justify-content: center; color: rgba(255,255,255,.45); font-size: 21rpx; }
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; margin: 48rpx 4rpx 20rpx; }
+.section-title { display: block; margin-top: 7rpx; color: #29342e; font-size: 34rpx; font-weight: 720; }
+.section-action { padding: 12rpx 0 5rpx 20rpx; color: #63806e; font-size: 23rpx; }
+.goal-card { padding: 28rpx; border-radius: 28rpx; background: #fff; box-shadow: 0 8rpx 28rpx rgba(45,70,55,.045); }
+.goal-badge { display: inline-flex; padding: 8rpx 17rpx; border-radius: 999rpx; color: #557362; background: #e9f1eb; font-size: 20rpx; font-weight: 680; }
+.goal-main { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20rpx; margin-top: 24rpx; }
+.goal-metric { padding: 20rpx; border-radius: 22rpx; background: #f6f7f4; }
+.goal-value { display: block; color: #29342e; font-size: 42rpx; font-weight: 740; }
+.goal-unit { display: block; margin-top: 4rpx; color: #8d9891; font-size: 19rpx; }
+.goal-privacy { display: block; margin-top: 20rpx; color: #a0a8a3; font-size: 19rpx; }
+.today-head { margin-top: 42rpx; }
+.partner-status { padding: 9rpx 16rpx; border-radius: 999rpx; color: #9c8f88; background: #eee9e4; font-size: 19rpx; }
+.partner-status.done { color: #557362; background: #e4efe7; }
+.checkin-card { padding: 30rpx; border-radius: 30rpx; background: #fff; box-shadow: 0 10rpx 32rpx rgba(45,70,55,.05); }
+.form-row, .weight-row, .meal-row { display: flex; align-items: center; justify-content: space-between; }
+.form-copy { min-width: 0; }
+.form-label { display: block; color: #354139; font-size: 24rpx; font-weight: 660; }
+.form-note { display: block; margin-top: 6rpx; color: #a2aaa5; font-size: 18rpx; }
+.picker-value { padding: 15rpx 18rpx; border-radius: 18rpx; color: #52705f; background: #edf3ee; font-size: 22rpx; }
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16rpx; margin-top: 27rpx; }
+.field-card { padding: 21rpx; border-radius: 21rpx; background: #f7f8f5; }
+.field-card.disabled { opacity: .48; }
+.field-label { color: #8f9992; font-size: 19rpx; }
+.field-input { display: flex; align-items: baseline; margin-top: 9rpx; }
+.field-input input { width: 115rpx; height: 52rpx; color: #303c35; font-size: 34rpx; font-weight: 700; }
+.field-input text { color: #9ca59f; font-size: 18rpx; }
+.weight-row, .meal-row { padding: 24rpx 2rpx; border-bottom: 1rpx solid #eff1ee; }
+.weight-input { display: flex; align-items: baseline; min-width: 180rpx; justify-content: flex-end; }
+.weight-input input { width: 125rpx; text-align: right; color: #344139; font-size: 28rpx; }
+.weight-input text { margin-left: 8rpx; color: #99a29c; font-size: 19rpx; }
+.meal-row { border-bottom: 0; }
+.save-checkin, .sheet-submit { height: 92rpx; display: flex; align-items: center; justify-content: center; margin-top: 12rpx; border: 0; border-radius: 24rpx; color: #fff; background: #496d59; font-size: 26rpx; font-weight: 680; line-height: 1; }
+.save-checkin::after, .sheet-submit::after { border: 0; }
+.save-checkin[disabled], .sheet-submit[disabled] { color: rgba(255,255,255,.8); background: #7d9687; }
+.challenge-list { display: flex; flex-direction: column; gap: 16rpx; }
+.challenge-card { padding: 27rpx; border-radius: 27rpx; background: #fff; box-shadow: 0 8rpx 28rpx rgba(45,70,55,.04); }
+.challenge-card.completed { background: #e9f1eb; }
+.challenge-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 18rpx; }
+.challenge-state { display: block; color: #74917e; font-size: 16rpx; font-weight: 750; letter-spacing: 2rpx; }
+.challenge-title { display: block; margin-top: 8rpx; color: #303c35; font-size: 26rpx; font-weight: 680; }
+.challenge-reward { flex-shrink: 0; color: #8e7e65; font-size: 19rpx; }
+.challenge-track { height: 8rpx; margin-top: 22rpx; background: #edf0ec; }
+.challenge-progress { height: 100%; min-width: 6rpx; border-radius: inherit; background: #6f9b80; }
+.challenge-bottom { display: flex; justify-content: space-between; margin-top: 12rpx; color: #9aa39d; font-size: 18rpx; }
+.challenge-empty { display: flex; flex-direction: column; align-items: center; padding: 42rpx 28rpx; border: 2rpx dashed #cdd8d0; border-radius: 28rpx; background: rgba(255,255,255,.45); }
+.empty-symbol { width: 56rpx; height: 56rpx; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #fff; background: #789882; font-size: 32rpx; }
+.empty-title { margin-top: 18rpx; color: #405047; font-size: 25rpx; font-weight: 660; }
+.empty-copy { margin-top: 7rpx; color: #9ba69f; font-size: 19rpx; }
+.health-note { margin-top: 42rpx; padding: 0 22rpx; color: #a5ada8; font-size: 18rpx; line-height: 1.6; text-align: center; }
+.sheet-mask { position: fixed; z-index: 100; inset: 0; display: flex; align-items: flex-end; background: rgba(27,34,30,.42); }
+.sheet-panel { width: 100%; max-height: 88vh; box-sizing: border-box; padding: 18rpx 30rpx calc(34rpx + env(safe-area-inset-bottom)); border-radius: 36rpx 36rpx 0 0; background: #f8f9f6; overflow-y: auto; }
+.sheet-handle { width: 70rpx; height: 8rpx; margin: 0 auto 25rpx; border-radius: 999rpx; background: #d7ddd8; }
+.sheet-title-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 30rpx; }
+.sheet-title { display: block; margin-top: 7rpx; color: #29342e; font-size: 38rpx; font-weight: 740; }
+.sheet-close { width: 56rpx; height: 56rpx; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #7e8982; background: #ecefeb; font-size: 36rpx; }
+.editor-label { display: block; margin-bottom: 14rpx; color: #7e8a83; font-size: 20rpx; }
+.choice-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13rpx; }
+.choice-chip { height: 70rpx; display: flex; align-items: center; justify-content: center; border: 2rpx solid transparent; border-radius: 20rpx; color: #748078; background: #fff; font-size: 23rpx; }
+.choice-chip.selected { border-color: #6f927c; color: #426450; background: #e9f1eb; font-weight: 680; }
+.editor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14rpx; margin-top: 22rpx; }
+.editor-field { padding: 20rpx; border-radius: 20rpx; background: #fff; }
+.editor-field > text { color: #929c96; font-size: 18rpx; }
+.editor-field > view { display: flex; align-items: baseline; margin-top: 8rpx; }
+.editor-field input { width: 150rpx; color: #344139; font-size: 30rpx; font-weight: 680; }
+.editor-field view text { color: #9ba49e; font-size: 18rpx; }
+.privacy-label { margin-top: 28rpx; }
+.privacy-list { display: flex; flex-direction: column; gap: 11rpx; }
+.privacy-item { display: flex; align-items: center; justify-content: space-between; padding: 20rpx 22rpx; border: 2rpx solid transparent; border-radius: 20rpx; color: transparent; background: #fff; }
+.privacy-item.selected { border-color: #85a48f; color: #557864; background: #eef4ef; }
+.privacy-item view text { display: block; color: #405047; font-size: 22rpx; }
+.privacy-item view text:last-child { margin-top: 5rpx; color: #9ba49f; font-size: 17rpx; }
+.sheet-submit { margin-top: 28rpx; }
+.challenge-sheet { padding-bottom: calc(46rpx + env(safe-area-inset-bottom)); }
+.preset-card { display: flex; align-items: center; justify-content: space-between; padding: 24rpx; margin-bottom: 13rpx; border-radius: 22rpx; background: #fff; }
+.preset-title { display: block; color: #354139; font-size: 24rpx; font-weight: 660; }
+.preset-note { display: block; margin-top: 7rpx; color: #9ba49e; font-size: 18rpx; }
+.preset-arrow { width: 50rpx; height: 50rpx; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #fff; background: #6c9079; font-size: 28rpx; }
+.fitness-loading { padding-top: 100rpx; }
+.hero-skeleton { height: 330rpx; border-radius: 36rpx; }
+.block-skeleton { height: 250rpx; margin-top: 28rpx; border-radius: 30rpx; }
+.fitness-empty { min-height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #748078; font-size: 26rpx; }
+.fitness-empty text:last-child { margin-top: 10rpx; color: #a2aaa5; font-size: 21rpx; }

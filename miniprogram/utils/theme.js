@@ -4,7 +4,7 @@
 
 const MOOD_TYPES = [
   { type: 'happy', emoji: '😊', label: '开心', color: '#FFD93D' },
-  { type: 'love', emoji: '🥰', label: '甜蜜', color: '#FF6B81' },
+  { type: 'love', emoji: '🥰', label: '甜蜜', color: '#E85D75' },
   { type: 'calm', emoji: '😌', label: '平静', color: '#60A5FA' },
   { type: 'excited', emoji: '🤩', label: '兴奋', color: '#F472B6' },
   { type: 'miss', emoji: '🥺', label: '想念', color: '#A78BFA' },

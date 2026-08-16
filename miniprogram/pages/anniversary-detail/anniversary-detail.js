@@ -12,7 +12,10 @@ Page({
 
   onLoad(options) {
     this.setData({ id: options.id })
-    this.loadDetail()
+  },
+
+  onShow() {
+    if (this.data.id) this.loadDetail()
   },
 
   async loadDetail() {
@@ -37,15 +40,14 @@ Page({
   },
 
   onEdit() {
-    // TODO: 编辑功能
-    wx.showToast({ title: '编辑功能开发中', icon: 'none' })
+    wx.navigateTo({ url: `/pages/anniversary/anniversary?editId=${this.data.id}` })
   },
 
   onDelete() {
     wx.showModal({
       title: '确认删除',
       content: '删除后无法恢复，确定要删除这个纪念日吗？',
-      confirmColor: '#FF6B81',
+      confirmColor: '#E85D75',
       success: async (res) => {
         if (res.confirm) {
           await callFunction('anniversary', { action: 'delete', data: { id: this.data.id } })
