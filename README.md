@@ -2,166 +2,112 @@
 
 # LoveSpace
 
-### 每天五分钟，把爱落在具体的小事里
+### 把陪伴落在每天可以完成的小事里
 
-一款仅供两人使用的私密情侣微信小程序，围绕每日连接、共同记录与长期回顾设计。
+一款仅供两个人使用的私密情侣微信小程序。<br>
+用每日问答建立连接，用共同记录保存生活，用健康挑战、任务和月报陪两个人长期成长。
 
-[微信小程序](https://mp.weixin.qq.com/) · [云开发](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html) · [MIT License](LICENSE)
+[![WeChat Mini Program](https://img.shields.io/badge/WeChat-Mini%20Program-07C160?style=flat-square&logo=wechat&logoColor=white)](https://developers.weixin.qq.com/miniprogram/dev/framework/)
+[![CloudBase](https://img.shields.io/badge/Backend-CloudBase-1677FF?style=flat-square)](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
+[![JavaScript](https://img.shields.io/badge/Language-JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=222)](https://developer.mozilla.org/docs/Web/JavaScript)
+[![Pages](https://img.shields.io/badge/Pages-28-E85D75?style=flat-square)](#项目规模)
+[![Cloud Functions](https://img.shields.io/badge/Cloud%20Functions-17-5F8F76?style=flat-square)](#项目规模)
+
+[产品能力](#核心体验) · [快速开始](#快速开始) · [部署说明](#云端部署) · [上线清单](docs/RELEASE_CHECKLIST.md)
 
 </div>
 
 ---
 
-## 产品理念
+## LoveSpace 是什么
 
-**关系容器** — 克制、亲密、可信赖
+LoveSpace 不是把大量情侣工具堆在一起，而是围绕一条清晰的关系主线设计：
 
-- 每日问答是核心双人仪式，双方回答后才揭晓内容
-- 首页只呈现今天最值得完成的互动，不用功能堆叠制造压力
-- 月报让心情、问答、回忆和积分形成长期反馈
-- “一起变好”奖励双人健康习惯，不用体重排名制造压力
-- 深色关系主卡 + 暖粉强调色，减少幼态贴纸与无意义动效
-- 所有共同数据通过云函数校验情侣空间归属，前端不直接读写数据库
+1. **每天靠近一点**：用每日问答和心情打卡建立稳定、低压力的交流习惯。
+2. **一起经历生活**：把照片、点滴、纪念日、愿望、任务和日常选择留在同一个双人空间。
+3. **长期看见彼此**：用关系月报、健康周报和回忆时间轴，把零散互动变成可回顾的共同成长。
 
----
+产品坚持三个原则：仅两人可见、双方身份在服务端校验、数据用于陪伴而不是排名。
 
-## 功能一览
+## 核心体验
 
-| 模块 | 功能 |
-|------|------|
-| 首页 | 每日问答 · 在一起天数 · 恋爱能量 · 纪念日 · 双人心情 · 最近回忆 |
-| 每日问答 | 独立作答 · 双方完成后揭晓 · 回答隐私保护 |
-| 关系月报 | 连接度 · 问答次数 · 双人心情 · 回忆与积分回顾 |
-| 一起变好 | 双人健康目标 · 每日打卡 · 共同周进度 · 挑战积分 · 健康周报 |
-| 纪念日 | 创建/编辑纪念日 · 倒计时 · 拍立得风格卡片 |
-| 相册 | 分类相册 · 照片上传 · 日杂拼贴网格 |
-| 点滴 | 记录生活瞬间 · 标签分类 · 随机回忆 · 时间轴展示 |
-| 心情打卡 | 10种心情选择 · 日记输入 · 对方心情查看 · 日历视图 |
-| 积分系统 | 快速加分 · 自定义项目 · 积分兑换 · 兑换记录 · 恋爱能量等级 |
-| 点菜 | 菜品管理 · 分类筛选 · 随机推荐 · 点餐下单 · 通知对方 |
-| 任务 | 指派任务 · 积分奖励 · 完成通知 · 任务详情 |
-| 愿望清单 | 创建愿望 · 标记完成 |
-| 时光胶囊 | 写给未来的信 · 开启时间设置 |
-| 感谢墙 | 记录感谢 · 表达爱意 |
-| 回忆时间轴 | 按月分组 · 日期选择 · 图片上传 · 拍立得风格 |
-| 设置 | 自定义背景 · 解除绑定 |
+| 场景 | 能力 | 体验重点 |
+|---|---|---|
+| 每日连接 | 每日问答、双方回答后揭晓、心情打卡 | 先独立表达，再互相看见 |
+| 一起变好 | 健康目标、每日运动记录、双人挑战、健康周报 | 比较各自的过去，不比较彼此体重 |
+| 保存回忆 | 点滴、相册、纪念日、时间轴、时光胶囊 | 让照片和文字形成长期关系档案 |
+| 共同生活 | 任务、愿望、点菜、积分与兑换 | 把商量和承诺变成可以完成的行动 |
+| 长期反馈 | 关系月报、恋爱能量、健康趋势 | 用趋势帮助回顾，不把关系数据化评分 |
 
----
+### 每日问答
 
-## 技术栈
+- 每天生成一个双人话题。
+- 双方分别回答，单方完成时无法查看对方正文。
+- 两个人都回答后同时揭晓，避免答案互相影响。
 
-| 层级 | 技术 |
-|------|------|
-| 前端 | 微信小程序原生 (WXML / WXSS / JS) + Vant Weapp |
-| 后端 | 微信云开发 (云函数 + 云数据库 + 云存储) |
-| 设计 | 暖灰中性色 · 关系强调色 · 分层卡片 · 克制动效 |
+### 一起变好
 
-**无自建服务器** — 全部运行在微信云开发平台上
+- 分别设置减脂、增肌或塑形目标。
+- 记录运动、步数、饮水、睡眠、饮食和可选体重。
+- 通过共同周进度和双人挑战获得积分奖励。
+- 体重支持“仅自己”“仅趋势”“双方可见”三级隐私。
 
----
+### 共同记录
 
-## 项目结构
+- 相册与点滴支持图片、文字、标签和时间轴回顾。
+- 纪念日提供倒计时、重复提醒和置顶展示。
+- 时光胶囊在到期前不向任何列表或详情接口返回正文。
 
-```
-lovespace/
-├── miniprogram/                    # 小程序前端
-│   ├── app.js                      # 全局逻辑 + 云初始化
-│   ├── app.json                    # 全局配置 + 自定义TabBar
-│   ├── app.wxss                    # 全局设计令牌与通用样式
-│   ├── config/                     # 云环境与订阅消息配置
-│   ├── custom-tab-bar/             # 自定义底部导航
-│   │   ├── index.js / .wxml / .wxss / .json
-│   ├── components/
-│   │   ├── bg-layer/               # 全局背景层
-│   ├── pages/
-│   │   ├── index/                  # 首页 · 今日关系概览
-│   │   ├── daily-question/         # 每日双人问答
-│   │   ├── monthly-report/         # 关系月报
-│   │   ├── fitness/                # 双人健康目标与每日打卡
-│   │   ├── fitness-report/         # 双人健康周报
-│   │   ├── login/                  # 登录 · 邀请码绑定
-│   │   ├── profile/                # 个人中心
-│   │   ├── album/                  # 相册列表
-│   │   ├── album-detail/           # 相册详情
-│   │   ├── anniversary/            # 纪念日
-│   │   ├── anniversary-detail/     # 纪念日详情
-│   │   ├── moments/                # 点点滴滴
-│   │   ├── moment-edit/            # 编辑记录
-│   │   ├── mood/                   # 心情打卡
-│   │   ├── mood-calendar/          # 心情日历
-│   │   ├── points/                 # 积分系统
-│   │   ├── points-records/         # 积分记录
-│   │   ├── menu/                   # 菜品管理
-│   │   ├── menu-order/             # 点餐模式
-│   │   ├── dish-detail/            # 菜品详情
-│   │   ├── order-history/          # 点餐历史
-│   │   ├── tasks/                  # 情侣任务
-│   │   ├── wishes/                 # 愿望清单
-│   │   ├── capsule/                # 时光胶囊
-│   │   ├── quiz/                   # 情侣问答
-│   │   ├── thanks/                 # 感谢墙
-│   │   ├── timeline/               # 回忆时间轴
-│   │   └── settings/               # 设置
-│   ├── utils/
-│   │   ├── cloud.js                # 云函数调用封装
-│   │   ├── date.js                 # 日期工具函数
-│   │   ├── storage.js              # 本地存储封装
-│   │   └── theme.js                # 主题配置 + 数据常量
-│   ├── images/                     # 图片资源
-│   └── styles/                     # 全局样式
-├── cloudfunctions/                 # 云函数
-│   ├── login/                      # 登录 + 用户初始化
-│   ├── couple/                     # 情侣绑定/解绑/信息
-│   ├── user/                       # 用户资料更新
-│   ├── anniversary/                # 纪念日CRUD
-│   ├── album/                      # 相册CRUD
-│   ├── moments/                    # 点滴记录CRUD
-│   ├── mood/                       # 心情打卡
-│   ├── points/                     # 积分系统
-│   ├── menu/                       # 菜品管理
-│   ├── task/                       # 任务系统
-│   ├── wish/                       # 愿望清单
-│   ├── capsule/                    # 时光胶囊
-│   ├── quiz/                       # 情侣问答
-│   ├── notification/               # 通知系统
-│   ├── daily-question/              # 每日问答
-│   ├── monthly-report/              # 月报聚合
-│   └── fitness/                     # 健康目标、打卡、挑战与周报
-└── project.config.json             # 项目配置
+## 技术架构
+
+```mermaid
+flowchart LR
+    A["微信小程序<br/>WXML · WXSS · JavaScript"] --> B["统一云调用层"]
+    B --> C["17 个云函数<br/>身份 · 权限 · 幂等校验"]
+    C --> D["云数据库<br/>双人业务数据"]
+    C --> E["云存储<br/>头像与照片"]
+    C --> F["微信 OpenAPI<br/>内容安全与订阅消息"]
 ```
 
----
+| 层级 | 实现 |
+|---|---|
+| 客户端 | 微信小程序原生 WXML / WXSS / JavaScript |
+| UI 组件 | Vant Weapp `^1.11.0` + 自定义组件与 TabBar |
+| 服务端 | 微信云开发云函数，`wx-server-sdk ~2.6.3` |
+| 数据 | 云数据库、云存储、服务端事务与确定性幂等 ID |
+| 质量检查 | JSON 校验、JavaScript 语法检查、事件绑定检查、微信原生 WXML/WXSS 编译 |
+
+## 安全与隐私
+
+- 客户端不直接访问业务数据库，所有请求经过云函数。
+- 云函数根据当前 OpenID、`coupleId` 和情侣成员关系进行授权。
+- 积分、兑换、任务奖励和健康挑战奖励使用事务及幂等流水。
+- 主要用户文本写入前调用微信内容安全接口。
+- 心情可设为仅自己可见，健康体重有独立的三级隐私控制。
+- 图片按情侣空间分区上传，云存储路径不由客户端直接指定。
+
+> 正式部署时，业务集合的客户端权限应设置为“所有用户不可读写”，仅允许云函数以服务端权限访问。
 
 ## 快速开始
 
-### 1. 注册小程序
+### 环境要求
 
-在 [微信公众平台](https://mp.weixin.qq.com/) 注册小程序，获取 AppID
+- 微信开发者工具 Stable
+- 已注册的微信小程序 AppID
+- 已开通并与 AppID 关联的微信云开发环境
+- Node.js 与 npm（用于构建小程序 npm 依赖）
 
-### 2. 配置项目
+### 1. 获取项目
 
 ```bash
-# 克隆项目
-git clone https://github.com/526858590/LoveSpace.git
+git clone https://github.com/PaoPao1021/LoveSpace.git
+cd LoveSpace
 ```
 
-在 `project.config.json` 中填入你的 AppID
+### 2. 配置账号与云环境
 
-### 3. 安装依赖
-
-用微信开发者工具打开项目：
-
-```
-工具 → 构建 npm
-```
-
-### 4. 开通云开发
-
-```
-微信开发者工具 → 云开发 → 开通
-```
-
-在 `miniprogram/config/index.js` 中确认云环境 ID 和点单订阅消息模板 ID：
+1. 在 `project.config.json` 中设置自己的小程序 AppID。
+2. 在 `miniprogram/config/index.js` 中设置云环境 ID 和订阅消息模板 ID。
 
 ```javascript
 module.exports = {
@@ -170,34 +116,37 @@ module.exports = {
 }
 ```
 
-### 5. 部署云函数
+这些值与微信小程序账号绑定，复制项目后必须替换为自己的正式环境配置。
 
-右键每个云函数目录 → **上传并部署：云端安装依赖**
+### 3. 构建依赖
 
-需要部署的云函数：
-- login
-- couple
-- user
-- anniversary
-- album
-- moments
-- mood
-- points
-- menu
-- task
-- wish
-- capsule
-- quiz
-- notification
-- daily-question
-- monthly-report
-- fitness
+使用微信开发者工具打开仓库根目录，然后执行：
 
-### 6. 创建数据库集合
-
-在云开发控制台创建以下集合：
-
+```text
+工具 → 构建 npm
 ```
+
+### 4. 部署云端资源
+
+按照下方“云端部署”完成集合、云函数和触发器配置，再点击编译和预览。
+
+## 云端部署
+
+### 云函数
+
+在微信开发者工具中，右键每个目录并选择“上传并部署：云端安装依赖”。
+
+```text
+login, couple, user, anniversary, album, moments, mood, points,
+menu, task, wish, capsule, quiz, notification,
+daily-question, monthly-report, fitness
+```
+
+部署 `notification` 后需要根据 [notification/config.json](cloudfunctions/notification/config.json) 上传定时触发器。
+
+### 数据库集合
+
+```text
 users, couples, couple_invites, anniversaries, albums, photos,
 moments, moods, daily_questions, points, point_exchanges,
 point_exchange_records, point_balances, dishes, orders,
@@ -205,124 +154,73 @@ tasks, wishes, capsules, quizzes, notifications, menu_categories,
 fitness_goals, fitness_checkins, fitness_challenges
 ```
 
-### 7. 数据库安全（必须）
+数据库索引、OpenAPI 权限、订阅消息字段和双账号验收步骤见 [上线清单](docs/RELEASE_CHECKLIST.md)。
 
-前端业务已全部改为通过云函数访问数据。请在云开发控制台将上述业务集合的客户端权限设为“所有用户不可读写”，仅允许云函数使用服务端权限访问。不要设置成“仅创建者可读写”，因为情侣共同数据不以 `_openid` 作为唯一授权依据。
+## 项目结构
 
-建议为常用查询建立复合索引：
+```text
+LoveSpace/
+├── miniprogram/
+│   ├── config/               # 云环境与消息模板配置
+│   ├── components/           # 通用小程序组件
+│   ├── custom-tab-bar/       # 自定义底部导航
+│   ├── pages/                # 28 个业务页面
+│   ├── utils/                # 云调用、日期、存储与主题工具
+│   ├── app.js
+│   ├── app.json
+│   └── app.wxss
+├── cloudfunctions/           # 17 个服务端云函数
+├── docs/
+│   ├── PRODUCT_AUDIT.md      # 产品与工程审计
+│   └── RELEASE_CHECKLIST.md  # 正式上线清单
+├── scripts/
+│   └── validate-project.ps1  # 项目自动检查
+└── project.config.json
+```
 
-- `daily_questions`: `coupleId + createdAt`
-- `moments`: `coupleId + createdAt`
-- `moods`: `coupleId + date`、`userId + date`
-- `points`: `coupleId + createdAt`、`coupleId + toUser`
-- `point_balances`: `coupleId + userId`
-- `notifications`: `coupleId + toUser + read + createdAt`
-- `tasks`: `coupleId + createdAt`
-- `couple_invites`: `status + createdAt`
-- `fitness_challenges`: `coupleId`
+## 项目规模
 
-### 8. 运行
+当前 `main` 分支包含：
 
-在微信开发者工具中编译预览。`notification/config.json` 已配置每天 01:00 UTC（北京时间 09:00）的纪念日提醒；部署该函数后还要单独执行“上传触发器”。
+- 28 个小程序页面
+- 53 个业务 JavaScript 文件
+- 65 个 JSON 配置文件
+- 17 个云函数
+- 24 个云数据库集合
 
-提交前可在 PowerShell 运行：
+运行本地质量检查：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\validate-project.ps1
 ```
 
-完整的控制台配置与双账号验收步骤见 [上线清单](docs/RELEASE_CHECKLIST.md)。
+若本机安装了微信开发者工具，脚本会同时调用微信原生 WXML/WXSS 编译器。检查必须以退出码 `0` 结束。
 
----
+## 上线前必读
 
-## 设计规范
+当前仓库提供完整可运行的客户端与云函数代码，但云环境资源不会随 Git 自动创建。正式预览或提审前需要完成：
 
-### 配色
+- 创建 24 个数据库集合并配置客户端权限。
+- 部署 17 个云函数及其 `config.json` 权限。
+- 上传 `notification` 定时触发器。
+- 配置正式订阅消息模板和隐私保护指引。
+- 使用两个真实微信账号完成双端验收。
 
-| 用途 | 色值 | 说明 |
-|------|------|------|
-| 页面背景 | `#F8F5F3` | 暖灰白 |
-| 卡片背景 | `#FFFFFF` | 纯白 |
-| 主色调 | `#E85D75` | 关系强调色 |
-| 强调浅色 | `#F6DDE2` | 卡片强调背景 |
-| 辅助色 | `#D7B48D` | 暖沙金 |
-| 主文字 | `#2D2729` | 暖黑 |
-| 次文字 | `#756A6D` | 暖灰 |
-| 弱文字 | `#A79DA0` | 辅助灰 |
+请逐项执行 [LoveSpace 上线清单](docs/RELEASE_CHECKLIST.md)。
 
-### 圆角
+## 反馈与协作
 
-| 元素 | 圆角值 |
-|------|--------|
-| 照片 | 12rpx |
-| 功能卡片 | 24rpx |
-| 小组件卡片 | 28rpx |
-| 弹窗顶部 | 36rpx |
-| 胶囊按钮 | 999rpx |
+发现问题或有产品建议，欢迎通过 [GitHub Issues](https://github.com/PaoPao1021/LoveSpace/issues) 提交。涉及安全或隐私的数据请勿直接粘贴到公开 Issue。
 
-### 动效
+## 致谢
 
-| 效果 | 时长 | 缓动 |
-|------|------|------|
-| 卡片点击 | 150ms | ease-out |
-| 页面切换 | 300ms | ease-in-out |
-| 卡片入场 | 400ms | cubic-bezier |
-| 呼吸光晕 | 2-3s | ease-in-out 循环 |
-| 心跳动画 | 1.2s | ease-in-out 循环 |
-| 浮动粒子 | 6-8s | ease-in 循环 |
-
----
-
-## 数据库设计
-
-### 核心集合
-
-| 集合 | 用途 | 关键字段 |
-|------|------|----------|
-| `users` | 用户信息 | `_id(openid)`, `nickName`, `avatarUrl`, `coupleId` |
-| `couples` | 情侣关系 | `creator`, `partner`, `startDate`, `inviteCode` |
-| `moods` | 心情记录 | `userId`, `coupleId`, `moodType`, `date` |
-| `points` | 积分流水 | `coupleId`, `fromUser`, `toUser`, `amount`, `reason` |
-| `tasks` | 情侣任务 | `coupleId`, `title`, `assignee`, `status`, `rewardPoints` |
-| `moments` | 点滴记录 | `coupleId`, `content`, `images`, `tags`, `eventDate` |
-| `fitness_goals` | 个人健康目标 | `coupleId`, `userId`, `goalType`, `privacy` |
-| `fitness_checkins` | 每日健康打卡 | `coupleId`, `userId`, `date`, `minutes`, `steps` |
-| `fitness_challenges` | 双人健康挑战 | `coupleId`, `metric`, `target`, `status` |
-
----
-
-## 组件说明
-
-### 自定义 TabBar
-
-位于 `custom-tab-bar/`，采用统一线性符号、清晰选中态和安全区适配，减少装饰噪音。
-
-### 背景层
-
-位于 `components/bg-layer/`，支持自定义背景图片，通过 `opacity` 控制透明度。
-
----
-
-## 协作方式
-
-本小程序仅供两人使用，通过 **邀请码** 绑定：
-
-1. 用户 A 创建空间 → 获得 6 位邀请码
-2. 用户 B 输入邀请码 → 完成绑定
-3. 绑定后共享所有数据
-
----
-
-## 许可证
-
-[MIT License](LICENSE)
+- [Vant Weapp](https://github.com/youzan/vant-weapp) 提供稳定的小程序 UI 基础组件。
+- [微信小程序](https://developers.weixin.qq.com/miniprogram/dev/framework/) 与 [微信云开发](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html) 提供运行平台。
 
 ---
 
 <div align="center">
 
-**用代码记录爱情，用技术守护回忆**
-
-Made with 💕
+**每天五分钟，把爱落在具体的小事里。**
 
 </div>
