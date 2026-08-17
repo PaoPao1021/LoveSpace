@@ -87,6 +87,7 @@
         </view>
       </view>
       <view class="rest-day" wx:else bindtap="addWorkout"><text>今天暂未添加运动</text><text>休息也是计划的一部分，也可以点这里添加记录</text></view>
+      <button class="save-workouts {{workoutsDirty ? 'dirty' : ''}}" loading="{{saving}}" disabled="{{saving || !workoutsDirty}}" bindtap="saveWorkoutRecords">{{workoutsDirty ? '保存运动记录' : dashboard.todayCheckin ? '运动记录已保存' : '添加后在这里保存'}}</button>
 
       <view class="form-grid lifestyle-grid">
         <view class="field-card">
@@ -113,6 +114,18 @@
       <button class="save-checkin" loading="{{saving}}" disabled="{{saving}}" bindtap="saveCheckin">{{dashboard.todayCheckin ? '更新今日记录' : '完成今日打卡'}}</button>
     </view>
 
+    <view class="section-head partner-workout-head" wx:if="{{dashboard.partner}}">
+      <view><text class="section-kicker">PARTNER TODAY</text><text class="section-title">TA 今天的运动</text></view>
+      <text class="partner-total" wx:if="{{dashboard.partnerToday}}">{{dashboard.partnerToday.minutes}} 分钟 · {{dashboard.partnerToday.calories}} 大卡</text>
+    </view>
+    <view class="partner-workout-card" wx:if="{{dashboard.partner && dashboard.partnerToday && dashboard.partnerToday.workouts.length}}">
+      <view class="partner-workout-item" wx:for="{{dashboard.partnerToday.workouts}}" wx:key="id">
+        <view><text class="partner-workout-type">{{item.typeLabel}}</text><text class="partner-workout-time">{{item.startTime || '未记录时间'}}</text></view>
+        <view><text>{{item.minutes}} 分钟</text><text>{{item.calories}} 大卡</text></view>
+      </view>
+    </view>
+    <view class="partner-workout-empty" wx:elif="{{dashboard.partner}}"><text>{{dashboard.partnerCheckedIn ? 'TA 今天记录了休息日' : 'TA 今天还没有保存运动记录'}}</text><text>保存后双方会在这里同步看到</text></view>
+
     <view class="section-head nutrition-head">
       <view><text class="section-kicker">TODAY'S FUEL</text><text class="section-title">今日饮食参考</text></view>
       <text class="nutrition-basis" wx:if="{{dashboard.nutritionPlan.ready}}">{{dashboard.nutritionPlan.intensity}}</text>
@@ -121,6 +134,11 @@
       <view class="nutrition-energy">
         <view><text class="energy-value">{{dashboard.nutritionPlan.calories}}</text><text class="energy-unit">大卡 / 日</text></view>
         <text class="energy-copy">{{dashboard.nutritionPlan.summary}}</text>
+      </view>
+      <view class="bmr-panel {{dashboard.nutritionPlan.bmr.ready ? '' : 'incomplete'}}" bindtap="openGoalEditor">
+        <view wx:if="{{dashboard.nutritionPlan.bmr.ready}}"><text class="bmr-label">基础代谢估算</text><text class="bmr-value">{{dashboard.nutritionPlan.bmr.value}}<text> 大卡 / 日</text></text><text class="bmr-note">{{dashboard.nutritionPlan.bmr.note}}</text></view>
+        <view wx:else><text class="bmr-label">完成基础代谢计算</text><text class="bmr-note">{{dashboard.nutritionPlan.bmr.message}}</text></view>
+        <text class="bmr-action">{{dashboard.nutritionPlan.bmr.ready ? '修改参数' : '补充资料 →'}}</text>
       </view>
       <view class="macro-list">
         <view class="macro-item" wx:for="{{dashboard.nutritionPlan.macros}}" wx:key="key">
@@ -175,10 +193,19 @@
       <view class="choice-chip {{goalForm.goalType === 'shape' ? 'selected' : ''}}" data-value="shape" bindtap="selectGoalType">塑形</view>
     </view>
     <view class="editor-grid">
-      <view class="editor-field"><text>当前体重（可选）</text><view><input type="digit" value="{{goalForm.currentWeight}}" data-field="currentWeight" bindinput="onGoalInput" placeholder="--" /><text>kg</text></view></view>
+      <view class="editor-field"><text>当前体重（代谢计算必填）</text><view><input type="digit" value="{{goalForm.currentWeight}}" data-field="currentWeight" bindinput="onGoalInput" placeholder="--" /><text>kg</text></view></view>
       <view class="editor-field"><text>目标体重（可选）</text><view><input type="digit" value="{{goalForm.targetWeight}}" data-field="targetWeight" bindinput="onGoalInput" placeholder="--" /><text>kg</text></view></view>
       <view class="editor-field"><text>每周运动</text><view><input type="number" value="{{goalForm.weeklyWorkouts}}" data-field="weeklyWorkouts" bindinput="onGoalInput" /><text>次</text></view></view>
       <view class="editor-field"><text>每日步数</text><view><input type="number" value="{{goalForm.dailySteps}}" data-field="dailySteps" bindinput="onGoalInput" /><text>步</text></view></view>
+    </view>
+    <view class="metabolic-head"><text class="editor-label">基础代谢参数</text><text>仅自己可见 · 适用于 18—80 岁成年人</text></view>
+    <view class="sex-choice-row">
+      <view class="choice-chip {{goalForm.biologicalSex === 'female' ? 'selected' : ''}}" data-value="female" bindtap="selectBiologicalSex">生理女性</view>
+      <view class="choice-chip {{goalForm.biologicalSex === 'male' ? 'selected' : ''}}" data-value="male" bindtap="selectBiologicalSex">生理男性</view>
+    </view>
+    <view class="editor-grid metabolic-grid">
+      <view class="editor-field"><text>身高</text><view><input type="digit" value="{{goalForm.height}}" data-field="height" bindinput="onGoalInput" placeholder="--" /><text>cm</text></view></view>
+      <view class="editor-field"><text>年龄</text><view><input type="number" value="{{goalForm.age}}" data-field="age" bindinput="onGoalInput" placeholder="--" /><text>岁</text></view></view>
     </view>
     <text class="editor-label privacy-label">体重隐私</text>
     <view class="privacy-list">

@@ -85,6 +85,7 @@ Page({
     workoutOptions: WORKOUT_OPTIONS,
     workoutLabels: WORKOUT_OPTIONS.map(item => item.label),
     workoutDrafts: [],
+    workoutsDirty: false,
     checkinForm: {
       steps: '',
       water: '',
@@ -98,6 +99,9 @@ Page({
       targetWeight: '',
       weeklyWorkouts: '3',
       dailySteps: '8000',
+      height: '',
+      age: '',
+      biologicalSex: '',
       privacy: 'trend'
     },
     showGoalEditor: false,
@@ -112,6 +116,12 @@ Page({
     if (showLoading) this.setData({ loading: true })
     try {
       const dashboard = await callFunction('fitness', { action: 'dashboard' })
+      if (dashboard.partnerToday && Array.isArray(dashboard.partnerToday.workouts)) {
+        dashboard.partnerToday.workouts = dashboard.partnerToday.workouts.map(item => ({
+          ...item,
+          typeLabel: (WORKOUT_OPTIONS.find(option => option.value === item.type) || { label: '其他运动' }).label
+        }))
+      }
       const checkin = dashboard.todayCheckin || {}
       const goal = dashboard.myGoal || {}
       this.setData({
@@ -120,6 +130,7 @@ Page({
         teamCopy: progressCopy(dashboard.teamProgress),
         goalTypeLabel: GOAL_LABELS[goal.goalType] || '减脂',
         workoutDrafts: workoutDrafts(checkin),
+        workoutsDirty: false,
         checkinForm: {
           steps: checkin.steps ? String(checkin.steps) : '',
           water: checkin.water ? String(checkin.water) : '',
@@ -133,6 +144,9 @@ Page({
           targetWeight: goal.targetWeight ? String(goal.targetWeight) : '',
           weeklyWorkouts: String(goal.weeklyWorkouts || 3),
           dailySteps: String(goal.dailySteps || 8000),
+          height: goal.height ? String(goal.height) : '',
+          age: goal.age ? String(goal.age) : '',
+          biologicalSex: goal.biologicalSex || '',
           privacy: goal.privacy || 'trend'
         },
         loading: false
@@ -164,6 +178,10 @@ Page({
     this.setData({ 'goalForm.privacy': event.currentTarget.dataset.value })
   },
 
+  selectBiologicalSex(event) {
+    this.setData({ 'goalForm.biologicalSex': event.currentTarget.dataset.value })
+  },
+
   onGoalInput(event) {
     const field = event.currentTarget.dataset.field
     this.setData({ [`goalForm.${field}`]: event.detail.value })
@@ -174,6 +192,15 @@ Page({
     const form = this.data.goalForm
     if (!form.weeklyWorkouts || !form.dailySteps) {
       wx.showToast({ title: '请填写运动次数和步数目标', icon: 'none' })
+      return
+    }
+    const metabolicFields = [form.height, form.age, form.biologicalSex].filter(Boolean)
+    if (metabolicFields.length > 0 && metabolicFields.length < 3) {
+      wx.showToast({ title: '请完整填写基础代谢参数', icon: 'none' })
+      return
+    }
+    if (metabolicFields.length === 3 && !form.currentWeight) {
+      wx.showToast({ title: '计算基础代谢需要当前体重', icon: 'none' })
       return
     }
     this.setData({ saving: true })
@@ -194,12 +221,12 @@ Page({
       wx.showToast({ title: `每天最多添加 ${MAX_DAILY_WORKOUTS} 条`, icon: 'none' })
       return
     }
-    this.setData({ workoutDrafts: [...this.data.workoutDrafts, createWorkout()] })
+    this.setData({ workoutDrafts: [...this.data.workoutDrafts, createWorkout()], workoutsDirty: true })
   },
 
   removeWorkout(event) {
     const index = Number(event.currentTarget.dataset.index)
-    this.setData({ workoutDrafts: this.data.workoutDrafts.filter((item, itemIndex) => itemIndex !== index) })
+    this.setData({ workoutDrafts: this.data.workoutDrafts.filter((item, itemIndex) => itemIndex !== index), workoutsDirty: true })
   },
 
   onWorkoutTypeChange(event) {
@@ -207,19 +234,20 @@ Page({
     const workoutIndex = Number(event.detail.value)
     this.setData({
       [`workoutDrafts[${index}].workoutIndex`]: workoutIndex,
-      [`workoutDrafts[${index}].type`]: WORKOUT_OPTIONS[workoutIndex].value
+      [`workoutDrafts[${index}].type`]: WORKOUT_OPTIONS[workoutIndex].value,
+      workoutsDirty: true
     })
   },
 
   onWorkoutTimeChange(event) {
     const index = Number(event.currentTarget.dataset.index)
-    this.setData({ [`workoutDrafts[${index}].startTime`]: event.detail.value })
+    this.setData({ [`workoutDrafts[${index}].startTime`]: event.detail.value, workoutsDirty: true })
   },
 
   onWorkoutInput(event) {
     const index = Number(event.currentTarget.dataset.index)
     const field = event.currentTarget.dataset.field
-    this.setData({ [`workoutDrafts[${index}].${field}`]: event.detail.value })
+    this.setData({ [`workoutDrafts[${index}].${field}`]: event.detail.value, workoutsDirty: true })
   },
 
   onCheckinInput(event) {
@@ -241,7 +269,7 @@ Page({
     return ''
   },
 
-  async saveCheckin() {
+  async persistToday(successTitle) {
     if (this.data.saving) return
     const errorMessage = this.validateWorkouts()
     if (errorMessage) {
@@ -258,6 +286,16 @@ Page({
     this.setData({ saving: true })
     try {
       const result = await callFunction('fitness', { action: 'checkIn', data: { ...this.data.checkinForm, workouts } })
+      if (!result.checkin || !Array.isArray(result.checkin.workouts) || result.checkin.workouts.length !== workouts.length) {
+        wx.showModal({
+          title: '云函数需要更新',
+          content: '云端 fitness 仍是旧版本，记录没有可靠落库。请重新上传并部署 fitness 云函数后再保存。',
+          showCancel: false,
+          confirmText: '知道了'
+        })
+        return false
+      }
+      this.setData({ workoutsDirty: false })
       if (result.completed && result.completed.length) {
         const challenge = result.completed[0]
         wx.showModal({
@@ -267,14 +305,23 @@ Page({
           confirmText: '继续变好'
         })
       } else {
-        wx.showToast({ title: result.updated ? '今日记录已更新' : '今日打卡完成', icon: 'success' })
+        wx.showToast({ title: successTitle, icon: 'success' })
       }
       await this.loadDashboard(false)
+      return true
     } catch (error) {
       // 统一错误提示由云函数封装处理。
     } finally {
       this.setData({ saving: false })
     }
+  },
+
+  saveWorkoutRecords() {
+    return this.persistToday('运动记录已保存')
+  },
+
+  saveCheckin() {
+    return this.persistToday(this.data.dashboard.todayCheckin ? '今日记录已更新' : '今日打卡完成')
   },
 
   openChallengePicker() {

@@ -88,6 +88,22 @@ function workoutsForCheckin(checkin) {
   return []
 }
 
+function calculateBmr(goal, weight) {
+  const height = Number(goal && goal.height)
+  const age = Number(goal && goal.age)
+  const biologicalSex = String(goal && goal.biologicalSex || '')
+  if (!weight || !height || !age || !['male', 'female'].includes(biologicalSex)) {
+    return { ready: false, message: '补充身高、年龄和生理性别后可计算基础代谢。' }
+  }
+  const sexAdjustment = biologicalSex === 'male' ? 5 : -161
+  return {
+    ready: true,
+    value: Math.round(10 * weight + 6.25 * height - 5 * age + sexAdjustment),
+    formula: 'Mifflin-St Jeor',
+    note: '表示身体静息状态下维持基本生命活动的估算能量，不等于每天建议摄入量。'
+  }
+}
+
 function buildNutritionPlan(goal, checkin) {
   const recordedWeight = Number(checkin && checkin.weight)
   const goalWeight = Number(goal && goal.currentWeight)
@@ -111,10 +127,14 @@ function buildNutritionPlan(goal, checkin) {
         ? '轻训练量'
         : '休息日'
   const goalType = goal && goal.goalType ? goal.goalType : 'shape'
+  const bmr = calculateBmr(goal, weight)
   const baseRates = { 'fat-loss': 28, muscle: 33, shape: 30 }
-  const baseCalories = clamp(Math.round((weight * baseRates[goalType]) / 10) * 10, 1400, 3200)
-  const trainingRecovery = clamp(Math.round((workoutCalories * 0.35) / 10) * 10, 0, 500)
-  const calories = clamp(baseCalories + trainingRecovery, 1400, 3600)
+  const fallbackCalories = clamp(Math.round((weight * baseRates[goalType]) / 10) * 10, 1400, 3200)
+  const restingDailyCalories = bmr.ready ? Math.round((bmr.value * 1.2) / 10) * 10 : fallbackCalories
+  const goalAdjustment = goalType === 'fat-loss' ? -250 : goalType === 'muscle' ? 200 : 0
+  const trainingRecovery = clamp(Math.round((workoutCalories * 0.7) / 10) * 10, 0, 700)
+  const calorieFloor = bmr.ready ? Math.max(1200, Math.round(bmr.value * 0.95)) : 1400
+  const calories = clamp(restingDailyCalories + goalAdjustment + trainingRecovery, calorieFloor, 3600)
   const proteinRate = goalType === 'muscle' ? 1.8 : goalType === 'fat-loss' ? 1.7 : 1.6
   const adjustedProteinRate = clamp(proteinRate + (hasStrength || intensity === '高训练量' ? 0.1 : 0), 1.4, 2)
   const protein = clamp(Math.round(weight * adjustedProteinRate), 50, 200)
@@ -125,6 +145,7 @@ function buildNutritionPlan(goal, checkin) {
 
   return {
     ready: true,
+    bmr,
     calories,
     weight,
     intensity,
@@ -157,6 +178,9 @@ function defaultGoal(userId, coupleId) {
     goalType: 'fat-loss',
     currentWeight: null,
     targetWeight: null,
+    height: null,
+    age: null,
+    biologicalSex: '',
     weeklyWorkouts: 3,
     dailySteps: 8000,
     privacy: 'trend'
@@ -241,11 +265,31 @@ function memberStats(checkins, goal, userId) {
 function sanitizePartnerGoal(goal) {
   if (!goal) return null
   const sanitized = { ...goal }
+  delete sanitized.height
+  delete sanitized.age
+  delete sanitized.biologicalSex
   if (goal.privacy !== 'shared') {
     delete sanitized.currentWeight
     delete sanitized.targetWeight
   }
   return sanitized
+}
+
+function sanitizePartnerToday(checkin) {
+  if (!checkin) return null
+  return {
+    date: checkin.date,
+    workouts: workoutsForCheckin(checkin).map(item => ({
+      id: item.id,
+      type: item.type,
+      startTime: item.startTime || '',
+      minutes: Number(item.minutes || 0),
+      calories: Number(item.calories || 0)
+    })),
+    workoutCount: workoutsForCheckin(checkin).length,
+    minutes: Number(checkin.minutes || 0),
+    calories: Number(checkin.calories || 0)
+  }
 }
 
 function sanitizePartnerStats(stats, goal) {
@@ -313,6 +357,7 @@ async function buildDashboard(openid) {
     todayCheckin: todayMine,
     nutritionPlan: buildNutritionPlan(myGoal, todayMine),
     partnerCheckedIn: Boolean(todayPartner),
+    partnerToday: sanitizePartnerToday(todayPartner),
     partnerTodayMinutes: todayPartner ? Number(todayPartner.minutes || 0) : 0,
     teamProgress: Math.round(members.reduce((sum, item) => sum + item.progress, 0) / members.length),
     challenges: challenges.map(item => formatChallenge(item, checkins)),
@@ -326,12 +371,23 @@ async function saveGoal(openid, data) {
   const privacy = String(data.privacy || 'trend')
   if (!GOAL_TYPES.includes(goalType)) throw new Error('请选择正确的健康目标')
   if (!PRIVACY_TYPES.includes(privacy)) throw new Error('隐私设置无效')
+  const biologicalSex = String(data.biologicalSex || '')
+  if (biologicalSex && !['male', 'female'].includes(biologicalSex)) throw new Error('基础代谢计算参数无效')
+  const height = asNumber(data.height, 120, 230, '身高', true)
+  const age = asNumber(data.age, 18, 80, '年龄', true)
+  const currentWeight = asNumber(data.currentWeight, 30, 300, '当前体重', true)
+  const profileParts = [biologicalSex, height, age].filter(value => value !== '' && value !== null)
+  if (profileParts.length > 0 && profileParts.length < 3) throw new Error('请完整填写身高、年龄和生理性别')
+  if (profileParts.length === 3 && currentWeight === null) throw new Error('计算基础代谢需要填写当前体重')
   const goal = {
     coupleId: context.coupleId,
     userId: openid,
     goalType,
-    currentWeight: asNumber(data.currentWeight, 30, 300, '当前体重', true),
+    currentWeight,
     targetWeight: asNumber(data.targetWeight, 30, 300, '目标体重', true),
+    height,
+    age: age === null ? null : Math.round(age),
+    biologicalSex,
     weeklyWorkouts: Math.round(asNumber(data.weeklyWorkouts, 1, 7, '每周运动次数')),
     dailySteps: Math.round(asNumber(data.dailySteps, 1000, 50000, '每日步数')),
     privacy,
@@ -389,16 +445,25 @@ async function checkIn(openid, data) {
   const normalized = normalizeCheckin(data)
   const id = checkinDocId(context.coupleId, openid, date)
   const existing = await readDoc('fitness_checkins', id)
-  await db.collection('fitness_checkins').doc(id).set({ data: {
+  const savedCheckin = {
     coupleId: context.coupleId,
     userId: openid,
     date,
     ...normalized,
     createdAt: existing && existing.createdAt ? existing.createdAt : db.serverDate(),
     updatedAt: db.serverDate()
-  } })
+  }
+  await db.collection('fitness_checkins').doc(id).set({ data: savedCheckin })
   const completed = await completeEligibleChallenges(context, openid)
-  return { code: 0, id, updated: Boolean(existing), completed }
+  const goal = await getGoal(context.coupleId, openid)
+  return {
+    code: 0,
+    id,
+    updated: Boolean(existing),
+    completed,
+    checkin: { ...savedCheckin, createdAt: undefined, updatedAt: undefined },
+    nutritionPlan: buildNutritionPlan(goal, savedCheckin)
+  }
 }
 
 async function createChallenge(openid, data) {
@@ -570,7 +635,7 @@ async function weeklyReport(openid, data) {
 }
 
 if (process.env.NODE_ENV === 'test') {
-  exports.__test = { buildNutritionPlan, normalizeCheckin, workoutsForCheckin }
+  exports.__test = { buildNutritionPlan, calculateBmr, normalizeCheckin, sanitizePartnerToday, workoutsForCheckin }
 }
 
 exports.main = async (event = {}) => {

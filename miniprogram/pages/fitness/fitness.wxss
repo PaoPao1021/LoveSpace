@@ -54,6 +54,10 @@
 .time-field > view { color: #456250; }
 .rest-day { display: flex; flex-direction: column; align-items: center; padding: 28rpx 18rpx; margin-top: 23rpx; border: 2rpx dashed #d3ddd5; border-radius: 21rpx; color: #738078; background: #fafbf9; font-size: 21rpx; }
 .rest-day text:last-child { margin-top: 7rpx; color: #a2aaa5; font-size: 17rpx; }
+.save-workouts { height: 74rpx; display: flex; align-items: center; justify-content: center; margin-top: 17rpx; border: 0; border-radius: 20rpx; color: #7e8982; background: #edf0ed; font-size: 22rpx; font-weight: 660; line-height: 1; }
+.save-workouts.dirty { color: #fff; background: #5a7c68; box-shadow: 0 8rpx 20rpx rgba(70,105,84,.13); }
+.save-workouts::after { border: 0; }
+.save-workouts[disabled] { color: #9ba49e; background: #edf0ed; }
 .form-row, .weight-row, .meal-row { display: flex; align-items: center; justify-content: space-between; }
 .form-copy { min-width: 0; }
 .form-label { display: block; color: #354139; font-size: 24rpx; font-weight: 660; }
@@ -75,6 +79,18 @@
 .save-checkin, .sheet-submit { height: 92rpx; display: flex; align-items: center; justify-content: center; margin-top: 12rpx; border: 0; border-radius: 24rpx; color: #fff; background: #496d59; font-size: 26rpx; font-weight: 680; line-height: 1; }
 .save-checkin::after, .sheet-submit::after { border: 0; }
 .save-checkin[disabled], .sheet-submit[disabled] { color: rgba(255,255,255,.8); background: #7d9687; }
+.partner-workout-head { margin-top: 46rpx; }
+.partner-total { color: #75837b; font-size: 18rpx; }
+.partner-workout-card { padding: 8rpx 25rpx; border-radius: 28rpx; background: #fff; box-shadow: 0 8rpx 28rpx rgba(45,70,55,.04); }
+.partner-workout-item { display: flex; align-items: center; justify-content: space-between; padding: 21rpx 0; border-bottom: 1rpx solid #edf0ed; }
+.partner-workout-item:last-child { border-bottom: 0; }
+.partner-workout-item text { display: block; }
+.partner-workout-type { color: #38473f; font-size: 23rpx; font-weight: 670; }
+.partner-workout-time { margin-top: 5rpx; color: #9aa39d; font-size: 17rpx; }
+.partner-workout-item > view:last-child { display: flex; gap: 10rpx; }
+.partner-workout-item > view:last-child text { padding: 7rpx 11rpx; border-radius: 999rpx; color: #617267; background: #f0f4f0; font-size: 17rpx; }
+.partner-workout-empty { display: flex; flex-direction: column; align-items: center; padding: 30rpx; border: 2rpx dashed #d0dad3; border-radius: 27rpx; color: #69776f; background: rgba(255,255,255,.5); font-size: 21rpx; }
+.partner-workout-empty text:last-child { margin-top: 7rpx; color: #9ca59f; font-size: 17rpx; }
 .nutrition-head { margin-top: 46rpx; }
 .nutrition-basis { padding: 9rpx 15rpx; border-radius: 999rpx; color: #806c4f; background: #eee5d8; font-size: 18rpx; }
 .nutrition-card { padding: 29rpx; border-radius: 30rpx; background: #fff; box-shadow: 0 10rpx 32rpx rgba(45,70,55,.05); }
@@ -83,6 +99,15 @@
 .energy-value { color: #314038; font-size: 54rpx; line-height: 1; font-weight: 760; }
 .energy-unit { margin-left: 7rpx; color: #909a94; font-size: 18rpx; }
 .energy-copy { max-width: 310rpx; color: #89958d; font-size: 18rpx; line-height: 1.55; text-align: right; }
+.bmr-panel { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; padding: 22rpx; margin-top: 22rpx; border-radius: 21rpx; background: #edf4ef; }
+.bmr-panel.incomplete { border: 1rpx dashed #c8d6cc; background: #f7f9f6; }
+.bmr-panel > view { min-width: 0; }
+.bmr-panel text { display: block; }
+.bmr-label { color: #66806f; font-size: 18rpx; font-weight: 680; }
+.bmr-value { margin-top: 5rpx; color: #304139; font-size: 34rpx; font-weight: 750; }
+.bmr-value text { display: inline; color: #839088; font-size: 16rpx; font-weight: 400; }
+.bmr-note { margin-top: 7rpx; color: #8d9891; font-size: 16rpx; line-height: 1.5; }
+.bmr-action { flex-shrink: 0; color: #567461; font-size: 17rpx; }
 .macro-list { display: flex; flex-direction: column; gap: 18rpx; margin-top: 25rpx; }
 .macro-top { display: flex; justify-content: space-between; color: #506057; font-size: 20rpx; }
 .macro-top text:last-child { color: #7f8b84; font-weight: 650; }
@@ -127,6 +152,11 @@
 .choice-chip { height: 70rpx; display: flex; align-items: center; justify-content: center; border: 2rpx solid transparent; border-radius: 20rpx; color: #748078; background: #fff; font-size: 23rpx; }
 .choice-chip.selected { border-color: #6f927c; color: #426450; background: #e9f1eb; font-weight: 680; }
 .editor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14rpx; margin-top: 22rpx; }
+.metabolic-head { display: flex; align-items: baseline; justify-content: space-between; margin-top: 29rpx; }
+.metabolic-head .editor-label { margin-bottom: 0; }
+.metabolic-head > text:last-child { color: #a0a9a3; font-size: 15rpx; }
+.sex-choice-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13rpx; margin-top: 14rpx; }
+.metabolic-grid { margin-top: 14rpx; }
 .editor-field { padding: 20rpx; border-radius: 20rpx; background: #fff; }
 .editor-field > text { color: #929c96; font-size: 18rpx; }
 .editor-field > view { display: flex; align-items: baseline; margin-top: 8rpx; }

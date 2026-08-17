@@ -17,7 +17,7 @@ Module._load = function load(request, parent, isMain) {
 }
 
 const { __test } = require('../cloudfunctions/fitness/index')
-const { buildNutritionPlan, normalizeCheckin, workoutsForCheckin } = __test
+const { buildNutritionPlan, calculateBmr, normalizeCheckin, sanitizePartnerToday, workoutsForCheckin } = __test
 
 const checkin = normalizeCheckin({
   workouts: [
@@ -36,19 +36,27 @@ assert.equal(checkin.minutes, 70)
 assert.equal(checkin.calories, 530)
 assert.equal(workoutsForCheckin(checkin).length, 2)
 
-const goal = { goalType: 'fat-loss', currentWeight: 70 }
+const goal = { goalType: 'fat-loss', currentWeight: 70, height: 175, age: 28, biologicalSex: 'male' }
 const trainingPlan = buildNutritionPlan(goal, checkin)
 const restPlan = buildNutritionPlan(goal, null)
 assert.equal(trainingPlan.ready, true)
+assert.equal(trainingPlan.bmr.ready, true)
+assert.equal(trainingPlan.bmr.value, 1659)
 assert.equal(trainingPlan.intensity, '中等训练量')
 assert(trainingPlan.calories > restPlan.calories)
 assert.equal(trainingPlan.macros.length, 3)
 assert(trainingPlan.macros.every(item => item.grams > 0 && item.ratio > 0))
 assert(Math.abs(trainingPlan.macros.reduce((sum, item) => sum + item.ratio, 0) - 100) <= 1)
 
+assert.equal(calculateBmr({ height: 165, age: 28, biologicalSex: 'female' }, 55).value, 1280)
+assert.equal(calculateBmr({}, 70).ready, false)
+const partnerToday = sanitizePartnerToday({ date: '2026-08-17', workouts: checkin.workouts, minutes: 70, calories: 530, weight: 70 })
+assert.equal(partnerToday.workouts.length, 2)
+assert.equal(Object.prototype.hasOwnProperty.call(partnerToday, 'weight'), false)
+
 assert.throws(() => normalizeCheckin({
   workouts: [{ id: 'bad', type: 'run', startTime: '18:30', minutes: 30, calories: 0 }]
 }), /消耗热量/)
 
 assert.equal(buildNutritionPlan({ goalType: 'shape' }, null).ready, false)
-console.log('Fitness domain tests passed: multi-workout totals, validation, nutrition plan and fallback.')
+console.log('Fitness domain tests passed: persistence payload, partner privacy, BMR and nutrition plan.')
